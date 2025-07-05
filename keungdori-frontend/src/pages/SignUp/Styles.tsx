@@ -9,8 +9,8 @@ export const Title = styled.h3`
 
 export const ProfileImageSection = styled.div`
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     margin-bottom: 40px;
 `;
 
@@ -19,6 +19,27 @@ export const ProfileImage = styled.img`
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
+`;
+
+export const ImageFileInput = styled.input`
+    display: none;
+`;
+
+export const CameraButton = styled.button`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+`;
+
+export const CameraIcon = styled.img`
+    width: 100%;
+    height: 100%;
 `;
 
 export const Form = styled.form`
