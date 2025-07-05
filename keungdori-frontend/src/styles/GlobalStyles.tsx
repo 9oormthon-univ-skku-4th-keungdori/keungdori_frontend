@@ -14,6 +14,7 @@ const GlobalStyles = () => (
         height: 100%;
         background-color: #f0f2f5; 
         font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 400;
       }
 
       #root {

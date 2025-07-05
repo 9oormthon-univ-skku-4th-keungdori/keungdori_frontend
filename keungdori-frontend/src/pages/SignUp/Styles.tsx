@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
+import Button from '../../components/Button';
 
+// wrapper를 그냥 공통 컴포넌트로 해서 화면 양 옆 빈 곳 동일하게 하면 좋을듯?
 export const SignUpWrapper = styled.div`
     width: 100%;
     height: 100%;
@@ -10,7 +12,7 @@ export const SignUpWrapper = styled.div`
 `;
 
 export const Title = styled.h3`
-    font-size: 28px;
+    font-size: 30px;
     margin-top: 45px;
     margin-bottom: 40px;
 `;
@@ -42,26 +44,25 @@ export const InputWrapper = styled.div`
 `;
 
 export const Label = styled.label`
-    font-size: 14px;
-    font-weight: 500;
-    maegin-bottom: 5px;
+    font-size: 18px;
+    margin-bottom: 5px;
     padding-left: 5px;
 `;
 
 export const Input = styled.input`
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #DDDDDD;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 18px;
     box-sizing: border-box;
-
-    &::placeholder {
-        color: #bdbdbd;
-    }
 
     &:focus {
         outline: none;
-        border-color: #F75A83;
+        border-color: #FF3662;
   }
 `;
+
+export const SubmitButton = styled(Button)`
+    margin-top: 20px;
+`

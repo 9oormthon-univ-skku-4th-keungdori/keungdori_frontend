@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SignUpWrapper, ProfileImageSection, ProfileImage, Form, InputWrapper, Label, Input, Title } from "./Styles";
+import { SignUpWrapper, ProfileImageSection, ProfileImage, Form, InputWrapper, Label, Input, Title, SubmitButton } from "./Styles";
 import profile_image from "../../assets/profile_image.png";
 
 const SignUp: React.FC = () => {
@@ -13,7 +13,7 @@ const SignUp: React.FC = () => {
     };
 
 
-    return (<div>
+    return (
         <SignUpWrapper>
             <Title>회원가입</Title>
 
@@ -31,11 +31,13 @@ const SignUp: React.FC = () => {
                     <Label htmlFor="id">아이디</Label>
                     <Input id="id" type="text" value={id} onChange={(e) => setId(e.target.value)}></Input>
                 </InputWrapper>
+
+                <SubmitButton type="submit">회원가입</SubmitButton>
             </Form>
 
 
         </SignUpWrapper>
-    </div>);
+        );
 }
 
 export default SignUp;
