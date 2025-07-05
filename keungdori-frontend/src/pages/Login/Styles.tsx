@@ -9,10 +9,10 @@ export const SplashWrapper = styled.div`
 `;
 
 export const SplashImage = styled.img`
-    display: block;     /* img 하단 여백 제거하려고 */
+    display: block;     
     width: 100%;
     height: 100%;
-    object-fit: cover;  /* 비율 유지하면서 꽉 채우려고 */
+    object-fit: cover; 
 `;
 
 export const KakaoLoginButton = styled.button`

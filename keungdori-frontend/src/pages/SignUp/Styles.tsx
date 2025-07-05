@@ -1,16 +1,6 @@
 import styled from '@emotion/styled';
 import Button from '../../components/Button';
 
-// wrapper를 그냥 공통 컴포넌트로 해서 화면 양 옆 빈 곳 동일하게 하면 좋을듯?
-export const SignUpWrapper = styled.div`
-    width: 100%;
-    height: 100%;
-    padding: 40px 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`;
-
 export const Title = styled.h3`
     font-size: 30px;
     margin-top: 45px;
@@ -63,6 +53,7 @@ export const Input = styled.input`
   }
 `;
 
+// styled(공통컴포넌트)로 공통 컴포넌트에서 위치만 조절한 컴포넌트 생성
 export const SubmitButton = styled(Button)`
     margin-top: 20px;
 `

@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-export const StyledButton = styled.button`
+//공통 컴포넌트
+const StyledButton = styled.button`
     width: 100%;
     padding: 16px 0;
     background-color: #FF3662;
@@ -17,6 +18,7 @@ export const StyledButton = styled.button`
     }
 `;
 
+//공통 컴포넌트 props
 interface ButtonProps {
     children: React.ReactNode;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -24,6 +26,7 @@ interface ButtonProps {
     disabled?: boolean;
 }
 
+//공통컴포넌트 생성
 const Button: React.FC<ButtonProps> = ({
     children,
     onClick,

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { SignUpWrapper, ProfileImageSection, ProfileImage, Form, InputWrapper, Label, Input, Title, SubmitButton } from "./Styles";
+import ScreenWrapper from "../../layouts/ScreenWrapper";
+import { ProfileImageSection, ProfileImage, Form, InputWrapper, Label, Input, Title, SubmitButton } from "./Styles";
 import profile_image from "../../assets/profile_image.png";
 
 const SignUp: React.FC = () => {
@@ -14,7 +15,8 @@ const SignUp: React.FC = () => {
 
 
     return (
-        <SignUpWrapper>
+        <ScreenWrapper>
+
             <Title>회원가입</Title>
 
             <ProfileImageSection>
@@ -35,8 +37,7 @@ const SignUp: React.FC = () => {
                 <SubmitButton type="submit">회원가입</SubmitButton>
             </Form>
 
-
-        </SignUpWrapper>
+        </ScreenWrapper>
         );
 }
 
