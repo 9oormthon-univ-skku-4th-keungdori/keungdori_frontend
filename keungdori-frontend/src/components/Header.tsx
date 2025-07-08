@@ -14,20 +14,13 @@ const StyledHeader = styled.header`
     height: 56px;
     padding: 0 16px;
     padding-top: env(safe-area-inset-top);
-    box-shadow: 0 1xp 2px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #E0E0E0;
 `;
 
 const Section = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-`;
-
-const CenterSection = styled(Section)`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
 `;
 
 interface HeaderProps {

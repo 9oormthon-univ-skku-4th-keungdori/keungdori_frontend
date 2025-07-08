@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import ScreenWrapper from "../../layouts/ScreenWrapper";
 import { ProfileImageSection, ProfileImage, ImageFileInput, Form, InputWrapper, Label, Input, Title, SubmitButton, CameraButton, CameraIcon } from "./Styles";
 import profile_image from "../../assets/profile_image.png";
 import camera_icon from "../../assets/camera_icon.png"
+import ScreenWrapper from "../../layouts/ScreenWrapper";
 
 const SignUp: React.FC = () => {
 

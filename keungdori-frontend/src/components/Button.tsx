@@ -26,7 +26,7 @@ interface ButtonProps {
     disabled?: boolean;
 }
 
-//공통컴포넌트 생성
+//공통 컴포넌트 생성
 const Button: React.FC<ButtonProps> = ({
     children,
     onClick,

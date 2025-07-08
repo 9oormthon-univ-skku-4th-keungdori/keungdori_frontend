@@ -77,4 +77,4 @@ export const Input = styled.input`
 // styled(공통컴포넌트)로 공통 컴포넌트에서 위치만 조절한 컴포넌트 생성
 export const SubmitButton = styled(Button)`
     margin-top: 20px;
-`
+`;
