@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+//공통 컴포넌트
 const StyledHeader = styled.header`
     position: fixed;
     top: 0;
@@ -23,6 +24,7 @@ const Section = styled.div`
     justify-content: center;
 `;
 
+//공통 컴포넌트 props
 interface HeaderProps {
     leftNode?: React.ReactNode;
     centerNode?: React.ReactNode;
@@ -31,6 +33,7 @@ interface HeaderProps {
     onRightClick?: () => void;
 }
 
+//공통 컴포넌트 생성
 const Header: React.FC<HeaderProps> = ({
     leftNode,
     centerNode,

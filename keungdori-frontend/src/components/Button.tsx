@@ -9,7 +9,7 @@ const StyledButton = styled.button`
     color: #FFFFFF;
     font-size: 20px;
     border: none;
-    border-radius: 20px;
+    border-radius: 24px;
     cursor: pointer;
 
     &:disabled {

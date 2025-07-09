@@ -17,7 +17,7 @@ const App: React.FC = () => {
     const storedToken = localStorage.getItem('accessToken'); //localstorage에서 토큰 가져오기
     if (storedToken) {
       setToken(storedToken);
-      navigate('/home', { replace: true }); //replace: true로 뒤로가기하면 로그인으로 안 가도록함
+      navigate('/home', { replace: true }); //replace: true로 뒤로가기 하면 로그인으로 안 가도록함
     }
   }, [setToken, navigate]);
 
