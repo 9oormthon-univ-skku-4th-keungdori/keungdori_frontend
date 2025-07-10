@@ -4,6 +4,13 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+      host: true,         // 외부 접근 허용 (기본은 'localhost'만 허용)
+      port: 5173,         // ngrok이 이 포트를 터널링할 예정
+      strictPort: true,   // 이 포트 못 쓰면 실패하게 (포트 바뀌면 ngrok 주소도 바뀜)
+      cors: true,          // CORS 에러 방지
+      allowedHosts: ['.ngrok-free.app']
+  },
   plugins: [
     react(),
     VitePWA({
