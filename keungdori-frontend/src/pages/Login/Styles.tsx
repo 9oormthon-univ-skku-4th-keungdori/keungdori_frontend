@@ -4,15 +4,12 @@ import kakaoLoginImg from '../../assets/kakao_login_medium_wide.png'
 export const SplashWrapper = styled.div`
     position: relative;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
 `;
 
 export const SplashImage = styled.img`
     display: block;     
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
 `;
 
 export const KakaoLoginButton = styled.button`

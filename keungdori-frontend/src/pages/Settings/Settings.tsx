@@ -1,7 +1,16 @@
 import React from 'react';
 import Header from '../../components/Header';
 import { ArrowIcon, Badge, Container, HeaderTitle, IconWrapper, ItemLeft, MenuGroup, MenuIcon, MenuItem, MenuTitle, SettingScreenWrapper, VectorIcon } from './Styles';
-import vector from '../../assets/vector.png'
+import vector from '../../assets/vector.png';
+import vectorReverse from '../../assets/vector_reverse.png';
+import account from '../../assets/account.png';
+import subscribe from '../../assets/subscribe.png';
+import support from '../../assets/support.png';
+import info from '../../assets/information.png';
+import trashCan from '../../assets/trash_can.png';
+import addFriend from '../../assets/add_friend.png';
+import hashtag from '../../assets/hashtag.png';
+import logout from '../../assets/logout.png';
 
 const Settings : React.FC = () => {
 
@@ -19,10 +28,9 @@ const Settings : React.FC = () => {
                 <MenuGroup>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="내 정보 변경" />
+                            <MenuIcon src={account} alt="내 정보 변경" />
                             <MenuTitle>내 정보 변경</MenuTitle>
                         </ItemLeft>
-                        <ArrowIcon src={vector} alt="go" />
                     </MenuItem>
                 </MenuGroup>
 
@@ -30,20 +38,20 @@ const Settings : React.FC = () => {
                 <MenuGroup>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="내 구독제" />
+                            <MenuIcon src={subscribe} alt="내 구독제" />
                             <MenuTitle>내 구독제</MenuTitle>
                         </ItemLeft>
                         <Badge>무료</Badge>
                     </MenuItem>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="지원 센터" />
+                            <MenuIcon src={support} alt="지원 센터" />
                             <MenuTitle>지원 센터</MenuTitle>
                         </ItemLeft>
                     </MenuItem>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="개인정보 처리방침" />
+                            <MenuIcon src={info} alt="개인정보 처리방침" />
                             <MenuTitle>개인정보 처리방침</MenuTitle>
                         </ItemLeft>
                     </MenuItem>
@@ -53,24 +61,24 @@ const Settings : React.FC = () => {
                 <MenuGroup>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="친구 목록 보기/삭제하기" />
+                            <MenuIcon src={trashCan} alt="친구 목록 보기/삭제하기" />
                             <MenuTitle>친구 목록 보기 / 삭제하기</MenuTitle>
                         </ItemLeft>
-                        <ArrowIcon src={vector} alt="go" />
+                        <ArrowIcon src={vectorReverse} alt="go" />
                     </MenuItem>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="친구 추가 및 설정" />
+                            <MenuIcon src={addFriend} alt="친구 추가 및 설정" />
                             <MenuTitle>친구 추가 및 설정</MenuTitle>
                         </ItemLeft>
-                        <ArrowIcon src={vector} alt="go" />
+                        <ArrowIcon src={vectorReverse} alt="go" />
                     </MenuItem>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="해시태그 관리" />
+                            <MenuIcon src={hashtag} alt="해시태그 관리" />
                             <MenuTitle>해시태그 관리</MenuTitle>
                         </ItemLeft>
-                        <ArrowIcon src={vector} alt="go" />
+                        <ArrowIcon src={vectorReverse} alt="go" />
                     </MenuItem>
                 </MenuGroup>
 
@@ -78,13 +86,13 @@ const Settings : React.FC = () => {
                 <MenuGroup>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="문제점 신고" />
+                            <MenuIcon src={hashtag} alt="문제점 신고" />
                             <MenuTitle>문제점 신고</MenuTitle>
                         </ItemLeft>
                     </MenuItem>
                     <MenuItem>
                         <ItemLeft>
-                            <MenuIcon src={vector} alt="로그아웃" />
+                            <MenuIcon src={logout} alt="로그아웃" />
                             <MenuTitle>로그아웃</MenuTitle>
                         </ItemLeft>
                     </MenuItem>

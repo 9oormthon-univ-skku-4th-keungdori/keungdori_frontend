@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import ScreenWrapper from '../../layouts/ScreenWrapper';
 
 export const SettingScreenWrapper = styled.div`
     width: 100%;
@@ -31,7 +30,7 @@ export const Container = styled.div`
     flex-direction: column;
     gap: 15px;
     padding-top: calc(96px + env(safe-area-inset-top));
-    padding-bottom: 40px;
+    padding-bottom: 50px;
     flex: 1;
 `;
 
@@ -79,8 +78,8 @@ export const ItemLeft = styled.div`
 `;
 
 export const MenuIcon = styled.img`
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 `;
 
 export const MenuTitle = styled.span`
@@ -89,8 +88,8 @@ export const MenuTitle = styled.span`
 `;
 
 export const ArrowIcon = styled.img`
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 15px;
 `;
 
 export const Badge = styled.span`

@@ -98,6 +98,14 @@ const Home: React.FC = () => {
                 />
             </MapContainer>
 
+            <BottomSheet>
+                {/* 여기에 바텀시트에 들어갈 내용을 작성합니다. */}
+                <h2>킁도리 상태</h2>
+                <p>킁도리는 지금 행복합니다!</p>
+                <p>배고픔: 50%</p>
+                <p>청결도: 80%</p>
+            </BottomSheet>
+
            
         </HomeWrapper>
     );

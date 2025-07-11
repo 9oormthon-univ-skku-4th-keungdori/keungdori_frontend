@@ -25,7 +25,7 @@ const SignUp: React.FC = () => {
 
             const fileTypes = ["image/jpeg", "image/png"];
             if (!fileTypes.includes(file.type)) {
-                console.log("이미지 파일이 아닙니다!");
+                console.log("jpeg, png 형식의 이미지 파일만 업로드 가능합니다.");
                 return; //1. 해당하는 파일 타입이 아닐 때 어떻게 할 것인지 개발해야 함!!
             }
 
@@ -59,9 +59,20 @@ const SignUp: React.FC = () => {
     }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        //3. 백엔드로 입력한 내용 보내야 함!!
-        // profileImg, nickname, imageFile, searchAvailable, userColor를 보내야 함
+        e.preventDefault(); // 폼 action은 페이지를 리로드 하는데, 그러면 state값 다 날아감 그래서 preventDefault()
+        
+        const validationRegex = /^[a-zA-Z0-9_]+$/;
+        if (!validationRegex.test(nickname) || !validationRegex.test(id)) {
+            console.log('닉네임과 ID는 영문, 숫자, 언더바(_)만 사용 가능합니다.');
+            return;
+        }
+
+        if (isIdAvailable !== true) {
+            console.log('ID 중복 확인을 해주세요.');
+            return;
+        }
+
+        const formData = new FormData();
     };
 
 

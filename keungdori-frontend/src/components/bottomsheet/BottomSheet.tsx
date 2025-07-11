@@ -7,7 +7,7 @@ interface BottomSheetProps {
 }
 
 const BottomSheet: React.FC<BottomSheetProps> = ({ children }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -22,15 +22,24 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children }) => {
       // SwipeableDrawer가 화면 밖으로 완전히 사라지는 것을 방지합니다.
       disableSwipeToOpen={false}
       // Paper 컴포넌트에 직접 스타일을 적용하여 둥근 모서리와 초기 높이를 설정합니다.
+      hideBackdrop={true}
+      ModalProps={{
+        keepMounted: true,
+      }
+      }
+      sx={{
+        zIndex: 1000,
+        pointerEvents: 'none',
+      }}
       slotProps={{
         paper: {
           sx: {
-            position: 'absolute',
+            pointerEvents: 'auto',
+            /*position: 'absolute',*/
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
-            height: open ? '60%' : '40px',
+            height: open ? '75%' : '10%',
             transition: 'height 0.3s ease-out',
-            zIndex: 1000,
           },
         },
       }}
