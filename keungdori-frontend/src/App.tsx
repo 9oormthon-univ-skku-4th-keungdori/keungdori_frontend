@@ -9,6 +9,7 @@ import Home from './pages/Home/Home';
 import Settings from './pages/Settings/Settings';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
+import MyAccount from './pages/Settings/MyAccount/MyAccount';
 
 const App: React.FC = () => {
   const { setToken } = useAuthStore();
@@ -36,6 +37,7 @@ const App: React.FC = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/account" element={<MyAccount />} />
         </Route>
 
         {/* 인증과 무관한 페이지 */}
