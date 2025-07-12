@@ -9,29 +9,29 @@ const KakaoCallback = () => {
 
     useEffect(() => {
         const params = new URL(document.location.toString()).searchParams;
-        const code = params.get('code'); //url에서 인가코드 추출
+        const authorizationCode = params.get('code'); //url에서 인가코드 추출
 
-        if (code) {
-            sendCode(code);
+        if (authorizationCode) {
+            sendCode(authorizationCode);
         } else {
             console.error('인가코드 받지 못함');
             navigate('/login');
         }
 
-    }, [navigate, setToken]);
+    }, [navigate]);
 
-    const sendCode = async (code: string) => { //인가코드 백엔드로 전송하고 토큰 받아오기
+    const sendCode = async (authorizationCode: string) => { //인가코드 백엔드로 전송하고 토큰 받아오기
         try {
             const response = await axios.post('http://localhost:8080/api/auth/kakao/callback',
-                 { authorizationCode: code });
+                 { code: authorizationCode });
 
             const { accessToken } = response.data;
             localStorage.setItem('accessToken', accessToken); //로컬스토리지에 토큰 저장
             setToken(accessToken); //zustand store에 토큰 저장
 
-            navigate('/home');
+            navigate('/signup');
         } catch (error) {
-            console.error('토큰을 받지 못함', error);
+            console.error('인가 코드 보냈는데 응답이 안 옴', error);
             navigate('/');
         }
     }
