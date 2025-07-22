@@ -18,6 +18,10 @@ import LogoutModal from '../../components/logoutmodal/LogoutModal';
 const Settings : React.FC = () => {
     const navigate = useNavigate();
 
+    const handleReturn = () => {
+        navigate('/home');
+    }
+
     const { logout: clearAuthState } = useAuthStore(); // Zustand의 logout 함수
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +44,7 @@ const Settings : React.FC = () => {
             <SettingScreenWrapper>
                 <Header leftNode={
                     <IconWrapper>
-                        <VectorIcon src={vector}></VectorIcon>
+                        <VectorIcon src={vector} onClick={handleReturn}></VectorIcon>
                         <HeaderTitle>설정</HeaderTitle>
                     </IconWrapper>}>
                 </Header>

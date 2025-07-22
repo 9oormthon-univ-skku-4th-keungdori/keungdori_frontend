@@ -7,6 +7,7 @@ import useAuthStore from './stores/authStore';
 import SignUp from './pages/SignUp/SignUp';
 import Home from './pages/Home/Home';
 import Settings from './pages/Settings/Settings';
+import Search from './pages/Search/Search';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 import MyAccount from './pages/Settings/MyAccount/MyAccount';
@@ -36,6 +37,7 @@ const App: React.FC = () => {
         {/* 로그인한 사용자는 바로 홈화면으로 이동함 */}
         <Route element={<PrivateRoute />}>
           <Route path="/home" element={<Home />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/account" element={<MyAccount />} />
         </Route>
