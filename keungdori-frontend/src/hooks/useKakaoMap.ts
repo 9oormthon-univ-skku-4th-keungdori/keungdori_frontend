@@ -6,7 +6,7 @@ declare global {
         kakao: any;
     }
 }
-const KAKAOMAP_REST_API_KEY = ' ';
+const KAKAOMAP_REST_API_KEY = '';
 const KAKAO_SDK_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAOMAP_REST_API_KEY}&autoload=false&libraries=services,clusterer,drawing`;
 
 export default function useKakaoMap() {

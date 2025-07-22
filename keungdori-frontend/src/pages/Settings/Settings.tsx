@@ -19,7 +19,7 @@ const Settings : React.FC = () => {
     const navigate = useNavigate();
 
     const handleReturn = () => {
-        navigate('/home');
+        navigate(-1);
     }
 
     const { logout: clearAuthState } = useAuthStore(); // Zustand의 logout 함수

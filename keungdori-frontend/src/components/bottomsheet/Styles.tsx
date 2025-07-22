@@ -24,7 +24,7 @@ export const ContentWrapper = styled.div`
 `;
 
 export const Sheet = styled(animated.div)`
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
   top: 0;

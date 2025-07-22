@@ -7,26 +7,32 @@ interface BottomSheetProps {
   children: React.ReactNode;
 }
 
-// 움직임 수정 필요! (조금 움직이면 다시 아래로 내려가는데 움직인 만큼 이동하도록 변경)
-// 바텀 시트 내부 스크롤 다 되면 바텀 시트가 스크롤 되도록 변경
+// 화면이 위로 갈 수록 y값은 작아짐!
 const BottomSheet: React.FC<BottomSheetProps> = ({ children }) => {
-  const openY = window.innerHeight * 0.2;
-  const closedY = window.innerHeight - 30;
-  const [{ y }, api] = useSpring(() => ({ y: closedY, config: config.gentle, clamp: true}));
+  const openY = window.innerHeight * 0.2; // 화면의 80%까지 보이게 함
+  const closedY = window.innerHeight - 30; // 시작은 30px만 보이게 함
+  const midY = (openY + closedY) / 2; // 절반만 펼쳐질 수 있도록 함
+
+  const [{ y }, api] = useSpring(() => ({ y: closedY, config: config.gentle, clamp: true }));
 
   const bind = useDrag(
-    ({ last, down, movement: [, my], velocity: [, vy] }) => {
+    ({ down, movement: [, my], velocity: [, vy] }) => {
+      // down : 드래그 중, my : y축으로 움직인 거리, vy : y축으로 움직인 속도
       const currentY = y.get();
       if (down) {
-        api.start({ y: currentY + my });
+        const newY = currentY + my;
+        const clampedY = Math.max(newY, openY); // 최대 높이 이상으로 드래그 되지 않도록 함
+        api.start({ y: clampedY });
       } else {
-        if (vy > 0.5) {
-          api.start({ y: closedY });
-        } else if (vy < -0.5) {
+        if (vy < -0.5) { // 드래그 속도가 빠르면 전체가 오르내림
           api.start({ y: openY });
-        } else {
-          if (currentY < (openY + closedY) / 2) {
+        } else if (vy > 0.5) {
+          api.start({ y: closedY });
+        } else { // 드래그 속도가 느리면 움직인 정도에 따라 다 펼치든지 반만 펼침
+          if (currentY < (openY + midY) / 2) {
             api.start({ y: openY });
+          } else if (currentY < (midY + closedY) / 2) {
+            api.start({ y: midY });
           } else {
             api.start({ y: closedY });
           }
@@ -42,7 +48,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children }) => {
 
   return (
     <Sheet style={{ y }}>
-      <SheetHeader {...bind()}>
+      <SheetHeader {...bind()} style={{ touchAction: 'none' }}>
         <Puller />
       </SheetHeader>
       <ContentWrapper>{children}</ContentWrapper>

@@ -2,12 +2,9 @@ import styled from '@emotion/styled';
 
 export const SettingScreenWrapper = styled.div`
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     padding: 0 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    box-sizing: border-box;
+    position: relative;
     background-color: #FFA6A9;
 `;
 
