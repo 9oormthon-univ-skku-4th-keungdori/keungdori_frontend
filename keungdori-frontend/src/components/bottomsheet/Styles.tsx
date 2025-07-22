@@ -1,21 +1,40 @@
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import { grey } from '@mui/material/colors';
+import styled from '@emotion/styled';
+import { animated } from '@react-spring/web';
 
-// 바텀시트의 상단 회색 '손잡이' 부분입니다.
-export const Puller = styled(Box)(() => ({
-  width: 30,
-  height: 6,
-  backgroundColor: grey[300],
-  borderRadius: 3,
-  position: 'absolute',
-  top: 8,
-  left: 'calc(50% - 15px)',
-}));
+export const SheetHeader = styled.div`
+  height: 40px;
+  position: relative;
+  cursor: grab;
+`;
 
-// 바텀시트 내용이 들어갈 영역입니다.
-export const ContentWrapper = styled(Box)(() => ({
-    padding: '16px',
-    height: '100%',
-    overflow: 'auto',
-}));
+export const Puller = styled.div`
+  width: 30px;
+  height: 6px;
+  background-color: #e0e0e0; 
+  border-radius: 3px;
+  position: absolute;
+  top: 8px;
+  left: calc(50% - 15px);
+`;
+
+export const ContentWrapper = styled.div`
+  padding: 0 16px 16px;
+  flex-grow: 1;
+  overflow: auto;
+`;
+
+export const Sheet = styled(animated.div)`
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  z-index: 1000;
+  background-color: #FFA6A9;
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  touch-action: none;
+  display: flex;
+  flex-direction: column;
+`;

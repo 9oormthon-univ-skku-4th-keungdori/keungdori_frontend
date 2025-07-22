@@ -107,7 +107,19 @@ const SignUp: React.FC = () => {
 
     /*const uploadImage = async (file: File) : Promise<string | null> => {
         try {
+            const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
+            const { data, error } = await supabase.storage.from('버킷 이름').upload(fileName, file);
 
+            if (error) {
+                throw error;
+            }
+
+            const { data: { publicUrl } } = supabase.storage.from('버킷 이름').getPublicUrl(fileName);
+
+            return publicUrl;
+        } catch (error) {
+            console.error('이미지 업로드 실패: ', error);
+            return null;
         }
     }*/
 
@@ -119,6 +131,7 @@ const SignUp: React.FC = () => {
         if (imageFile) {
             const uploadedUrl = await uploadImage(imageFile);
             if (!uploadedUrl) {
+                console.log('불러올 이미지가 없다.');
                 return;
             }
             profileImageUrl = uploadedUrl;

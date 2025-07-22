@@ -15,7 +15,7 @@ const KakaoCallback = () => {
             sendCode(authorizationCode);
         } else {
             console.error('인가코드 받지 못함');
-            navigate('/login');
+            navigate('/');
         }
 
     }, [navigate]);
@@ -26,9 +26,8 @@ const KakaoCallback = () => {
                  { code: authorizationCode });
 
             const { accessToken } = response.data;
-            localStorage.setItem('accessToken', accessToken); //로컬스토리지에 토큰 저장
             setToken(accessToken); //zustand store에 토큰 저장
-
+            //토큰과 함께 신규유저인지 기존유저인지에 대한 값도 받아야 함. 그래야 /home으로 갈지 /signup으로 갈지 결정할 수 있음
             navigate('/signup');
         } catch (error) {
             console.error('인가 코드 보냈는데 응답이 안 옴', error);

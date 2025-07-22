@@ -1,58 +1,52 @@
-import React, { useState } from 'react';
-import { SwipeableDrawer } from '@mui/material';
-import { Puller, ContentWrapper } from './Styles';
+import React from 'react';
+import { useDrag } from '@use-gesture/react';
+import { useSpring, config } from '@react-spring/web';
+import { Sheet, Puller, ContentWrapper, SheetHeader } from './Styles';
 
 interface BottomSheetProps {
   children: React.ReactNode;
 }
 
+// 움직임 수정 필요! (조금 움직이면 다시 아래로 내려가는데 움직인 만큼 이동하도록 변경)
+// 바텀 시트 내부 스크롤 다 되면 바텀 시트가 스크롤 되도록 변경
 const BottomSheet: React.FC<BottomSheetProps> = ({ children }) => {
-  const [open, setOpen] = useState(true);
+  const openY = window.innerHeight * 0.2;
+  const closedY = window.innerHeight - 30;
+  const [{ y }, api] = useSpring(() => ({ y: closedY, config: config.gentle, clamp: true}));
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
+  const bind = useDrag(
+    ({ last, down, movement: [, my], velocity: [, vy] }) => {
+      const currentY = y.get();
+      if (down) {
+        api.start({ y: currentY + my });
+      } else {
+        if (vy > 0.5) {
+          api.start({ y: closedY });
+        } else if (vy < -0.5) {
+          api.start({ y: openY });
+        } else {
+          if (currentY < (openY + closedY) / 2) {
+            api.start({ y: openY });
+          } else {
+            api.start({ y: closedY });
+          }
+        }
+      }
+    },
+    {
+      from: () => [0, y.get()],
+      bounds: { top: openY },
+      rubberband: true,
+    }
+  );
 
   return (
-    <SwipeableDrawer
-      anchor="bottom"
-      open={open}
-      onClose={toggleDrawer(false)}
-      onOpen={toggleDrawer(true)}
-      // SwipeableDrawer가 화면 밖으로 완전히 사라지는 것을 방지합니다.
-      disableSwipeToOpen={false}
-      // Paper 컴포넌트에 직접 스타일을 적용하여 둥근 모서리와 초기 높이를 설정합니다.
-      hideBackdrop={true}
-      ModalProps={{
-        keepMounted: true,
-      }
-      }
-      sx={{
-        zIndex: 1000,
-        pointerEvents: 'none',
-      }}
-      slotProps={{
-        paper: {
-          sx: {
-            pointerEvents: 'auto',
-            /*position: 'absolute',*/
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            height: open ? '75%' : '10%',
-            transition: 'height 0.3s ease-out',
-          },
-        },
-      }}
-    >
-      {/* 바텀시트 손잡이 */}
-      <Puller />
-      
-      {/* 바텀시트 주 내용 */}
-      <ContentWrapper>
-        {/* children으로 전달된 내용을 여기에 렌더링합니다. */}
-        {children}
-      </ContentWrapper>
-    </SwipeableDrawer>
+    <Sheet style={{ y }}>
+      <SheetHeader {...bind()}>
+        <Puller />
+      </SheetHeader>
+      <ContentWrapper>{children}</ContentWrapper>
+    </Sheet>
   );
 };
 

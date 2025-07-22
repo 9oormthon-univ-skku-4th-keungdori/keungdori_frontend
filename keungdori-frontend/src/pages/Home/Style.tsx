@@ -1,14 +1,10 @@
-import React from "react";
 import styled from "@emotion/styled";
 
 export const HomeWrapper = styled.div`
     width: 100%;
     height: 100%;
-    padding: 56px 0 0 0;
-    display: flex;
-    flex-direction: column;
+    padding-top: 56px;
     position: relative;
-    overflow: hidden;
 `;
 
 export const IconWrapper = styled.div`
@@ -23,9 +19,42 @@ export const HamburgerIcon = styled.img`
 export const KeungdoriIcon = styled.img`
 `;
 
+export const SearchWrapper = styled.div`
+    position: absolute; 
+    top: 70px;          
+    left: 16px;
+    right: 16px;
+    z-index: 10;        
+
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 8px 16px;
+    border-radius: 24px; 
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+`;
+
+export const SearchIcon = styled.img`
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+`;
+
+export const SearchInput = styled.input`
+    flex-grow: 1; 
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background-color: transparent;
+
+    &::placeholder {
+        color: #aaa;
+    }
+`;
+
 export const MapContainer = styled.div`
   width: 100%;
-  flex: 1;
+  height: 100%;
 `;
 
 export const SettingsIconImg = styled.img`

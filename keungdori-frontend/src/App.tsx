@@ -37,7 +37,7 @@ const App: React.FC = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/account" element={<MyAccount />} />
+          <Route path="/settings/account" element={<MyAccount />} />
         </Route>
 
         {/* 인증과 무관한 페이지 */}

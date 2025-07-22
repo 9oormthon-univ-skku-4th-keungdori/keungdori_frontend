@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { HomeWrapper, HamburgerIcon, KeungdoriIcon, IconWrapper, MapContainer, SettingsIconImg } from "./Style";
+import { HomeWrapper, HamburgerIcon, KeungdoriIcon, IconWrapper, MapContainer, SettingsIconImg, SearchWrapper, SearchIcon, SearchInput } from "./Style";
 import { Drawer,
     Box,
     IconButton,
@@ -13,6 +13,7 @@ import { Drawer,
 import Header from "../../components/Header";
 import hamburger from "../../assets/hamburger_icon.png";
 import keungdori from "../../assets/keungdori.png";
+import searchIcon from "../../assets/search_icon.png";
 import KakaoMap from "../../components/KakaoMap";
 import BottomSheet from "../../components/bottomsheet/BottomSheet";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
 
     const initialPosition = {
@@ -83,13 +85,18 @@ const Home: React.FC = () => {
                 </IconWrapper>}>
             </Header>
 
-            <Drawer
-                anchor="left"
-                open={isDrawerOpen}
-                onClose={toggleDrawer(false)}
-            >
+            <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
                 {drawerContent}
             </Drawer>
+
+            <SearchWrapper>
+                <SearchIcon src={searchIcon} alt="search icon" />
+                <SearchInput
+                    placeholder="Search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </SearchWrapper>
                     
             <MapContainer>
                 <KakaoMap //2.gelocation api로 웹 브라우저 api로 위치 가져올 수 있도록 해야함
@@ -99,11 +106,42 @@ const Home: React.FC = () => {
             </MapContainer>
 
             <BottomSheet>
-                {/* 여기에 바텀시트에 들어갈 내용을 작성합니다. */}
-                <h2>킁도리 상태</h2>
-                <p>킁도리는 지금 행복합니다!</p>
-                <p>배고픔: 50%</p>
-                <p>청결도: 80%</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
+                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
             </BottomSheet>
 
            
