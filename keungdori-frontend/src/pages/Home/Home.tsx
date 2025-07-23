@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HomeWrapper, HamburgerIcon, KeungdoriIcon, IconWrapper, MapContainer, SearchWrapper, SearchIcon, SearchInput } from "./Style";
 import Header from "../../components/Header";
 import hamburger from "../../assets/hamburger_icon.png";
@@ -12,15 +12,46 @@ import DrawerComponent from "../../components/DrawerComponent";
 
 const Home: React.FC = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [currentPosition, setCurrentPosition] = useState({
+        latitude: 37.588100,
+        longitude: 126.992831,
+    });
+
+    useEffect(() => {
+        let watchId: number | null = null;
+
+        if (navigator.geolocation) {
+            watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    setCurrentPosition({// 실시간 위치 추적
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    });
+                },
+                (error) => {
+                    console.log("위치 추적 실패", error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            console.error("브라우저가 위치정보 api 제공하지 않음");
+        }
+
+        return () => {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId); // 다른 화면 이동하면 종료(배터리 소모 많음)
+            }
+        }
+    }, []);
+
     const navigate = useNavigate();
 
     const handleSearchClick = () => {
         navigate('/search');
-    };
-
-    const initialPosition = {
-        latitude: 37.588100,
-        longitude: 126.992831,
     };
 
     const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -55,9 +86,9 @@ const Home: React.FC = () => {
             </SearchWrapper>
                     
             <MapContainer>
-                <KakaoMap // 1. gelocation api로 웹 브라우저 api로 위치 가져올 수 있도록 해야함
-                    latitude={initialPosition.latitude}
-                    longitude={initialPosition.longitude}
+                <KakaoMap
+                    latitude={currentPosition.latitude}
+                    longitude={currentPosition.longitude}
                 />
             </MapContainer>
 

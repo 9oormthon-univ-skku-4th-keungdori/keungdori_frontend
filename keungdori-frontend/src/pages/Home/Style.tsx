@@ -5,6 +5,7 @@ export const HomeWrapper = styled.div`
     height: 100%;
     padding-top: 56px;
     position: relative;
+    overflow: hidden;
 `;
 
 export const IconWrapper = styled.div`

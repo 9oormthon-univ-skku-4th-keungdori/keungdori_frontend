@@ -24,9 +24,9 @@ const BottomSheet: React.FC<BottomSheetProps> = ({ children }) => {
         const clampedY = Math.max(newY, openY); // 최대 높이 이상으로 드래그 되지 않도록 함
         api.start({ y: clampedY });
       } else {
-        if (vy < -0.5) { // 드래그 속도가 빠르면 전체가 오르내림
+        if (vy < -0.3) { // 드래그 속도가 빠르면 전체가 오르내림
           api.start({ y: openY });
-        } else if (vy > 0.5) {
+        } else if (vy > 0.3) {
           api.start({ y: closedY });
         } else { // 드래그 속도가 느리면 움직인 정도에 따라 다 펼치든지 반만 펼침
           if (currentY < (openY + midY) / 2) {

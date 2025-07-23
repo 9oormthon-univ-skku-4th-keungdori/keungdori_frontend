@@ -73,8 +73,63 @@ export const TabButton = styled.button<{ isActive: boolean }>`
     cursor: pointer;
 `;
 
-export const ResultsList = styled.div`
+export const Message = styled.div`
     padding-top: 16px;
-    color: #BDBDBD;
     text-align: center;
+    color: #828282;
+`;
+
+export const ResultsList = styled.div`
+    color: #333; // 기본 텍스트 색상 변경
+    text-align: left; // 텍스트 정렬 변경
+    margin: 0 16px;
+`;
+
+export const SearchResultItem = styled.div`
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 12px 8px;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #f5f5f5;
+    }
+`;
+
+export const PlaceInfo = styled.div`
+    h4 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        color: #828282;
+    }
+`;
+
+export const Distance = styled.p`
+    font-size: 12px !important; // !important로 기존 p 태그 스타일 덮어쓰기
+    color: #b0b0b0 !important;
+    margin-top: 4px !important;
+`;
+
+export const ReviewButton = styled.button`
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #FFA6A9;
+    background-color: #fff;
+    border: 1px solid #FFA6A9;
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap; // 버튼 텍스트가 줄바꿈되지 않도록 설정
+
+    &:hover {
+        background-color: #FFF0F1;
+    }
 `;
