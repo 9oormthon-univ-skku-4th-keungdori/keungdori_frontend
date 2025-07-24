@@ -1,6 +1,6 @@
 import React from 'react';
 import { Drawer, Box, IconButton, Typography, List, ListItem, ListItemText, Divider, Toolbar } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import keungdori from '../assets/keungdori.png';
 import styled from '@emotion/styled';
 
@@ -16,9 +16,10 @@ interface DrawerComponentProps {
 
 const DrawerComponent: React.FC<DrawerComponentProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSettingsClick = () => {
-    navigate('/settings');
+    navigate('/settings', { state: { from: location.pathname } });
   };
 
   const drawerContent = (

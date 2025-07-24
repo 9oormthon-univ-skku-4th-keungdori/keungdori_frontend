@@ -9,6 +9,7 @@ import keungdori from "../../../assets/keungdori.png"
 import Header from "../../../components/Header";
 import { IconWrapper, VectorIcon } from "../Styles";
 import { useNavigate } from "react-router-dom";
+//import { supabase } from "../../../supabaseClient";
 
 // 받아올 데이터 인터페이스
 interface UserInfo {
@@ -87,11 +88,11 @@ const MyAccount: React.FC = () => {
         };
 
         fetchMyInfo();
-    }, []);
+    }, []);*/
 
     if (error) {
         return <div>에러: {error}</div>;
-    }*/
+    }
     if (!userInfo) {
         return null;
     }
@@ -143,12 +144,12 @@ const MyAccount: React.FC = () => {
     // 정보 수정 제출 로직
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!userInfo || !initialUserInfo) return;
+        /*if (!userInfo || !initialUserInfo) return;
 
         // 변경된 데이터만 담을 객체
         const updatedData: { [key: string]: any } = {};
 
-        /*if (imageFile) {
+        if (imageFile) {
             alert('이미지를 업로드합니다. 잠시만 기다려주세요...');
             const imageUrl = await uploadImage(imageFile);
             if (imageUrl) {
@@ -157,7 +158,7 @@ const MyAccount: React.FC = () => {
                 alert('이미지 업로드에 실패했습니다.');
                 return; // 업로드 실패 시 중단
             }
-        }*/
+        }
 
         if (userInfo.nickname !== initialUserInfo.nickname) {
             updatedData.nickname = userInfo.nickname;
@@ -191,7 +192,7 @@ const MyAccount: React.FC = () => {
         } catch (error) {
             console.error('정보 수정 실패:', error);
             alert('정보 수정에 실패했습니다.');
-        }
+        }*/
     };
 
     const isFormValid = userInfo.nickname.length > 0 && !nicknameValidation;
@@ -200,7 +201,7 @@ const MyAccount: React.FC = () => {
         <ScreenWrapper>
             <Header leftNode={ //1.화면 너비만큼만 차지하도록 변경해야 함? 웹 화면에서는 header가 커짐!
                 <IconWrapper>
-                    <VectorIcon src={vector} onClick={() => {navigate("/settings")}}></VectorIcon>
+                    <VectorIcon src={vector} onClick={() => {navigate(-1)}}></VectorIcon>
                     <KeungdoriIcon src={keungdori}></KeungdoriIcon>
                 </IconWrapper>}>
             </Header>

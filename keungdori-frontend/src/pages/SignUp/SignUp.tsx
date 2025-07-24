@@ -5,6 +5,7 @@ import camera_icon from "../../assets/camera_icon.png"
 import ScreenWrapper from "../../layouts/ScreenWrapper";
 import { SwatchesPicker } from "react-color";
 import axios from "axios";
+//import { supabase } from "../../supabaseClient";
 
 type ValidationState = {
     message: string,

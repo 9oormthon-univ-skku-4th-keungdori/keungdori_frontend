@@ -11,13 +11,14 @@ import trashCan from '../../assets/trash_can.png';
 import addFriend from '../../assets/add_friend.png';
 import hashtag from '../../assets/hashtag.png';
 import logout from '../../assets/logout.png';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import LogoutModal from '../../components/logoutmodal/LogoutModal';
 import authApi from '../../api/authApi';
 
 const Settings : React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { logout: clearAuthState } = useAuthStore(); // Zustand의 logout 함수
 
@@ -37,7 +38,8 @@ const Settings : React.FC = () => {
     };
 
     const handleReturn = () => {
-        navigate(-1);//홈이나 검색으로 되돌아가게 해야 함(설정 세부 옵션으로 돌아가지 말고)
+        const from = location.state?.from;
+        navigate(from);
     }
 
     return (
