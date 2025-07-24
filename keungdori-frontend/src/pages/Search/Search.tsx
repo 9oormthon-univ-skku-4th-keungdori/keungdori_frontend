@@ -93,7 +93,10 @@ const Search: React.FC = () => {
             radius: 10000
         } : {};
 
-        ps.keywordSearch(searchQuery, (data, status) => {
+        ps.keywordSearch(searchQuery, (
+            data,
+            status
+        ) => {
             if (status === window.kakao.maps.services.Status.OK) {
                 setSearchResults(data as Place[]);
             } else {
@@ -110,9 +113,8 @@ const Search: React.FC = () => {
     };
 
     const handleReviewClick = (place: Place) => {
-        
         console.log("리뷰 작성:", place.place_name);
-        // navigate(`/review/new?placeId=${place.id}`);
+        navigate('/review/reviewlist/${place.id}', { state: { placeName: place.place_name }});
     };
    
     return (

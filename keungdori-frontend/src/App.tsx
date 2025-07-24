@@ -11,6 +11,7 @@ import Search from './pages/Search/Search';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 import MyAccount from './pages/Settings/MyAccount/MyAccount';
+import ReviewList from './pages/Review/ReviewList';
 
 const App: React.FC = () => {
   const { setToken } = useAuthStore();
@@ -40,6 +41,7 @@ const App: React.FC = () => {
           <Route path="/search" element={<Search />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/account" element={<MyAccount />} />
+          <Route path="/review/reviewlist/:placeId" element={<ReviewList />} />
         </Route>
 
         {/* 인증과 무관한 페이지 */}

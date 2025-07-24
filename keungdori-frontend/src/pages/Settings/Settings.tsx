@@ -14,30 +14,31 @@ import logout from '../../assets/logout.png';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import LogoutModal from '../../components/logoutmodal/LogoutModal';
+import authApi from '../../api/authApi';
 
 const Settings : React.FC = () => {
     const navigate = useNavigate();
-
-    const handleReturn = () => {
-        navigate(-1);
-    }
-
-    const { logout: clearAuthState } = useAuthStore(); // Zustand의 logout 함수
-
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { logout: clearAuthState } = useAuthStore(); // Zustand의 logout 함수
 
     const handleLogoutClick = () => {
         setIsModalOpen(true);
     };
 
-    const confirmLogout = () => {
-        // 이전에 설명한 서버에 로그아웃 요청(Refresh Token 무효화) 로직이 여기에 들어가야 합니다.
-        // api.post('/auth/logout').then(() => { ... });
-        
-        clearAuthState(); // Zustand 상태 초기화
-        setIsModalOpen(false); // 모달 닫기
-        navigate('/'); // 로그인 페이지로 이동
+    const confirmLogout = async () => {
+        try {
+            await authApi.logout(); // 서버에 로그아웃 요청
+            setIsModalOpen(false); // 모달 닫기
+            clearAuthState(); // Zustand 상태 초기화(access token 지우기)
+            navigate('/'); // 로그인 페이지로 이동
+        } catch (error) {
+            console.log("로그아웃 실패");
+        }
     };
+
+    const handleReturn = () => {
+        navigate(-1);//홈이나 검색으로 되돌아가게 해야 함(설정 세부 옵션으로 돌아가지 말고)
+    }
 
     return (
         <>
@@ -50,7 +51,6 @@ const Settings : React.FC = () => {
                 </Header>
                 
                 <Container>
-                    {/* 내 정보 */}
                     <MenuGroup>
                         <MenuItem onClick={() => navigate('/settings/account')}>
                             <ItemLeft>
@@ -60,7 +60,6 @@ const Settings : React.FC = () => {
                         </MenuItem>
                     </MenuGroup>
 
-                    {/* 고객 지원 */}
                     <MenuGroup>
                         <MenuItem>
                             <ItemLeft>
@@ -83,7 +82,6 @@ const Settings : React.FC = () => {
                         </MenuItem>
                     </MenuGroup>
 
-                    {/* 친구 및 해시태그 */}
                     <MenuGroup>
                         <MenuItem>
                             <ItemLeft>
@@ -108,7 +106,6 @@ const Settings : React.FC = () => {
                         </MenuItem>
                     </MenuGroup>
 
-                    {/* 기타 */}
                     <MenuGroup>
                         <MenuItem>
                             <ItemLeft>
@@ -127,7 +124,6 @@ const Settings : React.FC = () => {
 
             </SettingScreenWrapper>
 
-            {/* 5. 모달 컴포넌트를 렌더링하고 props를 전달합니다. */}
             <LogoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={confirmLogout} text="로그아웃 하시겠습니까?"/>
  
         </>

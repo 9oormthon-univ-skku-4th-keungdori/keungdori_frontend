@@ -9,7 +9,7 @@ import BottomSheet from "../../components/bottomsheet/BottomSheet";
 import { useNavigate } from "react-router-dom";
 import DrawerComponent from "../../components/DrawerComponent";
 
-
+// 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
 const Home: React.FC = () => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [currentPosition, setCurrentPosition] = useState({

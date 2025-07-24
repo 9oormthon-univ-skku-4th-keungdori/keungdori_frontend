@@ -10,7 +10,7 @@ type ValidationState = {
     message: string,
     status: 'success' | 'error';
 }
-
+//이미 회원가입한 사용자가 접속하는 거 막기
 const SignUp: React.FC = () => {
 
     const [profileImg, setProfileImg] = useState<string>(profile_image);
