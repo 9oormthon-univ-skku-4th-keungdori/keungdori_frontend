@@ -71,7 +71,7 @@ export const ReviewContent = styled.div`
 `;
 
 export const ReviewDate = styled.p`
-  font-size: 14px;
+  font-size: 16px;
   color: #888888;
   margin: 0 0 4px;
 `;
@@ -91,20 +91,12 @@ export const HashtagContainer = styled.div`
   gap: 8px;
 `;
 
-export const Hashtag = styled.span`
-  background-color: #FF769F;
-  color: #FFFFFF;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-`;
-
 export const NoReviewsMessage = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: calc(100vh - 200px);
-  font-size: 18px;
+  font-size: 16px;
   color: #888888;
 `;
 

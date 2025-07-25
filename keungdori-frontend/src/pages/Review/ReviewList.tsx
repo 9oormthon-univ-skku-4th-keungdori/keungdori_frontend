@@ -5,7 +5,8 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
 import api from '../../api/api';
-import { ScreenWrapper, ContentWrapper, Hashtag, HashtagContainer, MainHashtag, NoReviewsMessage, PlaceHeader, PlaceName, ReviewCard, ReviewContent, ReviewDate, ReviewImagePlaceholder, ReviewListContainer, ReviewMemo, StarRating, ButtonWrapper, VectorIcon } from './Styles';
+import { ScreenWrapper, ContentWrapper, HashtagContainer, MainHashtag, NoReviewsMessage, PlaceHeader, PlaceName, ReviewCard, ReviewContent, ReviewDate, ReviewImagePlaceholder, ReviewListContainer, ReviewMemo, StarRating, ButtonWrapper, VectorIcon } from './Styles';
+import Hashtag from '../../components/Hashtag';
 import vector from '../../assets/vector.png';
 
 interface Review {
