@@ -32,7 +32,7 @@ api.interceptors.response.use(
             request._retry = true;
 
             try {
-                const response = await api.post('/auth/refresh');
+                const response = await api.post('/auth/reissue');
                 const newAccessToken = response.data.accessToken;
                 useAuthStore.getState().setToken(newAccessToken);
                 request.headers.Authorization = `Bearer ${newAccessToken}`;

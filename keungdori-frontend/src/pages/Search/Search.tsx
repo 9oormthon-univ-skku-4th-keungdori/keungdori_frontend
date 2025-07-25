@@ -89,8 +89,7 @@ const Search: React.FC = () => {
 
         const searchOptions = currentLocation ? {
             x: currentLocation.longitude,
-            y: currentLocation.latitude,
-            radius: 10000
+            y: currentLocation.latitude
         } : {};
 
         ps.keywordSearch(searchQuery, (
