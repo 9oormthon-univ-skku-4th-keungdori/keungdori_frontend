@@ -25,10 +25,14 @@ const KakaoCallback = () => {
             const response = await axios.post('http://localhost:8080/api/auth/kakao/callback',
                  { code: authorizationCode });
 
-            const { accessToken } = response.data;
+            const { accessToken, exists } = response.data;
             setToken(accessToken); //zustand store에 토큰 저장
             //토큰과 함께 신규유저인지 기존유저인지에 대한 값도 받아야 함. 그래야 /home으로 갈지 /signup으로 갈지 결정할 수 있음
-            navigate('/signup');
+            if (exists) {
+                navigate('/home');
+            } else {
+                navigate('/signup');
+            }
         } catch (error) {
             console.error('인가 코드 보냈는데 응답이 안 옴', error);
             navigate('/');

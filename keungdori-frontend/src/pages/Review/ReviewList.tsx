@@ -11,16 +11,13 @@ import vector from '../../assets/vector.png';
 
 interface Review {
   id: number;
+  reviewId: number;
   date: string;
   rating: number;
   memo: string;
-  hashtags: string[];
-  imageUrl: string;
-}
-
-interface PlaceDetails {
   mainHashtag: string;
-  reviews: Review[];
+  hashtags: string[];
+  imageUrl?: string;
 }
 
 const renderStars = (rating: number) => {
@@ -33,50 +30,57 @@ const renderStars = (rating: number) => {
     );
 };
 
-const mockData: PlaceDetails = { mainHashtag: "#존맛", 
-    reviews: [
-        {   
-            id: 10, 
+const mockData: Review[] = [ {   
+            id: 10,
+            reviewId: 1,
             date: "20250101", 
             rating: 4.5, 
             memo: "맛있긴한데 너무 비싸요ㅜㅜ",
+            mainHashtag: "#존맛",
             hashtags: ["#스페인", "#하몽"], 
             imageUrl: "사진없음"
         },
         {   
-            id: 11, 
+            id: 10, 
+            reviewId: 2,
             date: "20250101", 
             rating: 3.5, 
             memo: "개존맛임 또가야지~ 근데 너무 비싸ㅜㅜ 돈 많이 벌어야지!",
+            mainHashtag: "#존맛",
             hashtags: ["#스페인", "#하몽"], 
             imageUrl: "사진없음"
         },
         {   
-            id: 12, 
+            id: 10, 
+            reviewId: 3,
             date: "20250101", 
             rating: 2.5, 
             memo: "개존맛임 또가야지~",
+            mainHashtag: "#존맛",
             hashtags: ["#스페인", "#하몽"], 
             imageUrl: "사진없음"
         },
         {   
-            id: 13, 
+            id: 10, 
+            reviewId: 4,
             date: "20250101", 
             rating: 1.5, 
             memo: "개존맛임 또가야지~",
+            mainHashtag: "#존맛",
             hashtags: ["#스페인", "#하몽"], 
             imageUrl: "사진없음"
         },
         {   
-            id: 14, 
+            id: 10, 
+            reviewId: 5,
             date: "20250101", 
             rating: 5, 
             memo: "개존맛임 또가야지~",
+            mainHashtag: "#존맛",
             hashtags: ["#스페인", "#하몽"], 
             imageUrl: "사진없음"
         }
-    ]
-};
+    ];
 
 const ReviewList: React.FC = () => {
     const { placeId } = useParams<{ placeId: string }>();
@@ -85,22 +89,19 @@ const ReviewList: React.FC = () => {
 
     const placeNameFromState = location.state?.placeName;
 
-    const [placeDetails, setPlaceDetails] = useState<PlaceDetails | null>(null);
+    const [reviews, setReviews] = useState<Review[] | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await api.get<PlaceDetails>(`/reviews/${placeId}`);
-                setPlaceDetails(response.data);
+                const response = await api.get<Review[]>(`/reviews/${placeId}`);
+                setReviews(response.data);
             } catch (error) {
                 console.error("리뷰 데이터를 불러오는 데 실패했습니다.", error);
-                setPlaceDetails({
-                    mainHashtag: "",
-                    reviews: []
-                });
+                setReviews([]);
             } finally {
-                setPlaceDetails(mockData);
+                setReviews(mockData);
                 setLoading(false);
             }
         };
@@ -112,12 +113,15 @@ const ReviewList: React.FC = () => {
 
     const handleBack = () => navigate(-1);
     const handleWriteReview = () => navigate(`/review/writereview/${placeId}`);
+    const handleReviewClick = (review: Review) => {
+        navigate(`/review/writereview/${placeId}`, { state: { reviewData: review, placeId: placeId, placeName: placeNameFromState }});
+    }
 
     if (loading) {
         return null;
     }
 
-    const hasReviews = placeDetails && placeDetails.reviews.length > 0;
+    const hasReviews = reviews && reviews.length > 0;
 
     return (
         <ScreenWrapper>
@@ -127,17 +131,17 @@ const ReviewList: React.FC = () => {
             />
 
             <ContentWrapper>
-                {placeDetails && (
+                {hasReviews && (
                     <>
                         <PlaceHeader>
                             <PlaceName>{placeNameFromState}</PlaceName>
-                            {hasReviews && <MainHashtag>{placeDetails.mainHashtag}</MainHashtag>}
+                            {hasReviews && <MainHashtag>{reviews[0].mainHashtag}</MainHashtag>}
                         </PlaceHeader>
 
                         {hasReviews ? (
                             <ReviewListContainer>
-                                {placeDetails.reviews.map(review => (
-                                    <ReviewCard key={review.id}>
+                                {reviews.map(review => (
+                                    <ReviewCard key={review.id} onClick={() => handleReviewClick(review)}>
                                         <ReviewImagePlaceholder />
                                         <ReviewContent>
                                             <ReviewDate>{review.date}</ReviewDate>

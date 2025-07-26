@@ -5,6 +5,7 @@ import camera_icon from "../../assets/camera_icon.png"
 import ScreenWrapper from "../../layouts/ScreenWrapper";
 import { SwatchesPicker } from "react-color";
 import axios from "axios";
+import useAuthStore from '../../stores/authStore';
 //import { supabase } from "../../supabaseClient";
 
 type ValidationState = {
@@ -13,7 +14,7 @@ type ValidationState = {
 }
 //이미 회원가입한 사용자가 접속하는 거 막기
 const SignUp: React.FC = () => {
-
+    const { setToken } = useAuthStore();
     const [profileImg, setProfileImg] = useState<string>(profile_image);
     const [nickname, setNickname] = useState('');
     const [id, setId] = useState('');
@@ -141,6 +142,9 @@ const SignUp: React.FC = () => {
         const Data = { userName: nickname, userId: id, search: searchAvailable, kengColor: userColor, profileImage: profileImageUrl };
         try {
             const response = await axios.post('http://localhost:8080/api/users/signup', Data);
+            const { accessToken } = response.data;
+            setToken(accessToken);
+            navigate('/home');
         } catch (error) {
             console.log('회원가입 실패', error);
         }*/

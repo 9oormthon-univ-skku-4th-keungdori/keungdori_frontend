@@ -9,6 +9,7 @@ import keungdori from "../../../assets/keungdori.png"
 import Header from "../../../components/Header";
 import { IconWrapper, VectorIcon } from "../Styles";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from '../../../stores/authStore';
 //import { supabase } from "../../../supabaseClient";
 
 // 받아올 데이터 인터페이스
@@ -27,7 +28,7 @@ type ValidationState = {
 
 const MyAccount: React.FC = () => {
     const navigate = useNavigate();
-
+    const { setToken } = useAuthStore();
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null); //변경 여부 확인할 데이터
     const [initialUserInfo, setInitialUserInfo] = useState<UserInfo | null>(null); //기존 내 정보 데이터
     const [error, setError] = useState<string | null>(null);
@@ -65,7 +66,8 @@ const MyAccount: React.FC = () => {
                     }
                 });
                 
-                const { userName, userId, search, kengColor, profileImage } = response.data;
+                const { accessToken, userName, userId, search, kengColor, profileImage } = response.data;
+                setToken(accessToken);
                 setUserInfo({
                     profileImage: profileImage,
                     nickname: userName,
@@ -177,13 +179,15 @@ const MyAccount: React.FC = () => {
 
         try {
             const token = localStorage.getItem('authToken');
-            await axios.patch('http://localhost:8080/api/users/me', updatedData, {
+            const response = await axios.patch('http://localhost:8080/api/users/me', updatedData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 }
             });
             
+            const { accessToken } = response.data;
+            setToken(accessToken);
             alert('정보가 성공적으로 변경되었습니다.');
             
             setInitialUserInfo(userInfo); 
