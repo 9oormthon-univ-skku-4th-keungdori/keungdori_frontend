@@ -8,7 +8,7 @@ import Button from '../../../components/Button';
 import api from '../../../api/api';
 import HashtagModal from '../../../components/hashtagmodal/HashtagModal';
 import vector from '../../../assets/vector.png'
-//import { supabase } from '../../../supabaseClient';
+import { supabase } from '../../../supabaseClient';
 
 interface Review {
     id: number;
@@ -54,7 +54,7 @@ const ReviewWrite: React.FC = () => {
 
     // Supabase 이미지 업로드 함수
     const uploadImage = async (file: File): Promise<string | null> => {
-        /*try {
+        try {
             // 파일 이름 중복 방지를 위해 현재 시간과 랜덤 문자열 조합
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
             // 'reviews'는 Supabase 스토리지 버킷 이름입니다. 실제 버킷 이름으로 변경해주세요.
@@ -71,16 +71,16 @@ const ReviewWrite: React.FC = () => {
             console.error('Supabase 이미지 업로드 실패: ', error);
             alert('이미지 업로드에 실패했습니다.');
             return null;
-        }*/
+        }
        return null;
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        /*if (e.target.files && e.target.files[0]) {
+        if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setImageFile(file);
             setImagePreview(URL.createObjectURL(file));
-        }*/
+        }
     };
 
     const openModal = (type: 'main' | 'sub') => {

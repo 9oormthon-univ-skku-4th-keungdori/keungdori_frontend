@@ -6,7 +6,9 @@ import ScreenWrapper from "../../layouts/ScreenWrapper";
 import { SwatchesPicker } from "react-color";
 import axios from "axios";
 import useAuthStore from '../../stores/authStore';
-//import { supabase } from "../../supabaseClient";
+import { supabase } from "../../supabaseClient";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/api";
 
 type ValidationState = {
     message: string,
@@ -15,6 +17,7 @@ type ValidationState = {
 //이미 회원가입한 사용자가 접속하는 거 막기
 const SignUp: React.FC = () => {
     const { setToken } = useAuthStore();
+    const navigate = useNavigate();
     const [profileImg, setProfileImg] = useState<string>(profile_image);
     const [nickname, setNickname] = useState('');
     const [id, setId] = useState('');
@@ -107,7 +110,7 @@ const SignUp: React.FC = () => {
         }
     }
 
-    /*const uploadImage = async (file: File) : Promise<string | null> => {
+    const uploadImage = async (file: File) : Promise<string | null> => {
         try {
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
             const { data, error } = await supabase.storage.from('버킷 이름').upload(fileName, file);
@@ -123,13 +126,13 @@ const SignUp: React.FC = () => {
             console.error('이미지 업로드 실패: ', error);
             return null;
         }
-    }*/
+    }
 
     //회원가입 데이터 전송
     const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // 폼 action은 페이지를 리로드 하는데, 그러면 state값 다 날아감 그래서 preventDefault()
         
-        /*let profileImageUrl: string | null = null;
+        let profileImageUrl: string | null = null;
         if (imageFile) {
             const uploadedUrl = await uploadImage(imageFile);
             if (!uploadedUrl) {
@@ -141,13 +144,13 @@ const SignUp: React.FC = () => {
 
         const Data = { userName: nickname, userId: id, search: searchAvailable, kengColor: userColor, profileImage: profileImageUrl };
         try {
-            const response = await axios.post('http://localhost:8080/api/users/signup', Data);
-            const { accessToken } = response.data;
-            setToken(accessToken);
+            const response = await api.patch('/users/signup', Data);
+            //const { accessToken } = response.data;
+            //setToken(accessToken);
             navigate('/home');
         } catch (error) {
             console.log('회원가입 실패', error);
-        }*/
+        }
     };
 
 

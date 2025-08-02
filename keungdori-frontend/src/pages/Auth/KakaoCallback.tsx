@@ -27,10 +27,10 @@ const KakaoCallback = () => {
 
             const { accessToken, exists } = response.data;
             setToken(accessToken); //zustand store에 토큰 저장
-            //토큰과 함께 신규유저인지 기존유저인지에 대한 값도 받아야 함. 그래야 /home으로 갈지 /signup으로 갈지 결정할 수 있음
-            if (exists) {
+            
+            if (exists) { //기존 유저
                 navigate('/home');
-            } else {
+            } else { //신규 유저
                 navigate('/signup');
             }
         } catch (error) {

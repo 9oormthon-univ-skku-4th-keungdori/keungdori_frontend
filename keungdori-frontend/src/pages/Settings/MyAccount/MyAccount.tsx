@@ -6,11 +6,13 @@ import { SwatchesPicker } from "react-color";
 import camera_icon from "../../../assets/camera_icon.png";
 import vector from "../../../assets/vector.png"
 import keungdori from "../../../assets/keungdori.png"
+import profileImg from "../../../assets/profile_image.png";
 import Header from "../../../components/Header";
 import { IconWrapper, VectorIcon } from "../Styles";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from '../../../stores/authStore';
-//import { supabase } from "../../../supabaseClient";
+import { supabase } from "../../../supabaseClient";
+import api from "../../../api/api";
 
 // 받아올 데이터 인터페이스
 interface UserInfo {
@@ -41,7 +43,7 @@ const MyAccount: React.FC = () => {
     useEffect(() => {
         // 더미 데이터를 설정하는 로직
         setUserInfo({
-            profileImage: "keungdori",
+            profileImage: profileImg,
             nickname: "두루미",
             id: "durumi",
             color: "#000000",
@@ -50,7 +52,7 @@ const MyAccount: React.FC = () => {
     }, []);
 
     //화면 키자 마자 회원 정보 get으로 가져와서 placeholder로 표시하기
-    /*useEffect(() => {
+    useEffect(() => {
         const fetchMyInfo = async () => {
             try {
                 const token = localStorage.getItem('authToken');
@@ -59,26 +61,21 @@ const MyAccount: React.FC = () => {
                 }
 
                 //await를 사용하여 비동기 요청을 기다리고, headers에 토큰 추가
-                const response = await axios.get('http://localhost:8080/api/users/me', {
-                    headers: {
-                        // 일반적인 Bearer 토큰 형식
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+                const response = await api.get('/users/me');
                 
-                const { accessToken, userName, userId, search, kengColor, profileImage } = response.data;
-                setToken(accessToken);
+                const { accessToken, userName, searchId, search, kengColor, profileImage } = response.data;
+                //setToken(accessToken);
                 setUserInfo({
                     profileImage: profileImage,
                     nickname: userName,
-                    id: userId,
+                    id: searchId,
                     color: kengColor,
                     searchAvailable: search,
                 });
                 setInitialUserInfo({
                     profileImage: profileImage,
                     nickname: userName,
-                    id: userId,
+                    id: searchId,
                     color: kengColor,
                     searchAvailable: search,
                 });
@@ -90,7 +87,7 @@ const MyAccount: React.FC = () => {
         };
 
         fetchMyInfo();
-    }, []);*/
+    }, []);
 
     if (error) {
         return <div>에러: {error}</div>;
@@ -125,7 +122,7 @@ const MyAccount: React.FC = () => {
         }
     };
 
-    /*const uploadImage = async (file: File) : Promise<string | null> => {
+    const uploadImage = async (file: File) : Promise<string | null> => {
         try {
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
             const { data, error } = await supabase.storage.from('버킷 이름').upload(fileName, file);
@@ -141,12 +138,12 @@ const MyAccount: React.FC = () => {
             console.error('이미지 업로드 실패: ', error);
             return null;
         }
-    }*/
+    }
     
     // 정보 수정 제출 로직
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        /*if (!userInfo || !initialUserInfo) return;
+        if (!userInfo || !initialUserInfo) return;
 
         // 변경된 데이터만 담을 객체
         const updatedData: { [key: string]: any } = {};
@@ -178,16 +175,10 @@ const MyAccount: React.FC = () => {
         }
 
         try {
-            const token = localStorage.getItem('authToken');
-            const response = await axios.patch('http://localhost:8080/api/users/me', updatedData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                }
-            });
+            const response = await api.patch('/users/me', updatedData);
             
-            const { accessToken } = response.data;
-            setToken(accessToken);
+            //const { accessToken } = response.data;
+            //setToken(accessToken);
             alert('정보가 성공적으로 변경되었습니다.');
             
             setInitialUserInfo(userInfo); 
@@ -196,7 +187,7 @@ const MyAccount: React.FC = () => {
         } catch (error) {
             console.error('정보 수정 실패:', error);
             alert('정보 수정에 실패했습니다.');
-        }*/
+        }
     };
 
     const isFormValid = userInfo.nickname.length > 0 && !nicknameValidation;

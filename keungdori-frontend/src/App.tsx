@@ -19,7 +19,7 @@ const App: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('accessToken'); //localstorage에서 토큰 가져오기
+    const storedToken = localStorage.getItem('accessToken'); // 이거 바꿔야 함!!(zustand에 저장하고 있기 때문!)
     if (storedToken) {
       setToken(storedToken);
       navigate('/home', { replace: true }); //replace: true로 뒤로가기 하면 로그인으로 안 가도록함
@@ -33,11 +33,11 @@ const App: React.FC = () => {
         {/* 로그인 안하면 로그인 화면, 회원가입 화면 나올 수 있도록 함 */}
         <Route element={<PublicRoute />}>
           <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
         </Route>
 
         {/* 로그인한 사용자는 바로 홈화면으로 이동함 */}
         <Route element={<PrivateRoute />}>
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/home" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/settings" element={<Settings />} />

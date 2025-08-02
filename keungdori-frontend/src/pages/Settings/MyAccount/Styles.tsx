@@ -11,8 +11,8 @@ export const ProfileImageSection = styled.div`
     position: relative;
     width: 150px;
     height: 150px;
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 76px;
+    margin-bottom: 30px;
 `;
 
 export const ProfileImage = styled.img`
