@@ -20,6 +20,7 @@ export const ModalContent = styled.div`
   width: 90%;
   max-width: 400px;
   display: flex;
+  text-align: center;
   flex-direction: column;
   gap: 20px;
 `;
@@ -34,7 +35,7 @@ export const TagInput = styled.input`
 
   &:focus {
       outline: none;
-      border-color: #007AFF;
+      border-color: #ff467dff;
   }
 `;
 
@@ -53,7 +54,7 @@ export const ModalButton = styled.button`
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    background-color: #007AFF;
+    background-color: #FF769F;
     color: white;
     
     &:disabled {

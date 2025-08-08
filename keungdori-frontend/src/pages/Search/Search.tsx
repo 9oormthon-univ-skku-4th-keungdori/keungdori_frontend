@@ -30,6 +30,8 @@ interface Place {
     place_name: string;
     address_name: string;
     road_address_name: string;
+    x: string;
+    y: string;
     distance: string;
 }
 
@@ -43,15 +45,62 @@ const formatDistance = (distance: string) => {// 리렌더링될때마다 새로
 };
 
 const Search: React.FC = () => {
+    const navigate = useNavigate();
     const { isLoaded } = useKakaoMap();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('place');
-
     const [currentLocation, setCurrentLocation] = useState<{ latitude: number, longitude: number; } | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<Place[]>([]);
 
-    const navigate = useNavigate();
+    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+            if (
+                event.type === 'keydown' &&
+                ((event as React.KeyboardEvent).key === 'Tab' ||
+                    (event as React.KeyboardEvent).key === 'Shift')
+            ) {
+                return;
+            }
+            setIsDrawerOpen(open);
+        };
+
+    const handleSearch = () => {
+        if (!isLoaded || !searchQuery.trim()) { //입력값 없이 검색한 경우
+            setSearchResults([]);
+            return;
+        }
+
+        const ps = new window.kakao.maps.services.Places();
+
+        const searchOptions = currentLocation ? { //현재 위치
+            x: currentLocation.longitude,
+            y: currentLocation.latitude
+        } : {};
+
+        ps.keywordSearch(searchQuery, (
+            data,
+            status
+        ) => {
+            if (status === window.kakao.maps.services.Status.OK) { //검색 성공
+                setSearchResults(data as Place[]);
+            } else { //검색 실패
+                setSearchResults([]);
+                console.log("검색결과가 없습니다!");
+            }
+        }, searchOptions); //현재
+    };
+
+    const handleKeyEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
+    const handleReviewClick = (place: Place) => { //리뷰 목록 화면으로 이동할때, 장소 이름, 좌표 넘겨줌
+        console.log("리뷰 작성:", place.place_name);
+        navigate('/review/reviewlist/${place.id}', 
+            { state: { placeName: place.place_name, longitude: place.x, latitude: place.y }});
+    };
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
@@ -66,54 +115,6 @@ const Search: React.FC = () => {
             }
         );
     }, []);
-
-    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-            if (
-                event.type === 'keydown' &&
-                ((event as React.KeyboardEvent).key === 'Tab' ||
-                    (event as React.KeyboardEvent).key === 'Shift')
-            ) {
-                return;
-            }
-            setIsDrawerOpen(open);
-        };
-
-    const handleSearch = () => {
-        if (!isLoaded || !searchQuery.trim()) {
-            setSearchResults([]);
-            return;
-        }
-
-        const ps = new window.kakao.maps.services.Places();
-
-        const searchOptions = currentLocation ? {
-            x: currentLocation.longitude,
-            y: currentLocation.latitude
-        } : {};
-
-        ps.keywordSearch(searchQuery, (
-            data,
-            status
-        ) => {
-            if (status === window.kakao.maps.services.Status.OK) {
-                setSearchResults(data as Place[]);
-            } else {
-                setSearchResults([]);
-                console.log("검색결과가 없습니다!");
-            }
-        }, searchOptions);
-    };
-
-    const handleKeyEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
-    };
-
-    const handleReviewClick = (place: Place) => {
-        console.log("리뷰 작성:", place.place_name);
-        navigate('/review/reviewlist/${place.id}', { state: { placeName: place.place_name }});
-    };
    
     return (
         <SearchWrapper>
@@ -135,6 +136,7 @@ const Search: React.FC = () => {
                     <SearchInput placeholder="Search" value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleKeyEnter} />
+                    {/* 1. icon 오른쪽으로 옮기고 아이콘 눌러서 검색할 수 있게함*/}
                 </SearchInputWrapper>
 
                 <TabContainer>

@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState } from "react";
 import ScreenWrapper from "../../../layouts/ScreenWrapper";
 import { CameraButton, CameraIcon, ColorSwatch, Form, ImageFileInput, InputLabel, Input, InputWrapper, KeungdoriIcon, OptionWrapper, PickerWrapper, ProfileImage, ProfileImageSection, SubmitButton, ToggleSlider, ToggleSwitch, ValidationMessage } from "./Styles";
 import { SwatchesPicker } from "react-color";
+import { useImageInput } from "../../../hooks/useImageInput";
+import { useImageUpload } from "../../../hooks/useImageUpload";
+import profile_image from "../../../assets/profile_image.png";
 import camera_icon from "../../../assets/camera_icon.png";
 import vector from "../../../assets/vector.png"
 import keungdori from "../../../assets/keungdori.png"
@@ -11,7 +14,6 @@ import Header from "../../../components/Header";
 import { IconWrapper, VectorIcon } from "../Styles";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from '../../../stores/authStore';
-import { supabase } from "../../../supabaseClient";
 import api from "../../../api/api";
 
 // 받아올 데이터 인터페이스
@@ -34,12 +36,18 @@ const MyAccount: React.FC = () => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null); //변경 여부 확인할 데이터
     const [initialUserInfo, setInitialUserInfo] = useState<UserInfo | null>(null); //기존 내 정보 데이터
     const [error, setError] = useState<string | null>(null);
-    const [imageFile, setImageFile] = useState<File | null>(null);
     const [nicknameValidation, setNicknameValidation] = useState<ValidationState | null>(null);
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
+    const {
+        previewUrl,
+        imageFile,
+        error: imageError,
+        imageFileRef,
+        handleImageChange,
+        triggerFileInput,
+    } = useImageInput(userInfo?.profileImage || profile_image); // 초기 이미지는 불러온 정보 또는 기본 이미지
+    const { uploadImage } = useImageUpload();
 
-    const imageFileRef = useRef<HTMLInputElement>(null);
-    
     useEffect(() => {
         // 더미 데이터를 설정하는 로직
         setUserInfo({
@@ -82,7 +90,7 @@ const MyAccount: React.FC = () => {
 
             } catch (err) {
                 console.error("내 정보 불러오기 실패:", err);
-                setError("정보를 불러오는 데 실패했습니다.");
+                setError("정보를 불러오는 데 실패했습니다.");// 1. 에러 모달 띄우기
             }
         };
 
@@ -108,21 +116,7 @@ const MyAccount: React.FC = () => {
         }
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) { //조건식 무슨 뜻?
-            const file = e.target.files[0];
-            setImageFile(file);
-            
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onloadend = () => {
-                const newImageSrc = reader.result as string;
-                setUserInfo(prev => prev ? { ...prev, profileImage: newImageSrc } : null);
-            };
-        }
-    };
-
-    const uploadImage = async (file: File) : Promise<string | null> => {
+    /*const uploadImage = async (file: File) : Promise<string | null> => {
         try {
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
             const { data, error } = await supabase.storage.from('버킷 이름').upload(fileName, file);
@@ -138,7 +132,7 @@ const MyAccount: React.FC = () => {
             console.error('이미지 업로드 실패: ', error);
             return null;
         }
-    }
+    }*/
     
     // 정보 수정 제출 로직
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -177,13 +171,9 @@ const MyAccount: React.FC = () => {
         try {
             const response = await api.patch('/users/me', updatedData);
             
-            //const { accessToken } = response.data;
-            //setToken(accessToken);
-            alert('정보가 성공적으로 변경되었습니다.');
+            //alert('정보가 성공적으로 변경되었습니다.'); 2. 모달 띄우기
             
-            setInitialUserInfo(userInfo); 
-            setImageFile(null); // 이미지 파일 상태 초기화
-
+            navigate(-1);
         } catch (error) {
             console.error('정보 수정 실패:', error);
             alert('정보 수정에 실패했습니다.');
@@ -215,8 +205,8 @@ const MyAccount: React.FC = () => {
             <ProfileImageSection>
                 <ProfileImage src={userInfo.profileImage} alt="Profile" />
                 <ImageFileInput type="file" accept="image/jpeg,image/png" ref={imageFileRef} onChange={handleImageChange} />
-                <CameraButton type="button" onClick={() => imageFileRef.current?.click()}>
-                    <CameraIcon src={camera_icon} alt="Change Profile Picture" />
+                <CameraButton type="button" onClick={triggerFileInput}>
+                    <CameraIcon src={camera_icon} alt="프로필 사진 변경" />
                 </CameraButton>
             </ProfileImageSection>
 

@@ -1,12 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { ProfileImageSection, ProfileImage, ImageFileInput, Form, InputWrapper, Input, SubmitButton, CameraButton, CameraIcon, IdInputWrapper, DuplicateCheckButton, ValidationMessage, OptionWrapper, ToggleSwitch, ToggleSlider, PickerWrapper, ColorSwatch } from "./Styles";
+import { useImageInput } from "../../hooks/useImageInput";
+import { useImageUpload } from "../../hooks/useImageUpload";
 import profile_image from "../../assets/profile_image.png";
 import camera_icon from "../../assets/camera_icon.png"
 import ScreenWrapper from "../../layouts/ScreenWrapper";
-import { SwatchesPicker } from "react-color";
 import axios from "axios";
 import useAuthStore from '../../stores/authStore';
-import { supabase } from "../../supabaseClient";
+import { SwatchesPicker } from "react-color";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 
@@ -18,10 +19,17 @@ type ValidationState = {
 const SignUp: React.FC = () => {
     const { setToken } = useAuthStore();
     const navigate = useNavigate();
-    const [profileImg, setProfileImg] = useState<string>(profile_image);
+    const { 
+        previewUrl, 
+        imageFile, 
+        error: imageError, // 1.이미지 파일 아닌 파일 올리면 에러 나는데, 이때 모달 띄워야 함
+        imageFileRef, 
+        handleImageChange, 
+        triggerFileInput // 'handleCameraButton' 대신 사용할 함수
+    } = useImageInput(profile_image);
+    const { uploadImage } = useImageUpload();
     const [nickname, setNickname] = useState('');
     const [id, setId] = useState('');
-    const [imageFile, setImageFile] = useState<File | null>(null);
     const [nicknameValidation, setNicknameValidation] = useState<ValidationState | null>(null);
     const [idValidation, setIdValidation] = useState<ValidationState | null>(null);
     const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
@@ -29,35 +37,6 @@ const SignUp: React.FC = () => {
     const [userColor, setUserColor] = useState<string>('#FF3662');
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false); // 컬러 피커 표시 여부
     const isFormValid = nickname.length > 0 && !nicknameValidation && isIdAvailable;
-
-    // 숨겨진 input에 접근하기 위한 ref임
-    const imageFileRef = useRef<HTMLInputElement>(null);
-
-    //프로필 사진 변경
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-
-            const fileTypes = ["image/jpeg", "image/png"];
-            if (!fileTypes.includes(file.type)) {
-                console.log("jpeg, png 형식의 이미지 파일만 업로드 가능합니다.");
-                return; //1. 해당하는 파일 타입이 아닐 때 어떻게 할 것인지 개발해야 함!!
-            }
-
-            setImageFile(file);
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onloadend = () => {
-                setProfileImg(reader.result as string);
-            }
-        }
-    }
-
-    // 버튼을 누르면 input이 클릭되어 실행됨
-    const handleCameraButton = () => {
-        imageFileRef.current?.click();
-    }
 
     //닉네임 유효성 검사(영문,숫자,언더바만)
     const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,7 +67,6 @@ const SignUp: React.FC = () => {
 
     //아이디 중복 여부 검사
     const handleCheckId = async () => {
-        //2. 중복여부 로직 작성해야함!! 백엔드와 연동
         if (!id || (idValidation && idValidation.status === 'error')) {
             setIdValidation({ message: 'ID를 조건에 맞게 입력해주세요!', status : 'error' });
             return;
@@ -110,7 +88,7 @@ const SignUp: React.FC = () => {
         }
     }
 
-    const uploadImage = async (file: File) : Promise<string | null> => {
+    /*const uploadImage = async (file: File) : Promise<string | null> => {
         try {
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
             const { data, error } = await supabase.storage.from('버킷 이름').upload(fileName, file);
@@ -126,7 +104,7 @@ const SignUp: React.FC = () => {
             console.error('이미지 업로드 실패: ', error);
             return null;
         }
-    }
+    }*/
 
     //회원가입 데이터 전송
     const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
@@ -172,9 +150,9 @@ const SignUp: React.FC = () => {
             )}
 
             <ProfileImageSection>
-                <ProfileImage src={profileImg} alt="ProfileImage"></ProfileImage>
+                <ProfileImage src={previewUrl || profile_image} alt="ProfileImage"></ProfileImage>
                 <ImageFileInput type="file" accept="image/jpeg image/png" ref={imageFileRef} onChange={handleImageChange}></ImageFileInput>
-                <CameraButton type="button" onClick={handleCameraButton}>
+                <CameraButton type="button" onClick={triggerFileInput}>
                     <CameraIcon src={camera_icon} alt="프로필 사진 변경"></CameraIcon>
                 </CameraButton>
             </ProfileImageSection>

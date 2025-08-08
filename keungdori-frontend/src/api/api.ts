@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import useAuthStore from '../stores/authStore';
 
-const baseURL = process.env.VITE_API_URL;
+const baseURL = import.meta.env.VITE_API_URL;
 // 사용자 커스텀 axios 인스턴스
 const api = axios.create({
     baseURL: baseURL,

@@ -1,18 +1,13 @@
 import styled from '@emotion/styled';
 
 export const PageContainer = styled.div`
-  padding: 30px 20px 20px;
+  padding: 72px 20px 20px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 `;
 
 export const VectorIcon = styled.img`
-`;
-
-export const PlaceName = styled.h2`
-  padding-top: 86px;
-  text-align: center;
 `;
 
 export const TopSection = styled.section`
@@ -72,15 +67,6 @@ export const TagSection = styled.div`
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
-`;
-
-export const TagInput = styled.input`
-  padding: 8px 12px;
-  border: 1px solid #FF769F;
-  border-radius: 20px;
-  font-size: 14px;
-  outline: none;
-  width: 150px; // 적절한 너비로 조절
 `;
 
 export const TagPlaceholder = styled.span`

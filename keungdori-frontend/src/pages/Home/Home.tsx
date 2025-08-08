@@ -11,11 +11,27 @@ import DrawerComponent from "../../components/DrawerComponent";
 
 // 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
 const Home: React.FC = () => {
+    const navigate = useNavigate();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [currentPosition, setCurrentPosition] = useState({
         latitude: 37.588100,
         longitude: 126.992831,
     });
+
+    const handleSearchClick = () => {
+        navigate('/search');
+    };
+
+    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (
+            event.type === 'keydown' &&
+            ((event as React.KeyboardEvent).key === 'Tab' ||
+                (event as React.KeyboardEvent).key === 'Shift')
+        ) {
+            return;
+        }
+        setIsDrawerOpen(open);
+    };
 
     useEffect(() => {
         let watchId: number | null = null;
@@ -47,23 +63,6 @@ const Home: React.FC = () => {
             }
         }
     }, []);
-
-    const navigate = useNavigate();
-
-    const handleSearchClick = () => {
-        navigate('/search');
-    };
-
-    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (
-            event.type === 'keydown' &&
-            ((event as React.KeyboardEvent).key === 'Tab' ||
-                (event as React.KeyboardEvent).key === 'Shift')
-        ) {
-            return;
-        }
-        setIsDrawerOpen(open);
-    };
 
     return (
         <HomeWrapper>

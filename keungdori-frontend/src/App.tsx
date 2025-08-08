@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import Login from './pages/Login/Login';
@@ -13,18 +13,34 @@ import PublicRoute from './components/PublicRoute';
 import MyAccount from './pages/Settings/MyAccount/MyAccount';
 import ReviewList from './pages/Review/ReviewList';
 import ReviewWrite from './pages/Review/ReviewWrite/ReviewWrite';
+import ReviewEdit from './pages/Review/ReviewEdit/ReviewEdit';
+import api from './api/api';
 
 const App: React.FC = () => {
   const { setToken } = useAuthStore();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('accessToken'); // 이거 바꿔야 함!!(zustand에 저장하고 있기 때문!)
-    if (storedToken) {
-      setToken(storedToken);
-      navigate('/home', { replace: true }); //replace: true로 뒤로가기 하면 로그인으로 안 가도록함
-    }
-  }, [setToken, navigate]);
+    const silentRefresh = async() => {
+      try {
+        const response = await api.post('/auth/reissue');
+        const newAccessToken = response.data.accessToken;
+        setToken(newAccessToken);
+      } catch (error) {
+        console.log("자동 로그인 실패. 유효한 Refresh Token이 없습니다.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    silentRefresh();
+
+  }, [setToken]);
+
+  if (isLoading) {
+    return <div></div>;
+  }
 
   return (
     <>
@@ -44,6 +60,7 @@ const App: React.FC = () => {
           <Route path="/settings/account" element={<MyAccount />} />
           <Route path="/review/reviewlist/:placeId" element={<ReviewList />} />
           <Route path="/review/writereview/:placeId" element={<ReviewWrite />} />
+          <Route path="/review/modifyreview/:placeId" element={<ReviewEdit />} />
         </Route>
 
         {/* 인증과 무관한 페이지 */}
