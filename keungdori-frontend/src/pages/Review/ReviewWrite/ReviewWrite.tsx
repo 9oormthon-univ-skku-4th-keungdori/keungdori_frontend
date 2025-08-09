@@ -44,12 +44,12 @@ const postReview = async (newReview: Review) => { //데이터를 보내는 비�
 }
 
 const createTag = async (tagText: string) => {
-    const { data } = await api.post('/api/hashtags', { hashtag: tagText });
+    const { data } = await api.post('/hashtags', { hashtag: tagText });
     return data;
 };
 
 const updateTagColor = async (variables: { text: string; bgColor: string }) => {
-    const { data } = await api.patch('/api/hashtags', { hashtag: variables.text, color: variables.bgColor });
+    const { data } = await api.patch('/hashtags', { hashtag: variables.text, color: variables.bgColor });
     return data;
 };
 

@@ -126,6 +126,7 @@ const ReviewList: React.FC = () => {
         navigate(`/review/modifyreview/${placeId}`, { state: { reviewData: review, placeId: placeId, placeName: placeName }});
     }
 
+    //UseInfiniteQuery로 교체해서 무한 스크롤해서 계속 데이터를 볼 수 있게 해야됨(페이지 단위)
     const { data: reviews, isPending, isError, error } = useQuery<Review[], Error> ({
        queryKey: ['reviews', placeId],
        queryFn: () => fetchReviewsByPlaceId(placeId!),
