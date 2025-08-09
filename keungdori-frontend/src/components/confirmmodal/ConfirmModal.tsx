@@ -12,9 +12,11 @@ interface ModalProps {
   onClose: () => void;
   onConfirm: () => void;
   text: string;
+  closeText: string;
+  confirmText: string;
 }
 
-const LogoutModal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm, text }) => {
+const ConfirmModal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm, text, closeText, confirmText }) => {
   if (!isOpen) {
     return null;
   }
@@ -25,12 +27,12 @@ const LogoutModal: React.FC<ModalProps> = ({ isOpen, onClose, onConfirm, text })
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <ModalText>{text}</ModalText>
         <ButtonWrapper>
-          <SecondaryButton onClick={onClose}>취소</SecondaryButton>
-          <PrimaryButton onClick={onConfirm}>로그아웃</PrimaryButton>
+          <SecondaryButton onClick={onClose}>{closeText}</SecondaryButton>
+          <PrimaryButton onClick={onConfirm}>{confirmText}</PrimaryButton>
         </ButtonWrapper>
       </ModalContainer>
     </ModalBackdrop>
   );
 };
 
-export default LogoutModal;
+export default ConfirmModal;

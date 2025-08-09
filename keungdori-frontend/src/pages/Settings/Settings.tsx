@@ -13,29 +13,47 @@ import hashtag from '../../assets/hashtag.png';
 import logout from '../../assets/logout.png';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
-import LogoutModal from '../../components/logoutmodal/LogoutModal';
+import LogoutModal from '../../components/confirmmodal/ConfirmModal';
+import UnsubscribeModal from '../../components/confirmmodal/ConfirmModal';
 import authApi from '../../api/authApi';
+import api from '../../api/api';
 
 const Settings : React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLogoutModalOpen, setLogoutIsModalOpen] = useState(false);
+    const [isUnsubscribeModalOpen, setUnsubscribeIsModalOpen] = useState(false);
     const { logout: clearAuthState } = useAuthStore(); // Zustand의 logout 함수
 
     const handleLogoutClick = () => {
-        setIsModalOpen(true);
+        setLogoutIsModalOpen(true);
     };
 
     const confirmLogout = async () => {
         try {
             await authApi.logout(); // 서버에 로그아웃 요청
-            setIsModalOpen(false); // 모달 닫기
+            setLogoutIsModalOpen(false); // 모달 닫기
             clearAuthState(); // Zustand 상태 초기화(access token 지우기)
             navigate('/'); // 로그인 페이지로 이동
         } catch (error) {
             console.log("로그아웃 실패");
         }
     };
+
+    const handleUnsubscribeClick = () => {
+        setUnsubscribeIsModalOpen(true);
+    }
+
+    const confirmUnsubscribe = async () => {
+        try {
+            await api.delete('/users/me');
+            setUnsubscribeIsModalOpen(false); // 모달 닫기
+            clearAuthState(); // Zustand 상태 초기화(access token 지우기)
+            navigate('/'); // 로그인 페이지로 이동
+        } catch (error) {
+            console.log("로그아웃 실패");
+        }
+    }
 
     const handleReturn = () => {
         const from = location.state?.from;
@@ -109,16 +127,16 @@ const Settings : React.FC = () => {
                     </MenuGroup>
 
                     <MenuGroup>
-                        <MenuItem>
-                            <ItemLeft>
-                                <MenuIcon src={hashtag} alt="문제점 신고" />
-                                <MenuTitle>문제점 신고</MenuTitle>
-                            </ItemLeft>
-                        </MenuItem>
                         <MenuItem onClick={handleLogoutClick}>
                             <ItemLeft>
                                 <MenuIcon src={logout} alt="로그아웃" />
                                 <MenuTitle>로그아웃</MenuTitle>
+                            </ItemLeft>
+                        </MenuItem>
+                        <MenuItem onClick={handleUnsubscribeClick}>
+                            <ItemLeft>
+                                <MenuIcon src={hashtag} alt="회원탈퇴" />
+                                <MenuTitle>회원 탈퇴</MenuTitle>
                             </ItemLeft>
                         </MenuItem>
                     </MenuGroup>
@@ -126,8 +144,8 @@ const Settings : React.FC = () => {
 
             </SettingScreenWrapper>
 
-            <LogoutModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onConfirm={confirmLogout} text="로그아웃 하시겠습니까?"/>
- 
+            <LogoutModal isOpen={isLogoutModalOpen} onClose={() => setLogoutIsModalOpen(false)} onConfirm={confirmLogout} text="로그아웃 하시겠습니까?" closeText="취소" confirmText="로그아웃"/>
+            <UnsubscribeModal isOpen={isUnsubscribeModalOpen} onClose={() => setUnsubscribeIsModalOpen(false)} onConfirm={confirmUnsubscribe} text="탈퇴하시겠습니까?" closeText="취소" confirmText="회원탈퇴"/>
         </>
 
     );
