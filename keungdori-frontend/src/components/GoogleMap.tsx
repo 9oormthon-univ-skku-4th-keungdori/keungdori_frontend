@@ -1,5 +1,27 @@
 import React, { useEffect } from 'react';
 import { Map, AdvancedMarker, useMap, type MapMouseEvent } from '@vis.gl/react-google-maps';
+import styled from '@emotion/styled';
+import { keyframes } from '@emotion/react';
+import location_marker from '../assets/current_marker.png';
+
+//현재 위치를 나타내는 마커 애니메이션
+const bounce = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: ease-in;
+  }
+  50% {
+    transform: translateY(-10px);
+    animation-timing-function: ease-out;
+  }
+`;
+
+const BouncingMarker = styled.img`
+  width: 48px;
+  height: auto;
+  animation: ${bounce} 2s infinite;
+  filter: drop-shadow(0px 5px 3px rgba(0, 0, 0, 0.2));
+`;
 
 const MapController = ({ latitude, longitude }: { latitude: number; longitude: number }) => {
     const map = useMap();
@@ -42,7 +64,9 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ latitude, longitude, onMapClick }
         mapId={'e8d33b0ce3e0c6e2578bec58'}
       >
         {/* 현재 위치를 표시하는 마커 */}
-        <AdvancedMarker position={position} />
+        <AdvancedMarker position={position}>
+            <BouncingMarker src={location_marker} />
+        </AdvancedMarker>
 
         {/* Map 자식으로 컨트롤러를 추가하여 지도 움직임을 제어 */}
         <MapController latitude={latitude} longitude={longitude} />
