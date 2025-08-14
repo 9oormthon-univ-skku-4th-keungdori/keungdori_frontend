@@ -22,8 +22,8 @@ const KakaoCallback = () => {
 
     const sendCode = async (authorizationCode: string) => { //인가코드 백엔드로 전송하고 토큰 받아오기
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/kakao/callback',
-                 { code: authorizationCode });
+            const response = await axios.get('http://localhost:8080/api/auth/kakao/callback',
+                {params: { code: authorizationCode }});
 
             const { accessToken, exists } = response.data;
             setToken(accessToken); //zustand store에 토큰 저장

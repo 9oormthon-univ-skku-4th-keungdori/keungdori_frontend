@@ -1,5 +1,4 @@
-import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../../../layouts/ScreenWrapper";
 import { CameraButton, CameraIcon, ColorSwatch, Form, ImageFileInput, InputLabel, Input, InputWrapper, KeungdoriIcon, OptionWrapper, PickerWrapper, ProfileImage, ProfileImageSection, SubmitButton, ToggleSlider, ToggleSwitch, ValidationMessage } from "./Styles";
 import { SwatchesPicker } from "react-color";
@@ -32,7 +31,7 @@ type ValidationState = {
 
 const MyAccount: React.FC = () => {
     const navigate = useNavigate();
-    const { setToken } = useAuthStore();
+    const accessToken = useAuthStore(s => s.accessToken);
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null); //변경 여부 확인할 데이터
     const [initialUserInfo, setInitialUserInfo] = useState<UserInfo | null>(null); //기존 내 정보 데이터
     const [error, setError] = useState<string | null>(null);
@@ -48,7 +47,7 @@ const MyAccount: React.FC = () => {
     } = useImageInput(userInfo?.profileImage || profile_image); // 초기 이미지는 불러온 정보 또는 기본 이미지
     const { uploadImage } = useImageUpload();
 
-    useEffect(() => {
+    /*useEffect(() => {
         // 더미 데이터를 설정하는 로직
         setUserInfo({
             profileImage: profileImg,
@@ -57,21 +56,20 @@ const MyAccount: React.FC = () => {
             color: "#000000",
             searchAvailable: true
         });
-    }, []);
+    }, []);*/
 
     //화면 키자 마자 회원 정보 get으로 가져와서 placeholder로 표시하기
     useEffect(() => {
         const fetchMyInfo = async () => {
             try {
-                const token = localStorage.getItem('authToken');
-                if (!token) {
+                if (!accessToken) {
                     throw new Error('인증 토큰이 없습니다.');
                 }
 
                 //await를 사용하여 비동기 요청을 기다리고, headers에 토큰 추가
                 const response = await api.get('/users/me');
                 
-                const { accessToken, userName, searchId, search, kengColor, profileImage } = response.data;
+                const { userName, searchId, search, kengColor, profileImage } = response.data;
                 //setToken(accessToken);
                 setUserInfo({
                     profileImage: profileImage,
@@ -115,24 +113,6 @@ const MyAccount: React.FC = () => {
             setNicknameValidation(null);
         }
     };
-
-    /*const uploadImage = async (file: File) : Promise<string | null> => {
-        try {
-            const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
-            const { data, error } = await supabase.storage.from('버킷 이름').upload(fileName, file);
-
-            if (error) {
-                throw error;
-            }
-
-            const { data: { publicUrl } } = supabase.storage.from('버킷 이름').getPublicUrl(fileName);
-
-            return publicUrl;
-        } catch (error) {
-            console.error('이미지 업로드 실패: ', error);
-            return null;
-        }
-    }*/
     
     // 정보 수정 제출 로직
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -154,13 +134,13 @@ const MyAccount: React.FC = () => {
         }
 
         if (userInfo.nickname !== initialUserInfo.nickname) {
-            updatedData.nickname = userInfo.nickname;
+            updatedData.userName = userInfo.nickname;
         }
         if (userInfo.color !== initialUserInfo.color) {
-            updatedData.userColor = userInfo.color; 
+            updatedData.kengColor = userInfo.color; 
         }
         if (userInfo.searchAvailable !== initialUserInfo.searchAvailable) {
-            updatedData.searchAvailable = userInfo.searchAvailable;
+            updatedData.search = userInfo.searchAvailable;
         }
 
         if (Object.keys(updatedData).length === 0) {

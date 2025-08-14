@@ -88,24 +88,6 @@ const SignUp: React.FC = () => {
         }
     }
 
-    /*const uploadImage = async (file: File) : Promise<string | null> => {
-        try {
-            const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
-            const { data, error } = await supabase.storage.from('버킷 이름').upload(fileName, file);
-
-            if (error) {
-                throw error;
-            }
-
-            const { data: { publicUrl } } = supabase.storage.from('버킷 이름').getPublicUrl(fileName);
-
-            return publicUrl;
-        } catch (error) {
-            console.error('이미지 업로드 실패: ', error);
-            return null;
-        }
-    }*/
-
     //회원가입 데이터 전송
     const handleSubmit =  async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // 폼 action은 페이지를 리로드 하는데, 그러면 state값 다 날아감 그래서 preventDefault()
@@ -120,7 +102,7 @@ const SignUp: React.FC = () => {
             profileImageUrl = uploadedUrl;
         }
 
-        const Data = { userName: nickname, userId: id, search: searchAvailable, kengColor: userColor, profileImage: profileImageUrl };
+        const Data = { userName: nickname, searchId: id, search: searchAvailable, kengColor: userColor, profileImage: profileImageUrl };
         try {
             const response = await api.patch('/users/signup', Data);
             //const { accessToken } = response.data;
