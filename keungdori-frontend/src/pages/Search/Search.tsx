@@ -25,9 +25,10 @@ import searchIcon from "../../assets/search_icon.png";
 import DrawerComponent from "../../components/DrawerComponent";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
-import { useInfiniteQuery, useQuery, type InfiniteData } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import ReviewCard from "../../components/reviewcard/ReviewCard";
+import { useInView } from 'react-intersection-observer';
 
 const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
 
@@ -116,6 +117,11 @@ const Search: React.FC = () => {
     const [activeTab, setActiveTab] = useState('place'); //현재 실행중인 탭
     const [currentLocation, setCurrentLocation] = useState<{ latitude: number, longitude: number; } | null>(null); //현재 사용자 위치
     const [searchQuery, setSearchQuery] = useState(""); //검색어
+
+    const { ref, inView } = useInView({
+        threshold: 0,
+        rootMargin: '200px',
+    });
 
     const {//구글 검색 useQuery
         data: googleSearchResult = [], 
@@ -213,6 +219,17 @@ const Search: React.FC = () => {
             }*/
         );
     }, []);
+
+    useEffect(() => {
+        if (inView) {
+            if (activeTab === 'visited' && hasNextVisited && !isVisitedFetching) {
+            fetchNextVisited();
+            } 
+            else if (activeTab === 'hashtag' && hasNextHashtag && !isHashtagFetching) {
+            fetchNextHashtag();
+            }
+        }
+    }, [inView, activeTab, hasNextVisited, isVisitedFetching, fetchNextVisited, hasNextHashtag, isHashtagFetching, fetchNextHashtag]);
    
     return (
         <APIProvider apiKey={API_KEY} libraries={['places']}>
@@ -286,17 +303,21 @@ const Search: React.FC = () => {
                     <ResultsList>
                         { visitedResult?.pages && visitedResult.pages[0].items.length > 0 ? (
                             <ReviewListContainer>
-                                { visitedResult.pages.map((review: Review) => (
+                                { visitedResult.pages.map(page =>
+                                page.items.map((review: Review) => (
                                     <ReviewCard 
                                         key={review.reviewId}
                                         review={review} 
-                                        onClick={handleReviewClick} 
+                                        onClick={() => handleReviewClick(review)} 
                                     />
-                                ))}
+                                ))
+                            )}
+                            <div ref={ref}/>
                             </ReviewListContainer>
                         ) : (
                             <Message>해당 장소의 리뷰가 없습니다</Message>
                         )}
+                        {isVisitedFetching && <Message>리뷰를 불러오는 중입니다</Message>} 
                     </ResultsList>
                 )}
 
@@ -304,19 +325,31 @@ const Search: React.FC = () => {
                     <ResultsList>
                         { hashtagResult?.pages && hashtagResult.pages[0].items.length > 0 ? (
                             <ReviewListContainer>
-                                { hashtagResult.pages.map((review: Review) => (
+                                { hashtagResult.pages.map(page => 
+                                page.items.map((review: Review) => (
                                     <ReviewCard 
                                         key={review.reviewId}
                                         review={review} 
-                                        onClick={handleReviewClick} 
+                                        onClick={() => handleReviewClick(review)} 
                                     />
-                                ))}
+                                ))
+                            )}
                             </ReviewListContainer>
                         ) : (
                             <Message>해당 해시태그의 리뷰가 없습니다</Message>
                         )}
+                        
                     </ResultsList>
-            )}
+                )}
+
+                {activeTab !== 'place' && (
+                    <>
+                    <div ref={ref} /> 
+                    {(isVisitedFetching || isHashtagFetching) && (
+                        <Message>리뷰를 불러오는 중입니다</Message>
+                    )}
+                    </>
+                )}
 
             </ContentWrapper>
         </SearchWrapper>
