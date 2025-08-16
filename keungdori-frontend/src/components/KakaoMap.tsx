@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+/*import { useEffect, useRef } from 'react';
 import useKakaoMap from '../hooks/useKakaoMap';
 
 interface KakaoMapProps {
@@ -30,4 +30,4 @@ function KakaoMap({ latitude, longitude }: KakaoMapProps) {
   );
 }
 
-export default KakaoMap;
+export default KakaoMap;*/

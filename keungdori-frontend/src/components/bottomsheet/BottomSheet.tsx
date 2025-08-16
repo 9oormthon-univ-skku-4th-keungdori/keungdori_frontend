@@ -11,12 +11,12 @@ interface BottomSheetProps {
 const BottomSheet: React.FC<BottomSheetProps> = ({ children }) => {
   const openY = window.innerHeight * 0.2; // 화면의 80%까지 보이게 함
   const closedY = window.innerHeight - 30; // 시작은 30px만 보이게 함
-  const midY = (openY + closedY) / 2; // 절반만 펼쳐질 수 있도록 함
+  //const midY = (openY + closedY) / 2; // 절반만 펼쳐질 수 있도록 함
 
   const [{ y }, api] = useSpring(() => ({ y: closedY, config: config.gentle, clamp: true }));
 
   const bind = useDrag(
-    ({ down, movement: [, my], velocity: [, vy] }) => {
+    ({ down, movement: [, my], velocity: [, /*vy*/] }) => {
       // down : 드래그 중, my : y축으로 움직인 거리, vy : y축으로 움직인 속도
       const currentY = y.get();
       if (down) {

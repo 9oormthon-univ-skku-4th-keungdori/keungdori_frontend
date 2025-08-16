@@ -47,15 +47,6 @@ export const ReviewListContainer = styled.ul`
   margin: 0;
 `;
 
-export const ReviewCard = styled.li`
-  display: flex;
-  padding: 16px;
-  border: 1px solid #F0F0F0;
-  border-radius: 16px;
-  margin-bottom: 16px;
-  background-color: #FFC2C3;
-`;
-
 export const ReviewImagePlaceholder = styled.div`
   width: 80px;
   height: 80px;

@@ -7,7 +7,7 @@ export const useImageUpload = () => {
     const uploadImage = async (file: File): Promise<string | null> => {
         try {
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}`;
-            const { data, error } = await supabase.storage.from(BUCKET_NAME).upload(fileName, file);
+            const { error } = await supabase.storage.from(BUCKET_NAME).upload(fileName, file);
 
             if (error) {
                 throw error;

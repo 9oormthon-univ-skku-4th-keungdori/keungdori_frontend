@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, /*useNavigate*/ } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import Login from './pages/Login/Login';
 import KakaoCallback from './pages/Auth/KakaoCallback';
@@ -18,7 +18,7 @@ import api from './api/api';
 
 const App: React.FC = () => {
   const { setToken } = useAuthStore();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

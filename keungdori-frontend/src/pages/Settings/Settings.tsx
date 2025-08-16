@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import Header from '../../components/Header';
 import { ArrowIcon, Badge, Container, HeaderTitle, IconWrapper, ItemLeft, MenuGroup, MenuIcon, MenuItem, MenuTitle, SettingScreenWrapper, VectorIcon } from './Styles';
-import vector from '../../assets/vector.png';
+import vector from '../../assets/vector.svg';
 import vectorReverse from '../../assets/vector_reverse.png';
-import account from '../../assets/account.png';
-import subscribe from '../../assets/subscribe.png';
-import support from '../../assets/support.png';
-import info from '../../assets/information.png';
-import trashCan from '../../assets/trash_can.png';
-import addFriend from '../../assets/add_friend.png';
-import hashtag from '../../assets/hashtag.png';
-import logout from '../../assets/logout.png';
+import account from '../../assets/account.svg';
+import subscribe from '../../assets/subscribe.svg';
+import support from '../../assets/support.svg';
+import info from '../../assets/information.svg';
+import trashCan from '../../assets/trash_can.svg';
+import addFriend from '../../assets/add_friend.svg';
+import hashtag from '../../assets/hashtag.svg';
+import logout from '../../assets/logout.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
-import LogoutModal from '../../components/confirmmodal/ConfirmModal';
-import UnsubscribeModal from '../../components/confirmmodal/ConfirmModal';
 import authApi from '../../api/authApi';
 import api from '../../api/api';
+const ConfirmModal = React.lazy(() => import('../../components/confirmmodal/ConfirmModal'));
 
 const Settings : React.FC = () => {
     const navigate = useNavigate();
@@ -144,8 +143,30 @@ const Settings : React.FC = () => {
 
             </SettingScreenWrapper>
 
-            <LogoutModal isOpen={isLogoutModalOpen} onClose={() => setLogoutIsModalOpen(false)} onConfirm={confirmLogout} text="로그아웃 하시겠습니까?" closeText="취소" confirmText="로그아웃"/>
-            <UnsubscribeModal isOpen={isUnsubscribeModalOpen} onClose={() => setUnsubscribeIsModalOpen(false)} onConfirm={confirmUnsubscribe} text="탈퇴하시겠습니까?" closeText="취소" confirmText="회원탈퇴"/>
+            {isLogoutModalOpen && (
+                <Suspense fallback={null}>
+                    <ConfirmModal
+                    isOpen
+                    onClose={() => setLogoutIsModalOpen(false)}
+                    onConfirm={confirmLogout}
+                    text="로그아웃 하시겠습니까?"
+                    closeText="취소"
+                    confirmText="로그아웃"
+                    />
+                </Suspense>
+            )}
+            {isUnsubscribeModalOpen && (
+                <Suspense fallback={null}>
+                    <ConfirmModal
+                    isOpen
+                    onClose={() => setUnsubscribeIsModalOpen(false)}
+                    onConfirm={confirmUnsubscribe}
+                    text="탈퇴하시겠습니까?"
+                    closeText="취소"
+                    confirmText="회원탈퇴"
+                    />
+                </Suspense>
+            )}
         </>
 
     );

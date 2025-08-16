@@ -118,6 +118,12 @@ export const Distance = styled.p`
     margin-top: 4px !important;
 `;
 
+export const ReviewListContainer = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
 export const ReviewButton = styled.button`
     padding: 6px 12px;
     font-size: 14px;

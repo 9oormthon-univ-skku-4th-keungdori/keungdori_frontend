@@ -75,8 +75,8 @@ export const ItemLeft = styled.div`
 `;
 
 export const MenuIcon = styled.img`
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
 `;
 
 export const MenuTitle = styled.span`

@@ -9,6 +9,9 @@ import BottomSheet from "../../components/bottomsheet/BottomSheet";
 import { useNavigate } from "react-router-dom";
 import DrawerComponent from "../../components/DrawerComponent";
 import GoogleMap from "../../components/GoogleMap";
+import { APIProvider } from "@vis.gl/react-google-maps";
+
+const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
 
 // 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
 const Home: React.FC = () => {
@@ -95,13 +98,15 @@ const Home: React.FC = () => {
                     readOnly // 사용자 입력 방지
                 />
             </SearchWrapper>
-                    
+      
             <MapContainer>
-                <GoogleMap
-                    latitude={currentPosition.latitude}
-                    longitude={currentPosition.longitude}
-                    onMapClick={handleMapClick}
-                />
+                <APIProvider apiKey={API_KEY} libraries={['places']}>
+                    <GoogleMap
+                        latitude={currentPosition.latitude}
+                        longitude={currentPosition.longitude}
+                        onMapClick={handleMapClick}
+                    />
+                </APIProvider> 
             </MapContainer>
 
             <BottomSheet>

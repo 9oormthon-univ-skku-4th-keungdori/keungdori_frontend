@@ -72,7 +72,7 @@ const ReviewWrite: React.FC = () => {
     const {
             previewUrl,
             imageFile,
-            error: imageError, // 필요하다면 에러 처리 추가
+            //error: imageError, // 필요하다면 에러 처리 추가
             handleImageChange, //label안에 input 있어서 handleimagechange만 줘도 이미지 누르면 파일 탐색기가 뜸
         } = useImageInput(profile_image); // 1. 초기 이미지 뭘로 할지?
     const { uploadImage } = useImageUpload();

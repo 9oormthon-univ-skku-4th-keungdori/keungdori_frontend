@@ -6,7 +6,6 @@ import profile_image from "../../assets/profile_image.png";
 import camera_icon from "../../assets/camera_icon.png"
 import ScreenWrapper from "../../layouts/ScreenWrapper";
 import axios from "axios";
-import useAuthStore from '../../stores/authStore';
 import { SwatchesPicker } from "react-color";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
@@ -17,12 +16,11 @@ type ValidationState = {
 }
 //이미 회원가입한 사용자가 접속하는 거 막기
 const SignUp: React.FC = () => {
-    const { setToken } = useAuthStore();
     const navigate = useNavigate();
     const { 
         previewUrl, 
         imageFile, 
-        error: imageError, // 1.이미지 파일 아닌 파일 올리면 에러 나는데, 이때 모달 띄워야 함
+        //error: imageError, // 1.이미지 파일 아닌 파일 올리면 에러 나는데, 이때 모달 띄워야 함
         imageFileRef, 
         handleImageChange, 
         triggerFileInput // 'handleCameraButton' 대신 사용할 함수
@@ -104,7 +102,7 @@ const SignUp: React.FC = () => {
 
         const Data = { userName: nickname, searchId: id, search: searchAvailable, kengColor: userColor, profileImage: profileImageUrl };
         try {
-            const response = await api.patch('/users/signup', Data);
+            /*const response =*/ await api.patch('/users/signup', Data);
             //const { accessToken } = response.data;
             //setToken(accessToken);
             navigate('/home');

@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { Rating } from '@smastrom/react-rating';
 import '@smastrom/react-rating/style.css';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
 import api from '../../api/api';
-import { ScreenWrapper, ContentWrapper, HashtagContainer, MainHashtag, NoReviewsMessage, PlaceHeader, PlaceName, ReviewCard, ReviewContent, ReviewDate, ReviewImagePlaceholder, ReviewListContainer, ReviewMemo, StarRating, ButtonWrapper, VectorIcon } from './Styles';
-import Hashtag from '../../components/Hashtag';
+import { ScreenWrapper, ContentWrapper, MainHashtag, NoReviewsMessage, PlaceHeader, PlaceName, ReviewListContainer, ButtonWrapper, VectorIcon } from './Styles';
+import ReviewCard from '../../components/reviewcard/ReviewCard';
 import vector from '../../assets/vector.png';
 
 interface Review {
-    placeId: number; //카카오 장소 id
-    placeName: string; //카카오 장소 id
+    placeId: number; //구글 장소 id
+    placeName: string; //구글 장소 이름
     x: number; //장소 위도
     y: number; //장소 경도
     reviewId: number; //리뷰 id
@@ -24,22 +22,7 @@ interface Review {
     memo: string; //메모
 }
 
-interface Coords {
-    x: number;
-    y: number;
-}
-
-const renderStars = (rating: number) => {
-    return (
-        <Rating 
-        style={{ maxWidth: 150 }} 
-        value={rating}
-        readOnly
-        />
-    );
-};
-
-const mockData: Review[] = [ {   //더미데이터
+/*const mockData: Review[] = [ {   //더미데이터
             placeId: 10,
             placeName: "스페인오늘",
             x: 10,
@@ -104,7 +87,7 @@ const mockData: Review[] = [ {   //더미데이터
             subtags: ["#스페인", "#하몽"], 
             imageUrl: "사진없음"
         }
-    ];
+    ];*/
 
     const fetchReviewsByPlaceId = async (placeId: string): Promise<Review[]> => { //해당 장소의 리뷰들 받아옴
         const { data } = await api.get<Review[]>(`/reviews/place/${placeId}`);
@@ -123,11 +106,11 @@ const ReviewList: React.FC = () => {
     const handleWriteReview = () => navigate(`/review/writereview/${placeId}`,
         { state: { x: placeX, y: placeY, placeId: placeId, placeName: placeName }}); //1. 처음 리뷰 작성하는 화면이랑, 리뷰 보는 화면 분리
     const handleReviewClick = (review: Review) => {
-        navigate(`/review/modifyreview/${placeId}`, { state: { reviewData: review, placeId: placeId, placeName: placeName }});
+        navigate(`/review/modifyreview/${placeId}`, { state: { reviewData: review }});
     }
 
     //UseInfiniteQuery로 교체해서 무한 스크롤해서 계속 데이터를 볼 수 있게 해야됨(페이지 단위)
-    const { data: reviews, isPending, isError, error } = useQuery<Review[], Error> ({
+    const { data: reviews, /*isPending, isError, error*/ } = useQuery<Review[], Error> ({
        queryKey: ['reviews', placeId],
        queryFn: () => fetchReviewsByPlaceId(placeId!),
        enabled: !!placeId, 
@@ -156,17 +139,11 @@ const ReviewList: React.FC = () => {
                 {hasReviews ? (
                     <ReviewListContainer>
                         {reviews.map(review => (
-                            <ReviewCard key={review.reviewId} onClick={() => handleReviewClick(review)}>
-                                <ReviewImagePlaceholder />
-                                <ReviewContent>
-                                    <ReviewDate>{review.date}</ReviewDate>
-                                    <StarRating>{renderStars(review.rating)}</StarRating>
-                                    <ReviewMemo>{review.memo.length > 10 ? `${review.memo.substring(0, 10)}...` : review.memo}</ReviewMemo>
-                                    <HashtagContainer>
-                                        {review.subtags.map(tag => <Hashtag key={tag}>{tag}</Hashtag>)}
-                                    </HashtagContainer>
-                                </ReviewContent>
-                            </ReviewCard>
+                            <ReviewCard 
+                                key={review.reviewId}
+                                review={review} 
+                                onClick={handleReviewClick} 
+                            />
                         ))}
                     </ReviewListContainer>
                 ) : (

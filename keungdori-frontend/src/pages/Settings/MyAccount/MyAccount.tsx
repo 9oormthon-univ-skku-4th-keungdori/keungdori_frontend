@@ -8,7 +8,6 @@ import profile_image from "../../../assets/profile_image.png";
 import camera_icon from "../../../assets/camera_icon.png";
 import vector from "../../../assets/vector.png"
 import keungdori from "../../../assets/keungdori.png"
-import profileImg from "../../../assets/profile_image.png";
 import Header from "../../../components/Header";
 import { IconWrapper, VectorIcon } from "../Styles";
 import { useNavigate } from "react-router-dom";
@@ -38,9 +37,9 @@ const MyAccount: React.FC = () => {
     const [nicknameValidation, setNicknameValidation] = useState<ValidationState | null>(null);
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
     const {
-        previewUrl,
+        //previewUrl,
         imageFile,
-        error: imageError,
+        //error: imageError,
         imageFileRef,
         handleImageChange,
         triggerFileInput,
@@ -150,7 +149,7 @@ const MyAccount: React.FC = () => {
 
         try {
             const response = await api.patch('/users/me', updatedData);
-            
+            console.log(response);
             //alert('정보가 성공적으로 변경되었습니다.'); 2. 모달 띄우기
             
             navigate(-1);

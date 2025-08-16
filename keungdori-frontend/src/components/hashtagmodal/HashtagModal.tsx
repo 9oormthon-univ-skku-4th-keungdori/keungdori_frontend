@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ModalButton, ModalContent, ModalOverlay, PickerWrapper, TagInput } from './Styles';
+import React, { useState } from 'react';
+import { ModalButton, ModalContent, ModalOverlay, PickerWrapper } from './Styles';
 import { SwatchesPicker } from 'react-color';
 import type { ColorResult } from 'react-color';
 
