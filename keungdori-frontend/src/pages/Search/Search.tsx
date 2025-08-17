@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { 
     SearchWrapper, 
     ContentWrapper,
@@ -26,11 +26,9 @@ import DrawerComponent from "../../components/DrawerComponent";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { APIProvider } from "@vis.gl/react-google-maps";
 import ReviewCard from "../../components/reviewcard/ReviewCard";
 import { useInView } from 'react-intersection-observer';
-
-const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
+import { loadGoogleScript } from "../../utils/loadGoogleScript";
 
 interface Place {
     place_id: string;
@@ -113,6 +111,7 @@ const fetchHashtagSearch = async ({ pageParam = 1, query }: { pageParam?: number
 
 const Search: React.FC = () => {
     const navigate = useNavigate();
+    const googleScriptLoaded = useRef(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('place'); //현재 실행중인 탭
     const [currentLocation, setCurrentLocation] = useState<{ latitude: number, longitude: number; } | null>(null); //현재 사용자 위치
@@ -178,11 +177,27 @@ const Search: React.FC = () => {
             setIsDrawerOpen(open);
         };
 
-    const handleKeyEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const handleFocus = async () => {
+            if (!googleScriptLoaded.current) {
+                try {
+                    await loadGoogleScript();
+                    googleScriptLoaded.current = true;
+                    console.log("Google Maps 스크립트가 Focus 이벤트로 미리 로드되었습니다.");
+                } catch (error) {
+                    console.error("스크립트 미리 로드 실패:", error);
+                }
+            }
+        };
+
+    const handleKeyEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && searchQuery.trim() !== '') {
-            // 2. 검색어 없으면 모달 띄우기
             if (activeTab === 'place') {
-                searchGooglePlacesRefetch();
+                try {
+                    await loadGoogleScript();
+                    searchGooglePlacesRefetch();
+                } catch (error) {
+                    console.error("검색을 위한 스크립트 로드 실패:", error);
+                }
             } else if (activeTab === 'visited') {
                 refetchPlaceName();
             } else {
@@ -232,7 +247,6 @@ const Search: React.FC = () => {
     }, [inView, activeTab, hasNextVisited, isVisitedFetching, fetchNextVisited, hasNextHashtag, isHashtagFetching, fetchNextHashtag]);
    
     return (
-        <APIProvider apiKey={API_KEY} libraries={['places']}>
             <SearchWrapper>
             <Header 
                 leftNode={
@@ -250,6 +264,7 @@ const Search: React.FC = () => {
                 <SearchInputWrapper>
                     <SearchIcon src={searchIcon} />
                     <SearchInput placeholder="Search" value={searchQuery}
+                        onFocus={handleFocus}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={handleKeyEnter} />
                     {/* 1. icon 오른쪽으로 옮기고 아이콘 눌러서 검색할 수 있게함*/}
@@ -353,7 +368,6 @@ const Search: React.FC = () => {
 
             </ContentWrapper>
         </SearchWrapper>
-        </APIProvider>
         
     );
 };

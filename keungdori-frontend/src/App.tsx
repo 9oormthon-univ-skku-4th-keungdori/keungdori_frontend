@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Routes, Route, /*useNavigate*/ } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
-import Login from './pages/Login/Login';
-import KakaoCallback from './pages/Auth/KakaoCallback';
 import useAuthStore from './stores/authStore';
-import SignUp from './pages/SignUp/SignUp';
-import Home from './pages/Home/Home';
-import Settings from './pages/Settings/Settings';
-import Search from './pages/Search/Search';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
-import MyAccount from './pages/Settings/MyAccount/MyAccount';
-import ReviewList from './pages/Review/ReviewList';
-import ReviewWrite from './pages/Review/ReviewWrite/ReviewWrite';
-import ReviewEdit from './pages/Review/ReviewEdit/ReviewEdit';
 import api from './api/api';
+import Spinner from './components/Spinner';
+
+const Login = lazy(() => import('./pages/Login/Login'));
+const KakaoCallback = lazy(() => import('./pages/Auth/KakaoCallback'));
+const SignUp = lazy(() => import('./pages/SignUp/SignUp'));
+const Home = lazy(() => import('./pages/Home/Home'));
+const Settings = lazy(() => import('./pages/Settings/Settings'));
+const Search = lazy(() => import('./pages/Search/Search'));
+const MyAccount = lazy(() => import('./pages/Settings/MyAccount/MyAccount'));
+const ReviewList = lazy(() => import('./pages/Review/ReviewList'));
+const ReviewWrite = lazy(() => import('./pages/Review/ReviewWrite/ReviewWrite'));
+const ReviewEdit = lazy(() => import('./pages/Review/ReviewEdit/ReviewEdit'));
 
 const App: React.FC = () => {
   const { setToken } = useAuthStore();
@@ -39,12 +41,13 @@ const App: React.FC = () => {
   }, [setToken]);
 
   if (isLoading) {
-    return <div></div>;
+    return <Spinner />;
   }
 
   return (
     <>
     <GlobalStyles></GlobalStyles>
+    <Suspense fallback={<Spinner />}>
       <Routes>
         {/* 로그인 안하면 로그인 화면, 회원가입 화면 나올 수 있도록 함 */}
         <Route element={<PublicRoute />}>
@@ -66,6 +69,7 @@ const App: React.FC = () => {
         {/* 인증과 무관한 페이지 */}
         <Route path="/oauth/callback" element={<KakaoCallback />} />
       </Routes>
+    </Suspense>
     </>
   );
 
