@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { lazy, useCallback, useEffect, useState } from "react";
 import { HomeWrapper, HamburgerIcon, KeungdoriIcon, IconWrapper, MapContainer, SearchWrapper, SearchIcon, SearchInput } from "./Style";
 import Header from "../../components/Header";
 import hamburger from "../../assets/hamburger_icon.png";
@@ -7,11 +7,31 @@ import searchIcon from "../../assets/search_icon.png";
 //import KakaoMap from "../../components/KakaoMap";
 import BottomSheet from "../../components/bottomsheet/BottomSheet";
 import { useNavigate } from "react-router-dom";
-import DrawerComponent from "../../components/DrawerComponent";
 import GoogleMap from "../../components/GoogleMap";
-import { APIProvider } from "@vis.gl/react-google-maps";
+import { APIProvider, useApiIsLoaded } from "@vis.gl/react-google-maps";
+import Spinner from "../../components/Spinner";
 
 const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
+
+const DrawerComponent = lazy(() => import("../../components/DrawerComponent"));
+
+const MapLoader: React.FC<{
+    currentPosition: { latitude: number; longitude: number; };
+    handleMapClick: (placeId: string | null) => void;
+}> = ({ currentPosition, handleMapClick }) => {
+
+    const apiIsLoaded = useApiIsLoaded();
+
+    return apiIsLoaded ? (
+        <GoogleMap
+            latitude={currentPosition.latitude}
+            longitude={currentPosition.longitude}
+            onMapClick={handleMapClick}
+        />
+    ) : (
+        <Spinner />
+    );
+};
 
 // 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
 const Home: React.FC = () => {
@@ -21,13 +41,14 @@ const Home: React.FC = () => {
         latitude: 37.588100,
         longitude: 126.992831,
     });
-    // 클릭된 장소의 Place ID를 저장할 상태 추가
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
-    // 지도에서 장소를 클릭했을 때 호출될 함수
     const handleMapClick = useCallback((placeId: string | null) => {
         if (placeId) {
             console.log("선택된 장소의 Place ID:", placeId);
+            if (!selectedPlaceId) {
+                console.log(selectedPlaceId);
+            }
             setSelectedPlaceId(placeId);
             // 여기서 BottomSheet를 열거나 다른 동작을 수행할 수 있습니다.
         }
@@ -79,86 +100,40 @@ const Home: React.FC = () => {
         }
     }, []);
 
+
     return (
-        <HomeWrapper>
-            <Header leftNode={
-                <IconWrapper>
-                    <HamburgerIcon src={hamburger} onClick={toggleDrawer(true)}></HamburgerIcon>
-                    <KeungdoriIcon src={keungdori}></KeungdoriIcon>
-                </IconWrapper>}>
-            </Header>
+            <HomeWrapper>
+                <Header leftNode={
+                    <IconWrapper>
+                        <HamburgerIcon src={hamburger} onClick={toggleDrawer(true)}></HamburgerIcon>
+                        <KeungdoriIcon src={keungdori}></KeungdoriIcon>
+                    </IconWrapper>}>
+                </Header>
 
-            <DrawerComponent isOpen={isDrawerOpen} onClose={toggleDrawer(false)}></DrawerComponent>
+                <DrawerComponent isOpen={isDrawerOpen} onClose={toggleDrawer(false)}></DrawerComponent>
 
-            <SearchWrapper>
-                <SearchIcon src={searchIcon} alt="search icon" />
-                <SearchInput
-                    placeholder="Search"
-                    onClick={handleSearchClick}
-                    readOnly // 사용자 입력 방지
-                />
-            </SearchWrapper>
-      
-            <MapContainer>
-                <APIProvider apiKey={API_KEY} libraries={['places']}>
-                    <GoogleMap
-                        latitude={currentPosition.latitude}
-                        longitude={currentPosition.longitude}
-                        onMapClick={handleMapClick}
+                <SearchWrapper>
+                    <SearchIcon src={searchIcon} alt="search icon" />
+                    <SearchInput
+                        placeholder="Search"
+                        onClick={handleSearchClick}
+                        readOnly // 사용자 입력 방지
                     />
-                </APIProvider> 
-            </MapContainer>
+                </SearchWrapper>
+        
+                <MapContainer>
+                    <APIProvider apiKey={API_KEY} libraries={['places']}>
+                        <MapLoader
+                            currentPosition={currentPosition}
+                            handleMapClick={handleMapClick}
+                        />
+                    </APIProvider>
+                    </MapContainer>
+                
+                <BottomSheet/>
 
-            <BottomSheet>
-                <h3>선택된 장소 정보</h3>
-                <p>
-                    {selectedPlaceId 
-                        ? `Place ID: ${selectedPlaceId}` 
-                        : '지도에서 장소를 선택해주세요.'
-                    }
-                </p>
-                <p>{currentPosition.latitude}</p>
-                <p>{currentPosition.longitude}</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-                <p>아니 시트가 왜 안 보이는거야!!!!!</p>
-            </BottomSheet>
-
-           
-        </HomeWrapper>
+            
+            </HomeWrapper>
     );
 
 

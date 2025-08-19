@@ -40,14 +40,14 @@ const App: React.FC = () => {
 
   }, [setToken]);
 
-  if (isLoading) {
+  if (isLoading) { //1. 처음 앱 켜서 로딩할때, 동작함 -> pwa에서 제공하는 스플래시 화면말고 커스텀 스플래시 따로 또 보여주게 하자
     return <Spinner />;
   }
 
   return (
     <>
     <GlobalStyles></GlobalStyles>
-    <Suspense fallback={<Spinner />}>
+    <Suspense fallback={<Spinner />}> {/*suspense로 각 화면으로 이동할때 화면 코드 로딩하는데, 그때 로딩중일때 spinner 띄움*/}
       <Routes>
         {/* 로그인 안하면 로그인 화면, 회원가입 화면 나올 수 있도록 함 */}
         <Route element={<PublicRoute />}>

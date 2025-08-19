@@ -1,7 +1,5 @@
-// Google Maps API 키를 .env 파일에서 가져옵니다.
 const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
 
-// 로드할 Google Maps 스크립트 URL입니다. 'places' 라이브러리를 포함합니다.
 const GOOGLE_MAPS_URL = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places`;
 
 /**
@@ -18,6 +16,12 @@ let loadingPromise: Promise<void> | null = null;
  * @returns {Promise<void>} 스크립트 로드가 완료되면 resolve되는 Promise 객체
  */
 export const loadGoogleScript = (): Promise<void> => {
+  // **핵심: 함수가 호출될 때마다 DOM을 직접 확인합니다.**
+  if (document.querySelector(`script[src*="maps.googleapis.com/maps/api/js"]`)) {
+    // 스크립트 태그가 이미 존재하면, 로드된 것으로 간주하고 즉시 성공 처리합니다.
+    return Promise.resolve();
+  }
+  
   // 1. 이미 스크립트가 로드되었다면, 즉시 성공 처리합니다.
   if (isScriptLoaded) {
     return Promise.resolve();
