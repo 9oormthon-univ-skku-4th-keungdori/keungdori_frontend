@@ -16,26 +16,27 @@ import vector from '../../../assets/vector.png'
 interface Place {
     placeId: number;
     placeName: string;
+    placeAddress: string;
     x: number;
     y: number;
 }
 
 interface Review {
-    placeId: string; //카카오 장소 id
-    placeName: string, //장소 이름
-    xCoordinate: string; //장소 위도
-    yCoordinate: string; //장소 경도
-    date: string; //리뷰 작성한 날짜
-    rating: number; //별점
-    memo: string; //메모
-    maintag: string; //메인태그
-    subtags: string[]; //서브태그
-    imageUrl?: string | null; //이미지경로(supabase)
+    name: string; // 장소 이름
+    address: string, // 장소 주소
+    googleId: string, // 구글 장소 id
+    xCoordinate: number; // 장소 위도
+    yCoordinate: number; // 장소 경도
+    rating: number; // 별점
+    memo: string; // 메모
+    maintag: string; // 메인태그
+    subtags: string[]; // 서브태그
+    imageUrl?: string | null; // 이미지경로(supabase)
 }
 
 interface Tag {
   text: string;
-  bgColor: string;
+  backgroundColor: string;
 }
 
 const postReview = async (newReview: Review) => { //데이터를 보내는 비동기 함수인 mutationFn
@@ -48,8 +49,8 @@ const createTag = async (tagText: string) => {
     return data;
 };
 
-const updateTagColor = async (variables: { text: string; bgColor: string }) => {
-    const { data } = await api.patch('/hashtags', { hashtag: variables.text, color: variables.bgColor });
+const updateTagColor = async (variables: { text: string; backgroundColor: string }) => {
+    const { data } = await api.patch('/hashtags', { hashtag: variables.text, color: variables.backgroundColor });
     return data;
 };
 
@@ -62,8 +63,9 @@ const ReviewWrite: React.FC = () => {
     const state = location.state as Place; //가져온 값 타입 설정
     const placeId = state.placeId.toString(); //장소 아이디
     const placeName = state.placeName; //장소 이름
-    const placeX = state.x.toString(); //장소 위치
-    const placeY = state.y.toString();
+    const placeAddress = state.placeAddress;
+    const placeX = state.x //장소 위치
+    const placeY = state.y
 
     const [rating, setRating] = useState(0);
     const [memo, setMemo] = useState('');
@@ -82,12 +84,6 @@ const ReviewWrite: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [tagToColorize, setTagToColorize] = useState<string | null>(null);
 
-    const today = new Date(); //리뷰 작성하는 날짜 구하기
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0'); // getMonth()는 0부터 시작하므로 +1, 한 자릿수면 앞에 '0'을 붙여줌
-    const day = today.getDate().toString().padStart(2, '0'); // getDate()도 한 자릿수면 앞에 '0'을 붙여즘
-    const reviewDay = `${year}-${month}-${day}`;
-
     const { mutate: submitReview } = useMutation({ //4. 낙관적 업데이트 적용해 말어?
         mutationFn: postReview,
         onSuccess: () => {
@@ -105,7 +101,7 @@ const ReviewWrite: React.FC = () => {
         mutationFn: createTag, // 직접 정의한 함수 사용
         onSuccess: (newTag) => {// new Tag는 응답으로 온 데이터
             if (newTag.color) { // 기존 태그 (색상 값이 있음)
-                const tagForState = { text: newTag.hashtag, bgColor: newTag.color };
+                const tagForState = { text: newTag.hashtag, backgroundColor: newTag.color };
                 if (activeInput === 'main') {
                     setMainTag(tagForState);
                 } else {
@@ -127,7 +123,7 @@ const ReviewWrite: React.FC = () => {
     const { mutate: patchColor } = useMutation({
         mutationFn: updateTagColor,
         onSuccess: (updatedTag) => { 
-            const tagForState = { text: updatedTag.hashtag, bgColor: updatedTag.color };
+            const tagForState = { text: updatedTag.hashtag, backgroundColor: updatedTag.color };
             if (activeInput === 'main') {
                 setMainTag(tagForState);
             } else {
@@ -167,9 +163,9 @@ const ReviewWrite: React.FC = () => {
     };
 
     // 모달에서 색상 선택 완료 시 호출
-    const handleColorSelect = (bgColor: string) => {
+    const handleColorSelect = (backgroundColor: string) => {
         if (tagToColorize) {
-            patchColor({ text: tagToColorize, bgColor }); // 색상 수정 API 호출
+            patchColor({ text: tagToColorize, backgroundColor }); // 색상 수정 API 호출
         }
     };
     
@@ -194,11 +190,11 @@ const ReviewWrite: React.FC = () => {
 
         // 신규 리뷰 등록
         const review: Review = {
-            placeName: placeName,
-            placeId: placeId,
+            name: placeName,
+            address: placeAddress,
+            googleId: placeId,
             xCoordinate: placeX,
             yCoordinate: placeY,
-            date: reviewDay,
             rating: rating,
             maintag: mainTag.text,
             subtags: subTags.map(t => t.text),
@@ -232,12 +228,12 @@ const ReviewWrite: React.FC = () => {
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    onBlur={resetInputState} 
+                                    //onBlur={resetInputState} 
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                 />
                             ) : mainTag ? (
-                                <Hashtag bgColor={mainTag.bgColor}>{mainTag.text}</Hashtag>
+                                <Hashtag bgColor={mainTag.backgroundColor}>{mainTag.text}</Hashtag>
                             ) : (
                                 <TagPlaceholder onClick={() => { setActiveInput('main'); setInputValue('#')}}>
                                     메인 태그를 추가해주세요.
@@ -248,14 +244,14 @@ const ReviewWrite: React.FC = () => {
                         <TagSection>
                             {/* 이미 추가된 서브 태그들 렌더링 */}
                             {subTags.map((tag) => (
-                                <Hashtag key={tag.text} bgColor={tag.bgColor}>{tag.text}</Hashtag>
+                                <Hashtag key={tag.text} bgColor={tag.backgroundColor}>{tag.text}</Hashtag>
                             ))}
                             {activeInput === 'sub' ? (
                                  <TagInput 
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    onBlur={resetInputState}
+                                    //onBlur={resetInputState}
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                  />

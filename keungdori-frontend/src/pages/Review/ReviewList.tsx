@@ -1,5 +1,5 @@
 import '@smastrom/react-rating/style.css';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
@@ -22,89 +22,24 @@ interface Review {
     memo: string; //메모
 }
 
-/*const mockData: Review[] = [ {   //더미데이터
-            placeId: 10,
-            placeName: "스페인오늘",
-            x: 10,
-            y: 20,
-            reviewId: 1,
-            date: "20250101", 
-            rating: 4.5, 
-            memo: "맛있긴한데 너무 비싸요ㅜㅜ",
-            maintag: "#존맛",
-            subtags: ["#스페인", "#하몽"], 
-            imageUrl: "사진없음"
-        },
-        {   
-            placeId: 10, 
-            placeName: "스페인오늘",
-            x: 10,
-            y: 20,
-            reviewId: 2,
-            date: "20250101", 
-            rating: 3.5, 
-            memo: "개존맛임 또가야지~ 근데 너무 비싸ㅜㅜ 돈 많이 벌어야지!",
-            maintag: "#존맛",
-            subtags: ["#스페인", "#하몽"], 
-            imageUrl: "사진없음"
-        },
-        {   
-            placeId: 10, 
-            placeName: "스페인오늘",
-            x: 10,
-            y: 20,
-            reviewId: 3,
-            date: "20250101", 
-            rating: 2.5, 
-            memo: "개존맛임 또가야지~",
-            maintag: "#존맛",
-            subtags: ["#스페인", "#하몽"], 
-            imageUrl: "사진없음"
-        },
-        {   
-            placeId: 10, 
-            placeName: "스페인오늘",
-            x: 10,
-            y: 20,
-            reviewId: 4,
-            date: "20250101", 
-            rating: 1.5, 
-            memo: "개존맛임 또가야지~",
-            maintag: "#존맛",
-            subtags: ["#스페인", "#하몽"], 
-            imageUrl: "사진없음"
-        },
-        {   
-            placeId: 10, 
-            placeName: "스페인오늘",
-            x: 10,
-            y: 20,
-            reviewId: 5,
-            date: "20250101", 
-            rating: 5, 
-            memo: "개존맛임 또가야지~",
-            maintag: "#존맛",
-            subtags: ["#스페인", "#하몽"], 
-            imageUrl: "사진없음"
-        }
-    ];*/
-
-    const fetchReviewsByPlaceId = async (placeId: string): Promise<Review[]> => { //해당 장소의 리뷰들 받아옴
+const fetchReviewsByPlaceId = async (placeId: string): Promise<Review[]> => { //해당 장소의 리뷰들 받아옴
         const { data } = await api.get<Review[]>(`/reviews/place/${placeId}`);
         return data;
-    }
+}
 
 const ReviewList: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { placeId } = useParams<{ placeId: string }>(); //검색에서 url에 담아 넘겨주는 카카오 장소 id
+    //const { placeId } = useParams<{ placeId: string }>(); //검색에서 url에 담아 넘겨주는 카카오 장소 id
+    const placeId = location.state.placeId;
     const placeName = location.state.placeName; //검색에서 장소 이름을 state에 담아서 넘겨준거
+    const placeAddress = location.state.placeAddress;
     const placeX = location.state.longitude; //장소의 위도, 경도
     const placeY = location.state.latitude;
 
     const handleBack = () => navigate(-1);
     const handleWriteReview = () => navigate(`/review/writereview/${placeId}`,
-        { state: { x: placeX, y: placeY, placeId: placeId, placeName: placeName }}); //1. 처음 리뷰 작성하는 화면이랑, 리뷰 보는 화면 분리
+        { state: { x: placeX, y: placeY, placeId: placeId, placeName: placeName, placeAddress: placeAddress }}); //1. 처음 리뷰 작성하는 화면이랑, 리뷰 보는 화면 분리
     const handleReviewClick = (review: Review) => {
         navigate(`/review/modifyreview/${placeId}`, { state: { reviewData: review }});
     }

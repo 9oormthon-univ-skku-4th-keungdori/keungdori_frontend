@@ -210,7 +210,9 @@ const Search: React.FC = () => {
         console.log("리뷰 작성:", place.name);
         navigate('/review/reviewlist/${place.place_id}', 
             { state: { 
-                placeName: place.name, 
+                placeName: place.name,
+                placeId: place.place_id,
+                placeAddress: place.formatted_address,
                 longitude: place.geometry.location.lng(), 
                 latitude: place.geometry.location.lat()  
             }
