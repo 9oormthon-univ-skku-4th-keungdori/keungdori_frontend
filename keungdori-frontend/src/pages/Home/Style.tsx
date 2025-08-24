@@ -19,9 +19,13 @@ export const SettingsIconImg = styled.img`
 `;
 
 export const HamburgerIcon = styled.img`
+    width: 20px;
+    height: 18px;
 `;
 
 export const KeungdoriIcon = styled.img`
+    width: 24px;
+    height: 24px;
 `;
 
 export const SearchWrapper = styled.div`

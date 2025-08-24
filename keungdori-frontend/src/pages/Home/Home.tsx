@@ -1,15 +1,38 @@
 import React, { lazy, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { APIProvider, useApiIsLoaded } from "@vis.gl/react-google-maps";
 import { HomeWrapper, HamburgerIcon, KeungdoriIcon, IconWrapper, MapContainer, SearchWrapper, SearchIcon, SearchInput } from "./Style";
-import Header from "../../components/Header";
 import hamburger from "../../assets/hamburger_icon.png";
 import keungdori from "../../assets/keungdori.png";
 import searchIcon from "../../assets/search_icon.png";
-//import KakaoMap from "../../components/KakaoMap";
+import Header from "../../components/Header";
 import BottomSheet from "../../components/bottomsheet/BottomSheet";
-import { useNavigate } from "react-router-dom";
 import GoogleMap from "../../components/GoogleMap";
-import { APIProvider, useApiIsLoaded } from "@vis.gl/react-google-maps";
 import Spinner from "../../components/Spinner";
+import api from "../../api/api";
+import { useInfiniteQuery, type QueryFunctionContext} from "@tanstack/react-query";
+
+interface Review {
+    name: number; // 구글 장소 이름
+    address: string; // 구글 장소 주소
+    googleId: string; // 구글 장소 id
+    xCoordinate: number; //장소 위도
+    yCoordinate: number; //장소 경도
+    reviewId: number; //리뷰 id
+    date: string; //리뷰 작성한 날짜
+    rating: number; //별점
+    mainTag: string; //메인태그
+    subTags: string[]; //서브태그
+    imageUrl?: string; //이미지경로(supabase)
+    memo: string; //메모
+}
+
+interface ReviewPage {
+    reviews: Review[];
+    nextPage: number | null;
+}
+
+type ReviewQueryKey = [string, google.maps.LatLngBounds | null];
 
 const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
 
@@ -18,7 +41,8 @@ const DrawerComponent = lazy(() => import("../../components/DrawerComponent"));
 const MapLoader: React.FC<{
     currentPosition: { latitude: number; longitude: number; };
     handleMapClick: (placeId: string | null) => void;
-}> = ({ currentPosition, handleMapClick }) => {
+    onBoundsChanged: (bounds: google.maps.LatLngBounds) => void;
+}> = ({ currentPosition, handleMapClick, onBoundsChanged }) => {
 
     const apiIsLoaded = useApiIsLoaded();
 
@@ -27,21 +51,53 @@ const MapLoader: React.FC<{
             latitude={currentPosition.latitude}
             longitude={currentPosition.longitude}
             onMapClick={handleMapClick}
+            onBoundsChanged={onBoundsChanged}
         />
     ) : (
         <Spinner />
     );
 };
 
+const fetchReview = async ({ pageParam = 0, queryKey })  => {
+    const [, bounds] = queryKey;
+
+    if (!bounds) {
+        return { reviews: [], nextPage: null };
+    }
+
+    const { north, south, east, west } = bounds.toJSON();
+    const { data } = await api.get(`/reviews/nearme`, { 
+        params: {
+            page: pageParam,
+            north, south, east, west
+        }
+    });
+    return data;
+}
 // 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
 const Home: React.FC = () => {
     const navigate = useNavigate();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [currentPosition, setCurrentPosition] = useState({
-        latitude: 37.588100,
-        longitude: 126.992831,
-    });
-    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+    const [currentPosition, setCurrentPosition] = useState({ latitude: 37.588100, longitude: 126.992831 }); //현재 위치
+    const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null); //지도에서 클릭한 장소의 장소 id
+    const [isInteractiveMapReady, setInteractiveMapReady] = useState(false); //정적 지도 보여지면 바로 지도 api 로드
+    const [staticMapUrl, setStaticMapUrl] = useState<string | null>(null); //정적 지도 url
+    const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null); //화면에서 지도 범위 어디인지
+
+    const {
+        data: reviewData,
+        error,
+        fetchNextPage,
+        hasNextPage,
+        isFetching,
+        isFetchingNextPage
+    } = useInfiniteQuery({
+        queryKey: ['reviews', bounds],
+        queryFn: fetchReview,
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
+        enabled: !!bounds
+    })
 
     const handleMapClick = useCallback((placeId: string | null) => {
         if (placeId) {
@@ -52,6 +108,11 @@ const Home: React.FC = () => {
             setSelectedPlaceId(placeId);
             // 여기서 BottomSheet를 열거나 다른 동작을 수행할 수 있습니다.
         }
+    }, [selectedPlaceId]);
+
+    const handleBoundsChanged = useCallback((newBounds: google.maps.LatLngBounds) => {
+        console.log("지도 범위가 변경되었습니다 (부모 컴포넌트):", newBounds.toJSON());
+        setBounds(newBounds);
     }, []);
 
     const handleSearchClick = () => {
@@ -69,11 +130,39 @@ const Home: React.FC = () => {
         setIsDrawerOpen(open);
     };
 
-    useEffect(() => {
-        let watchId: number | null = null;
-
+    useEffect(() => { //처음에 위치 가져오고 그 다음에 해당 위치의 지도 이미지 표시해서 lcp 줄임
         if (navigator.geolocation) {
-            watchId = navigator.geolocation.watchPosition(
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setCurrentPosition({ latitude, longitude });
+
+                    const newStaticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=17&size=600x800&key=${API_KEY}`
+                    setStaticMapUrl(newStaticMapUrl);
+
+                    setTimeout(() => {
+                        setInteractiveMapReady(true);
+                    }, 1000);
+                },
+                (error) => {
+                    console.log("위치 조회 실패", error);
+                    setInteractiveMapReady(true);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 1000,
+                    maximumAge: 0
+                }
+            );
+        } else {
+            console.error("브라우저가 위치정보 제공하지 않음");
+            setInteractiveMapReady(true);
+        }
+    }, []); 
+
+    useEffect(() => {
+        if (isInteractiveMapReady && navigator.geolocation) {
+            const watchId = navigator.geolocation.watchPosition(
                 (position) => {
                     setCurrentPosition({// 실시간 위치 추적
                         latitude: position.coords.latitude,
@@ -85,20 +174,18 @@ const Home: React.FC = () => {
                 },
                 {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 1000,
                     maximumAge: 0
                 }
             );
-        } else {
-            console.error("브라우저가 위치정보 api 제공하지 않음");
+
+            return () => {
+            navigator.geolocation.clearWatch(watchId); // 다른 화면 이동하면 종료(배터리 소모 많음)
+            };
+
         }
 
-        return () => {
-            if (watchId !== null) {
-                navigator.geolocation.clearWatch(watchId); // 다른 화면 이동하면 종료(배터리 소모 많음)
-            }
-        }
-    }, []);
+    }, [isInteractiveMapReady]);
 
 
     return (
@@ -122,15 +209,33 @@ const Home: React.FC = () => {
                 </SearchWrapper>
         
                 <MapContainer>
-                    <APIProvider apiKey={API_KEY} libraries={['places']}>
-                        <MapLoader
-                            currentPosition={currentPosition}
-                            handleMapClick={handleMapClick}
-                        />
-                    </APIProvider>
-                    </MapContainer>
+                    {isInteractiveMapReady ? (
+                        <APIProvider apiKey={API_KEY} libraries={['places']}>
+                            <MapLoader
+                                currentPosition={currentPosition}
+                                handleMapClick={handleMapClick}
+                                onBoundsChanged={handleBoundsChanged}
+                            />
+                        </APIProvider>
+                    ) : (
+                        staticMapUrl ? (
+                            <img 
+                                src={staticMapUrl} 
+                                alt="Map of current location" 
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                        ) : (
+                            <Spinner />
+                        )
+                    )}
+                </MapContainer>
                 
-                <BottomSheet/>
+                <BottomSheet
+                    reviewsData={reviewData}
+                    isFetching={isFetching}
+                    fetchNextPage={fetchNextPage}
+                    hasNextPage={hasNextPage}
+                />
 
             
             </HomeWrapper>

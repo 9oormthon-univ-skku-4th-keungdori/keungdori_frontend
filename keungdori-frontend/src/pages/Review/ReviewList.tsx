@@ -9,15 +9,16 @@ import ReviewCard from '../../components/reviewcard/ReviewCard';
 import vector from '../../assets/vector.png';
 
 interface Review {
-    placeId: number; //구글 장소 id
-    placeName: string; //구글 장소 이름
-    x: number; //장소 위도
-    y: number; //장소 경도
+    name: number; // 구글 장소 이름
+    address: string; // 구글 장소 주소
+    googleId: string; // 구글 장소 id
+    xCoordinate: number; //장소 위도
+    yCoordinate: number; //장소 경도
     reviewId: number; //리뷰 id
     date: string; //리뷰 작성한 날짜
     rating: number; //별점
-    maintag: string; //메인태그
-    subtags: string[]; //서브태그
+    mainTag: string; //메인태그
+    subTags: string[]; //서브태그
     imageUrl?: string; //이미지경로(supabase)
     memo: string; //메모
 }
@@ -68,7 +69,7 @@ const ReviewList: React.FC = () => {
             <ContentWrapper>
                 <PlaceHeader>
                     <PlaceName>{placeName || '장소 정보'}</PlaceName>
-                    {hasReviews && <MainHashtag>{reviews[0].maintag}</MainHashtag>}
+                    {hasReviews && <MainHashtag>{reviews[0].mainTag}</MainHashtag>}
                 </PlaceHeader>
 
                 {hasReviews ? (

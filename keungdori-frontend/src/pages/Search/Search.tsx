@@ -38,17 +38,17 @@ interface Place {
         location: google.maps.LatLng;
     }
 }
-
 interface Review {
-    placeId: number; //구글 장소 id
-    placeName: string; //구글 장소 이름
-    x: number; //장소 위도
-    y: number; //장소 경도
+    name: number; // 구글 장소 이름
+    address: string; // 구글 장소 주소
+    googleId: string; // 구글 장소 id
+    xCoordinate: number; //장소 위도
+    yCoordinate: number; //장소 경도
     reviewId: number; //리뷰 id
     date: string; //리뷰 작성한 날짜
     rating: number; //별점
-    maintag: string; //메인태그
-    subtags: string[]; //서브태그
+    mainTag: string; //메인태그
+    subTags: string[]; //서브태그
     imageUrl?: string; //이미지경로(supabase)
     memo: string; //메모
 }
@@ -98,12 +98,12 @@ const searchGooglePlaces = async (
     }
 };
 
-const fetchPlaceNameSearch = async ({ pageParam = 1, query }: { pageParam?: number, query: string }) => {
-    const { data } = await api.get(`/reviews/visited?name=${query}&page=${pageParam}`);
+const fetchPlaceNameSearch = async ({ pageParam = 0, query }: { pageParam?: number, query: string }) => {
+    const { data } = await api.get(`/reviews/visited?search=${query}&page=${pageParam}`);
     return data; //api 응답이 { items: [], nextPage: 2라고 가정}
 };
 
-const fetchHashtagSearch = async ({ pageParam = 1, query }: { pageParam?: number, query: string }) => {
+const fetchHashtagSearch = async ({ pageParam = 0, query }: { pageParam?: number, query: string }) => {
     const { data } = await api.get(`/reviews/hashtag?tag=${query}&page=${pageParam}`);
     return data;
 }
@@ -177,7 +177,7 @@ const Search: React.FC = () => {
             setIsDrawerOpen(open);
         };
 
-        const handleFocus = async () => {
+    const handleFocus = async () => {
             if (!googleScriptLoaded.current) {
                 try {
                     await loadGoogleScript();
@@ -187,7 +187,7 @@ const Search: React.FC = () => {
                     console.error("스크립트 미리 로드 실패:", error);
                 }
             }
-        };
+    };
 
     const handleKeyEnter = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && searchQuery.trim() !== '') {
@@ -220,7 +220,7 @@ const Search: React.FC = () => {
     };
 
     const handleReviewClick = (review: Review) => {
-        navigate(`/review/modifyreview/${review.placeId}`, { state: { reviewData: review }});
+        navigate(`/review/modifyreview/${review.googleId}`, { state: { reviewData: review }});
     }
 
     useEffect(() => {//브라우저 api로 현재 위치 가져오기
