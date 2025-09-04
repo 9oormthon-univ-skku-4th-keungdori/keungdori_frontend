@@ -10,21 +10,27 @@ import {
     ReviewMemo, 
     HashtagContainer 
 } from './Styles';
-import Hashtag from '../Hashtag';
+import RdOnlyHashtag from '../RdOnlyHashtag';
+
+interface Tag {
+    hashtag: string;
+    backgroundColor: string;
+    fontColor: string;
+}
 
 interface Review {
-    name: number; // 구글 장소 이름
-    address: string; // 구글 장소 주소
-    googleId: string; // 구글 장소 id
-    xCoordinate: number; //장소 위도
-    yCoordinate: number; //장소 경도
-    reviewId: number; //리뷰 id
-    date: string; //리뷰 작성한 날짜
-    rating: number; //별점
-    mainTag: string; //메인태그
-    subTags: string[]; //서브태그
-    imageUrl?: string; //이미지경로(supabase)
-    memo: string; //메모
+    reviewId: number;
+    rating: number;
+    memo: string;
+    mainTag: Tag; // string -> Tag
+    subTags: Tag[]; // string[] -> Tag[]
+    name: string; 
+    address: string;
+    googleId: string;
+    xCoordinate: number;
+    yCoordinate: number;
+    date: string;
+    imageUrl: string;
 }
 
 interface ReviewCardProps {
@@ -45,7 +51,6 @@ const renderStars = (rating: number) => {
 const ReviewCard: React.FC<ReviewCardProps> = ({ review, onClick }) => {
     return (
         <CardContainer onClick={() => onClick(review)}>
-            {/* 이미지가 있다면 ReviewImagePlaceholder 대신 img 태그를 사용하도록 수정할 수 있습니다. */}
             <ReviewImagePlaceholder />
             <ReviewContent>
                 <ReviewDate>{review.date}</ReviewDate>
@@ -57,7 +62,8 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, onClick }) => {
                         : review.memo}
                 </ReviewMemo>
                 <HashtagContainer>
-                    {review.subTags.map(tag => <Hashtag key={tag}>{tag}</Hashtag>)}
+                    {review.subTags.map(tag => 
+                    <RdOnlyHashtag key={tag.hashtag} hashtag={tag.hashtag} backgroundColor={tag.backgroundColor} fontColor={tag.fontColor}/>)}
                 </HashtagContainer>
             </ReviewContent>
         </CardContainer>

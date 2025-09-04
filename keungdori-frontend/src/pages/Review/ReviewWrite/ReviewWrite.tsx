@@ -50,9 +50,14 @@ const createTag = async (tagText: string) => {
 };
 
 const updateTagColor = async (variables: { text: string; backgroundColor: string }) => {
-    const { data } = await api.patch('/hashtags', { hashtag: variables.text, color: variables.backgroundColor });
+    const { data } = await api.patch('/hashtags', { hashtag: variables.text, backgroundColor: variables.backgroundColor });
     return data;
 };
+
+const deleteTag = async (tagText: string) => {
+    const { data } = await api.delete('/hashtags', { data: { hashtag: tagText } });
+    return data;
+}
 
 const ReviewWrite: React.FC = () => {
     const location = useLocation();
@@ -123,7 +128,7 @@ const ReviewWrite: React.FC = () => {
     const { mutate: patchColor } = useMutation({
         mutationFn: updateTagColor,
         onSuccess: (updatedTag) => { 
-            const tagForState = { text: updatedTag.hashtag, backgroundColor: updatedTag.color };
+            const tagForState = { text: updatedTag.hashtag, backgroundColor: updatedTag.backgroundColor };
             if (activeInput === 'main') {
                 setMainTag(tagForState);
             } else {
@@ -140,6 +145,19 @@ const ReviewWrite: React.FC = () => {
         }
     });
 
+    const { mutate: removeTag } = useMutation({
+        mutationFn: deleteTag,
+        onSuccess: (data, tagTextToDelete) => {
+            if (mainTag?.text === tagTextToDelete) {
+                setMainTag(null);
+            } else {
+                setSubTags(prev => prev.filter(tag => tag.text !== tagTextToDelete));
+            }
+        },
+        onError: (error, tagTextToDelete) => {
+            alert("태그 삭제 실패");
+        }
+    })
 
     const resetInputState = () => {
         setActiveInput(null);
@@ -168,6 +186,11 @@ const ReviewWrite: React.FC = () => {
             patchColor({ text: tagToColorize, backgroundColor }); // 색상 수정 API 호출
         }
     };
+
+    const handleDeleteTag = (textToDelete: string) => {
+        removeTag(textToDelete);
+    };
+
     
     const handleSubmit = async () => {
         if (!rating || !mainTag) {
@@ -233,7 +256,7 @@ const ReviewWrite: React.FC = () => {
                                     autoFocus
                                 />
                             ) : mainTag ? (
-                                <Hashtag bgColor={mainTag.backgroundColor}>{mainTag.text}</Hashtag>
+                                <Hashtag text={mainTag.text} bgColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
                             ) : (
                                 <TagPlaceholder onClick={() => { setActiveInput('main'); setInputValue('#')}}>
                                     메인 태그를 추가해주세요.
@@ -244,7 +267,7 @@ const ReviewWrite: React.FC = () => {
                         <TagSection>
                             {/* 이미 추가된 서브 태그들 렌더링 */}
                             {subTags.map((tag) => (
-                                <Hashtag key={tag.text} bgColor={tag.backgroundColor}>{tag.text}</Hashtag>
+                                <Hashtag key={tag.text} text={tag.text} bgColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
                             ))}
                             {activeInput === 'sub' ? (
                                  <TagInput 

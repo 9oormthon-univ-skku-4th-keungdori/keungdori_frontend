@@ -1,41 +1,62 @@
 import '@smastrom/react-rating/style.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
 import api from '../../api/api';
 import { ScreenWrapper, ContentWrapper, MainHashtag, NoReviewsMessage, PlaceHeader, PlaceName, ReviewListContainer, ButtonWrapper, VectorIcon } from './Styles';
 import ReviewCard from '../../components/reviewcard/ReviewCard';
 import vector from '../../assets/vector.png';
+import { useInView } from 'react-intersection-observer';
+import { useEffect } from 'react';
+import React from 'react';
+import Spinner from '../../components/Spinner';
 
-interface Review {
-    name: number; // 구글 장소 이름
-    address: string; // 구글 장소 주소
-    googleId: string; // 구글 장소 id
-    xCoordinate: number; //장소 위도
-    yCoordinate: number; //장소 경도
-    reviewId: number; //리뷰 id
-    date: string; //리뷰 작성한 날짜
-    rating: number; //별점
-    mainTag: string; //메인태그
-    subTags: string[]; //서브태그
-    imageUrl?: string; //이미지경로(supabase)
-    memo: string; //메모
+interface Tag {
+    hashtag: string;
+    backgroundColor: string;
+    fontColor: string;
 }
 
-const fetchReviewsByPlaceId = async (placeId: string): Promise<Review[]> => { //해당 장소의 리뷰들 받아옴
-    const { data } = await api.get<Review[]>(`/reviews/place/${placeId}`);
-    return data;
+interface Review {
+    reviewId: number;
+    rating: number;
+    memo: string;
+    mainTag: Tag; // string -> Tag
+    subTags: Tag[]; // string[] -> Tag[]
+    name: string; 
+    address: string;
+    googleId: string;
+    xCoordinate: number;
+    yCoordinate: number;
+    date: string;
+    imageUrl: string;
+}
+
+//리뷰 불러오는 api
+const fetchReviewsByPlaceId = async (placeId: string, pageParam: number) => {
+    const { data } = await api.get(`/reviews/place/${placeId}?page=${pageParam}`);
+    const { placeInfo, reviews, pageInfo } = data; 
+
+    const nextPage = pageInfo.currentPage < pageInfo.totalPages - 1
+        ? pageInfo.currentPage + 1
+        : undefined;
+
+    return {
+        placeInfo: placeInfo,
+        reviews: reviews,
+        nextPage: nextPage,
+    };
 }
 
 const ReviewList: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    //const { placeId } = useParams<{ placeId: string }>(); //검색에서 url에 담아 넘겨주는 카카오 장소 id
+    //검색 화면에서 넘겨준 값들
     const placeId = location.state.placeId;
-    const placeName = location.state.placeName; //검색에서 장소 이름을 state에 담아서 넘겨준거
+    const placeName = location.state.placeName; 
     const placeAddress = location.state.placeAddress;
-    const placeX = location.state.longitude; //장소의 위도, 경도
+    const placeX = location.state.longitude; 
     const placeY = location.state.latitude;
 
     const handleBack = () => navigate(-1);
@@ -45,19 +66,45 @@ const ReviewList: React.FC = () => {
         navigate(`/review/modifyreview/${placeId}`, { state: { reviewData: review }});
     }
 
+    //무한스크롤 감지
+    const { ref, inView } = useInView({ 
+        threshold: 0,
+        rootMargin: '200px',
+    });
+
     //UseInfiniteQuery로 교체해서 무한 스크롤해서 계속 데이터를 볼 수 있게 해야됨(페이지 단위)
-    const { data: reviews, /*isPending, isError, error*/ } = useQuery<Review[], Error> ({
+    const { 
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isLoading,
+        isFetching,
+    } = useInfiniteQuery({
        queryKey: ['reviews', placeId],
-       queryFn: () => fetchReviewsByPlaceId(placeId!),
+       queryFn: ({ pageParam = 0}) => fetchReviewsByPlaceId(placeId!, pageParam),
+       initialPageParam: 0,
+       getNextPageParam: (lastPage) => lastPage.nextPage,
        enabled: !!placeId, 
     });
+
+    useEffect(() => {
+        // 사용자가 페이지 끝을 보고 있고(inView), 다음 페이지가 있으며(hasNextPage), 데이터를 불러오는 중이 아닐 때(!isFetching)
+        if (inView && hasNextPage && !isFetching) {
+            fetchNextPage();
+        }
+    }, [inView, hasNextPage, isFetching, fetchNextPage]);
 
     /*if (isError) {
         console.error("리뷰 데이터 호출 실패.", error);
         return <div>에러가 발생했습니다!</div>;
     }*/
 
-    const hasReviews = reviews && reviews.length > 0;
+    if (isLoading) {
+        return <Spinner />;
+    }
+
+    const hasReviews = data && data.pages.some(page => page.reviews.length > 0);
+        
 
     return (
         <ScreenWrapper>
@@ -68,23 +115,42 @@ const ReviewList: React.FC = () => {
 
             <ContentWrapper>
                 <PlaceHeader>
-                    <PlaceName>{placeName || '장소 정보'}</PlaceName>
-                    {hasReviews && <MainHashtag>{reviews[0].mainTag}</MainHashtag>}
+                    <PlaceName>{placeName}</PlaceName>
+                    {hasReviews && data?.pages[0].reviews[0]?.mainTag.hashtag &&
+                        <MainHashtag>
+                            {data.pages[0].reviews[0].mainTag.hashtag}
+                        </MainHashtag>
+                    }
                 </PlaceHeader>
 
                 {hasReviews ? (
                     <ReviewListContainer>
-                        {reviews.map(review => (
-                            <ReviewCard 
-                                key={review.reviewId}
-                                review={review} 
-                                onClick={handleReviewClick} 
-                            />
+                        {data.pages.map((page, i) => (
+                            <React.Fragment key={i}>
+                                {page.reviews.map((review: Review) => (
+                                    <ReviewCard 
+                                        key={review.reviewId}
+                                        review={review} 
+                                        onClick={() => handleReviewClick(review)} 
+                                    />
+                                ))}
+                            </React.Fragment>
                         ))}
                     </ReviewListContainer>
                 ) : (
                     <NoReviewsMessage>해당 장소의 리뷰가 없습니다</NoReviewsMessage>
                 )}
+
+                <div ref={ref} style={{ height: '1px' }} />
+
+                {/* 다음 페이지를 불러올 때(isFetching) 그리고 초기 로딩이 아닐 때(!isLoading) 로딩 UI 표시 */}
+                {isFetching && !isLoading && (
+                    <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
+                         {/* 간단한 로더를 여기에 두거나, Spinner 컴포넌트를 수정하여 사용 */}
+                        <NoReviewsMessage>리뷰를 더 불러오는 중입니다...</NoReviewsMessage>
+                    </div>
+                )}
+
             </ContentWrapper>
 
             <ButtonWrapper>

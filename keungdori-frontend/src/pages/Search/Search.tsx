@@ -26,9 +26,9 @@ import DrawerComponent from "../../components/DrawerComponent";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import ReviewCard from "../../components/reviewcard/ReviewCard";
 import { useInView } from 'react-intersection-observer';
 import { loadGoogleScript } from "../../utils/loadGoogleScript";
+import PlaceCard from "../../components/placecard/PlaceCard";
 
 interface Place {
     place_id: string;
@@ -38,8 +38,8 @@ interface Place {
         location: google.maps.LatLng;
     }
 }
-interface Review {
-    name: number; // 구글 장소 이름
+/*interface Review {
+    name: string; // 구글 장소 이름
     address: string; // 구글 장소 주소
     googleId: string; // 구글 장소 id
     xCoordinate: number; //장소 위도
@@ -51,6 +51,15 @@ interface Review {
     subTags: string[]; //서브태그
     imageUrl?: string; //이미지경로(supabase)
     memo: string; //메모
+}*/
+
+interface ReviewedPlace {
+    placeId: number;
+    name: string;
+    address: string;
+    googleId: string;
+    xcoordinate: number;
+    ycoordinate: number;
 }
 
 /*const formatDistance = (distance: string) => {// 리렌더링될때마다 새로 생성할 필요없으니까 최초 렌더링 시에 한번만 생성하도록 하려고 함수 컴포넌트 밖에 둠
@@ -100,12 +109,29 @@ const searchGooglePlaces = async (
 
 const fetchPlaceNameSearch = async ({ pageParam = 0, query }: { pageParam?: number, query: string }) => {
     const { data } = await api.get(`/reviews/visited?search=${query}&page=${pageParam}`);
-    return data; //api 응답이 { items: [], nextPage: 2라고 가정}
+    
+    const { content, pageInfo } = data;
+    
+    //다음 페이지 존재 여부 확인
+    const nextPage = pageInfo.currentPage < pageInfo.totalPages - 1 ? pageInfo.currentPage + 1 : undefined;
+
+    return {
+        content: content,
+        nextPage: nextPage,
+    }
 };
 
 const fetchHashtagSearch = async ({ pageParam = 0, query }: { pageParam?: number, query: string }) => {
     const { data } = await api.get(`/reviews/hashtag?tag=${query}&page=${pageParam}`);
-    return data;
+    
+    const { content, pageInfo } = data;
+
+    const nextPage = pageInfo.currentPage < pageInfo.totalPages - 1? pageInfo.currentPage + 1 : undefined;
+
+    return {
+        content: content,
+        nextPage: nextPage,
+    };
 }
 
 
@@ -145,8 +171,8 @@ const Search: React.FC = () => {
     } = useInfiniteQuery({
         queryKey: ['placeNameSearch', searchQuery],
         queryFn: ({ pageParam }) => fetchPlaceNameSearch({ pageParam, query: searchQuery }),
-        getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
-        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        initialPageParam: 0,
         enabled: false,
     });
 
@@ -159,8 +185,8 @@ const Search: React.FC = () => {
     } = useInfiniteQuery({
         queryKey: ['hashtagSearch', searchQuery],
         queryFn: ({ pageParam }) => fetchHashtagSearch({ pageParam, query: searchQuery }),
-        getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
-        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        initialPageParam: 0,
         enabled: false, 
     });
 
@@ -208,7 +234,7 @@ const Search: React.FC = () => {
 
     const handleReviewButtonClick = (place: Place) => { //리뷰 목록 화면으로 이동할때, 장소 이름, 좌표 넘겨줌
         console.log("리뷰 작성:", place.name);
-        navigate('/review/reviewlist/${place.place_id}', 
+        navigate(`/review/reviewlist/${place.place_id}`, 
             { state: { 
                 placeName: place.name,
                 placeId: place.place_id,
@@ -219,8 +245,15 @@ const Search: React.FC = () => {
         });
     };
 
-    const handleReviewClick = (review: Review) => {
-        navigate(`/review/modifyreview/${review.googleId}`, { state: { reviewData: review }});
+    const handleReviewClick = (place: ReviewedPlace) => {
+        navigate(`/review/reviewlist/${place.googleId}`, 
+            { state: { 
+                placeName: place.name,
+                placeId: place.googleId,
+                placeAddress: place.address,
+                longitude: place.xcoordinate,
+                latitude: place.ycoordinate
+             }});
     }
 
     useEffect(() => {//브라우저 api로 현재 위치 가져오기
@@ -240,10 +273,10 @@ const Search: React.FC = () => {
     useEffect(() => {
         if (inView) {
             if (activeTab === 'visited' && hasNextVisited && !isVisitedFetching) {
-            fetchNextVisited();
+                fetchNextVisited();
             } 
             else if (activeTab === 'hashtag' && hasNextHashtag && !isHashtagFetching) {
-            fetchNextHashtag();
+                fetchNextHashtag();
             }
         }
     }, [inView, activeTab, hasNextVisited, isVisitedFetching, fetchNextVisited, hasNextHashtag, isHashtagFetching, fetchNextHashtag]);
@@ -318,36 +351,34 @@ const Search: React.FC = () => {
                 
                 {activeTab === 'visited' && (
                     <ResultsList>
-                        { visitedResult?.pages && visitedResult.pages[0].items.length > 0 ? (
+                        {visitedResult?.pages && visitedResult.pages[0].content.length > 0 ? (
                             <ReviewListContainer>
                                 { visitedResult.pages.map(page =>
-                                page.items.map((review: Review) => (
-                                    <ReviewCard 
-                                        key={review.reviewId}
-                                        review={review} 
-                                        onClick={() => handleReviewClick(review)} 
+                                page.content.map((place: ReviewedPlace) => (
+                                    <PlaceCard 
+                                        key={place.placeId}
+                                        place={place} 
+                                        onClick={() => handleReviewClick(place)} 
                                     />
                                 ))
                             )}
-                            <div ref={ref}/>
                             </ReviewListContainer>
                         ) : (
                             <Message>해당 장소의 리뷰가 없습니다</Message>
                         )}
-                        {isVisitedFetching && <Message>리뷰를 불러오는 중입니다</Message>} 
                     </ResultsList>
                 )}
 
                 {activeTab === 'hashtag' && (
                     <ResultsList>
-                        { hashtagResult?.pages && hashtagResult.pages[0].items.length > 0 ? (
+                        { hashtagResult?.pages && hashtagResult.pages[0].content.length > 0 ? (
                             <ReviewListContainer>
                                 { hashtagResult.pages.map(page => 
-                                page.items.map((review: Review) => (
-                                    <ReviewCard 
-                                        key={review.reviewId}
-                                        review={review} 
-                                        onClick={() => handleReviewClick(review)} 
+                                page.content.map((place: ReviewedPlace) => (
+                                    <PlaceCard 
+                                        key={place.placeId}
+                                        place={place} 
+                                        onClick={() => handleReviewClick(place)} 
                                     />
                                 ))
                             )}
