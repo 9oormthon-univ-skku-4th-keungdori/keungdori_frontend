@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Routes, Route, /*useNavigate*/ } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import useAuthStore from './stores/authStore';
 import PrivateRoute from './components/PrivateRoute';
@@ -20,7 +20,6 @@ const ReviewEdit = lazy(() => import('./pages/Review/ReviewEdit/ReviewEdit'));
 
 const App: React.FC = () => {
   const { setToken } = useAuthStore();
-  //const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -66,7 +65,6 @@ const App: React.FC = () => {
           <Route path="/review/modifyreview/:placeId" element={<ReviewEdit />} />
         </Route>
 
-        {/* 인증과 무관한 페이지 */}
         <Route path="/oauth/callback" element={<KakaoCallback />} />
       </Routes>
     </Suspense>

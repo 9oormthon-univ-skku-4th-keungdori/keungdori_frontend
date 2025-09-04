@@ -25,16 +25,16 @@ interface ReviewPage {
     reviews: Review[];
     nextPage: number | null;
 }
-/*
+
 interface ContentProps {
     reviewsData?: InfiniteData<ReviewPage>;
     isFetching: boolean;
     fetchNextPage: () => void;
     hasNextPage: boolean;
-}*/
+}
 
-const Content = (/*{ reviewsData, isFetching, fetchNextPage, hasNextPage }: ContentProps*/) => {
-  /*const navigate = useNavigate();
+const Content = ({ reviewsData, isFetching, fetchNextPage, hasNextPage }: ContentProps) => {
+  const navigate = useNavigate();
   
   const { ref, inView } = useInView({
         threshold: 0,
@@ -56,11 +56,11 @@ const Content = (/*{ reviewsData, isFetching, fetchNextPage, hasNextPage }: Cont
 
     if (!reviewsData || reviewsData.pages.length === 0 || reviewsData.pages[0].reviews.length === 0) {
         return <div>이 지역에 작성된 리뷰가 없습니다.</div>;
-    }*/
+    }
 
     return (
         <div>
-            {/* useInfiniteQuery의 데이터는 pages 배열에 중첩되어 있습니다.
+            {/* useInfiniteQuery의 데이터는 pages 배열에 중첩되어 있습니다.*/}
             {reviewsData.pages.map((page, i) => (
                 <React.Fragment key={i}>
                     {page.reviews.map(review => (
@@ -75,7 +75,7 @@ const Content = (/*{ reviewsData, isFetching, fetchNextPage, hasNextPage }: Cont
             
             {hasNextPage && <div ref={ref} style={{ height: '50px' }} />}
             
-            {isFetching && hasNextPage && <Spinner />}*/}
+            {isFetching && hasNextPage && <Spinner />}
         </div>
     );
 }

@@ -24,8 +24,8 @@ interface Review {
 }
 
 const fetchReviewsByPlaceId = async (placeId: string): Promise<Review[]> => { //해당 장소의 리뷰들 받아옴
-        const { data } = await api.get<Review[]>(`/reviews/place/${placeId}`);
-        return data;
+    const { data } = await api.get<Review[]>(`/reviews/place/${placeId}`);
+    return data;
 }
 
 const ReviewList: React.FC = () => {

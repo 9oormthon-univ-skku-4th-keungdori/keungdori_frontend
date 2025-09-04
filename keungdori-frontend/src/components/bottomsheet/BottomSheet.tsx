@@ -31,7 +31,7 @@ interface BottomSheetProps {
     hasNextPage: boolean;
 }
 
-const BottomSheet = (/*{ reviewsData, isFetching, fetchNextPage, hasNextPage }: BottomSheetProps*/) => {
+const BottomSheet = ({ reviewsData, isFetching, fetchNextPage, hasNextPage }: BottomSheetProps) => {
   const { sheet, content } = useBottomSheet();
 
   
@@ -40,10 +40,10 @@ const BottomSheet = (/*{ reviewsData, isFetching, fetchNextPage, hasNextPage }: 
       <BottomSheetHeader />
       <BottomSheetContent ref={content}>
         <Content 
-          {/*reviewsData={reviewsData}
+          reviewsData={reviewsData}
           isFetching={isFetching}
           fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}*/}
+          hasNextPage={hasNextPage}
         />
       </BottomSheetContent>
     </Wrapper>
