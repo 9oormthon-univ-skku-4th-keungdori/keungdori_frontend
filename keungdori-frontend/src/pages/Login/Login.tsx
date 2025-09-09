@@ -10,6 +10,7 @@ const Login: React.FC = () => {
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
     const handleLogin = () => {
+        console.log("Generated Kakao Auth URL:", KAKAO_AUTH_URL);
         window.location.href = KAKAO_AUTH_URL;
     }
 
