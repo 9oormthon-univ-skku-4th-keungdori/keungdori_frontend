@@ -6,27 +6,33 @@ import hamburger from "../../assets/hamburger_icon.png";
 import keungdori from "../../assets/keungdori.png";
 import searchIcon from "../../assets/search_icon.png";
 import Header from "../../components/Header";
-import BottomSheet from "../../components/bottomsheet/BottomSheet";
+//import BottomSheet from "../../components/bottomsheet/BottomSheet";
 import GoogleMap from "../../components/GoogleMap";
 import Spinner from "../../components/Spinner";
-import api from "../../api/api";
-import { useInfiniteQuery, type InfiniteData, type QueryFunctionContext} from "@tanstack/react-query";
+//import api from "../../api/api";
+//import { useInfiniteQuery, type InfiniteData, type QueryFunctionContext} from "@tanstack/react-query";
 
 const DrawerComponent = lazy(() => import("../../components/DrawerComponent"));
 
+interface Tag {
+    hashtag: string;
+    backgroundColor: string;
+    fontColor: string;
+}
+
 interface Review {
-    name: number; // 구글 장소 이름
-    address: string; // 구글 장소 주소
-    googleId: string; // 구글 장소 id
-    xCoordinate: number; //장소 위도
-    yCoordinate: number; //장소 경도
-    reviewId: number; //리뷰 id
-    date: string; //리뷰 작성한 날짜
-    rating: number; //별점
-    mainTag: string; //메인태그
-    subTags: string[]; //서브태그
-    imageUrl?: string; //이미지경로(supabase)
-    memo: string; //메모
+    reviewId: number;
+    rating: number;
+    memo: string;
+    mainTag: Tag; // string -> Tag
+    subTags: Tag[]; // string[] -> Tag[]
+    name: string; 
+    address: string;
+    googleId: string;
+    xCoordinate: number;
+    yCoordinate: number;
+    date: string;
+    imageUrl: string;
 }
 
 interface ReviewPage {
@@ -56,7 +62,7 @@ const MapLoader: React.FC<{
     );
 };
 
-const fetchReview = async ({ pageParam = 0, queryKey }: QueryFunctionContext<[string, google.maps.LatLngBounds | null]>): Promise<ReviewPage> => {
+/*const fetchReview = async ({ pageParam = 0, queryKey }: QueryFunctionContext<[string, google.maps.LatLngBounds | null]>): Promise<ReviewPage> => {
     const [, bounds] = queryKey;
 
     if (!bounds) {
@@ -72,7 +78,7 @@ const fetchReview = async ({ pageParam = 0, queryKey }: QueryFunctionContext<[st
         }
     });
     return data;
-};
+};*/
 
 // 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
 const Home: React.FC = () => {
@@ -82,15 +88,13 @@ const Home: React.FC = () => {
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null); //지도에서 클릭한 장소의 장소 id
     const [isInteractiveMapReady, setInteractiveMapReady] = useState(false); //정적 지도 보여지면 바로 지도 api 로드
     const [staticMapUrl, setStaticMapUrl] = useState<string | null>(null); //정적 지도 url
-    const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null); //화면에서 지도 범위 어디인지
+    //const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null); //화면에서 지도 범위 어디인지
 
-    const {
+    /*const {
         data: reviewData,
-        error,
         fetchNextPage,
         hasNextPage,
         isFetching,
-        isFetchingNextPage
     } = useInfiniteQuery<
         ReviewPage,                                           // TQueryFnData: fetchReview가 반환하는 타입
         Error,                                               // TError: 에러 타입
@@ -103,7 +107,7 @@ const Home: React.FC = () => {
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
         enabled: !!bounds
-    })
+    })*/
 
     const handleMapClick = useCallback((placeId: string | null) => {
         if (placeId) {
@@ -118,7 +122,7 @@ const Home: React.FC = () => {
 
     const handleBoundsChanged = useCallback((newBounds: google.maps.LatLngBounds) => {
         console.log("지도 범위가 변경되었습니다 (부모 컴포넌트):", newBounds.toJSON());
-        setBounds(newBounds);
+        //setBounds(newBounds);
     }, []);
 
     const handleSearchClick = () => {
@@ -236,12 +240,12 @@ const Home: React.FC = () => {
                     )}
                 </MapContainer>
                 
-                <BottomSheet
+                {/*<BottomSheet
                     reviewsData={reviewData}
                     isFetching={isFetching}
                     fetchNextPage={fetchNextPage}
                     hasNextPage={hasNextPage}
-                />
+                />*/}
 
             
             </HomeWrapper>

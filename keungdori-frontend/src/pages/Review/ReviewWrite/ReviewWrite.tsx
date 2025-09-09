@@ -147,14 +147,15 @@ const ReviewWrite: React.FC = () => {
 
     const { mutate: removeTag } = useMutation({
         mutationFn: deleteTag,
-        onSuccess: (data, tagTextToDelete) => {
+        onSuccess: (tagTextToDelete) => {
             if (mainTag?.text === tagTextToDelete) {
                 setMainTag(null);
             } else {
                 setSubTags(prev => prev.filter(tag => tag.text !== tagTextToDelete));
             }
         },
-        onError: (error, tagTextToDelete) => {
+        onError: (error) => {
+            console.error("태그 삭제 실패:", error); 
             alert("태그 삭제 실패");
         }
     })

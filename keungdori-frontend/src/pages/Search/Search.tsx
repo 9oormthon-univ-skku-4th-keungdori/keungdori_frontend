@@ -38,20 +38,6 @@ interface Place {
         location: google.maps.LatLng;
     }
 }
-/*interface Review {
-    name: string; // 구글 장소 이름
-    address: string; // 구글 장소 주소
-    googleId: string; // 구글 장소 id
-    xCoordinate: number; //장소 위도
-    yCoordinate: number; //장소 경도
-    reviewId: number; //리뷰 id
-    date: string; //리뷰 작성한 날짜
-    rating: number; //별점
-    mainTag: string; //메인태그
-    subTags: string[]; //서브태그
-    imageUrl?: string; //이미지경로(supabase)
-    memo: string; //메모
-}*/
 
 interface ReviewedPlace {
     placeId: number;
@@ -61,15 +47,6 @@ interface ReviewedPlace {
     xcoordinate: number;
     ycoordinate: number;
 }
-
-/*const formatDistance = (distance: string) => {// 리렌더링될때마다 새로 생성할 필요없으니까 최초 렌더링 시에 한번만 생성하도록 하려고 함수 컴포넌트 밖에 둠
-    const distInMeters = parseInt(distance, 10);
-    if (isNaN(distInMeters)) return "";
-    if (distInMeters < 1000) {
-        return `${distInMeters}m`;
-    }
-    return `${(distInMeters / 1000).toFixed(1)}km`;
-};*/
 
 const searchGooglePlaces = async (
     query: string,
