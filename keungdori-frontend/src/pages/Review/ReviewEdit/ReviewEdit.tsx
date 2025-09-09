@@ -21,8 +21,8 @@ interface Review {
     reviewId: number; //리뷰 id
     date: string; //리뷰 작성한 날짜
     rating: number; //별점
-    maintag: string; //메인태그
-    subtags: string[]; //서브태그
+    mainTag: string; //메인태그
+    subTags: string[]; //서브태그
     imageUrl?: string; //이미지경로(supabase)
     memo: string; //메모
 }
@@ -63,10 +63,10 @@ const ReviewEdit: React.FC = () => {
     const [rating, setRating] = useState(reviewData.rating);
     const [memo, setMemo] = useState(reviewData.memo);
     const [mainTag, setMainTag] = useState<Tag | null>(
-        { text: reviewData.maintag, backgroundColor: '#42a5f5' }//!!해시태그 api로 가져와야 함
+        { text: reviewData.mainTag, backgroundColor: '#42a5f5' }//!!해시태그 api로 가져와야 함
     );
     const [subTags, setSubTags] = useState<Tag[]>(//!!해시태그 api로 가져와야 함
-        reviewData.subtags ? reviewData.subtags.map(tag => ({ text: tag, backgroundColor: '#FF769F' })) : []
+        reviewData.subTags ? reviewData.subTags.map(tag => ({ text: tag, backgroundColor: '#FF769F' })) : []
     );
     const review_image = reviewData.imageUrl || profile_image;
     const {
@@ -218,12 +218,12 @@ const ReviewEdit: React.FC = () => {
         const payload: { [key: string]: any } = {};
         if (rating !== reviewData.rating) payload.rating = rating;
         if (memo !== reviewData.memo) payload.memo = memo;
-        if (mainTag.text !== reviewData.maintag) payload.mainHashtag = mainTag.text;
+        if (mainTag.text !== reviewData.mainTag) payload.mainHashtag = mainTag.text;
         if (newImageUrl && newImageUrl !== reviewData.imageUrl) {
             payload.imageUrl = newImageUrl;
         }    
         const currentSubTags = subTags.map(t => t.text);
-        if (JSON.stringify(currentSubTags) !== JSON.stringify(reviewData.subtags)) {
+        if (JSON.stringify(currentSubTags) !== JSON.stringify(reviewData.subTags)) {
             payload.hashtags = currentSubTags;
         }
 

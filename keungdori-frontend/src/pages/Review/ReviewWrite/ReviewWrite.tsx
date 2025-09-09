@@ -29,8 +29,8 @@ interface Review {
     yCoordinate: number; // 장소 경도
     rating: number; // 별점
     memo: string; // 메모
-    maintag: string; // 메인태그
-    subtags: string[]; // 서브태그
+    mainTag: string; // 메인태그
+    subTags: string[]; // 서브태그
     imageUrl?: string | null; // 이미지경로(supabase)
 }
 
@@ -220,8 +220,8 @@ const ReviewWrite: React.FC = () => {
             xCoordinate: placeX,
             yCoordinate: placeY,
             rating: rating,
-            maintag: mainTag.text,
-            subtags: subTags.map(t => t.text),
+            mainTag: mainTag.text,
+            subTags: subTags.map(t => t.text),
             imageUrl: imageUrl,
             memo: memo,
         };
