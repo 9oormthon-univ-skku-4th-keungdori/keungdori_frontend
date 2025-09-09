@@ -14,7 +14,7 @@ import Spinner from "../../components/Spinner";
 
 const DrawerComponent = lazy(() => import("../../components/DrawerComponent"));
 
-interface Tag {
+/*interface Tag {
     hashtag: string;
     backgroundColor: string;
     fontColor: string;
@@ -38,7 +38,7 @@ interface Review {
 interface ReviewPage {
     reviews: Review[];
     nextPage: number | null;
-}
+}*/
 
 const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
 
