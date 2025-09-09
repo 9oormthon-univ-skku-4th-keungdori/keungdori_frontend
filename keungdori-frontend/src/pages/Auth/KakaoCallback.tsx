@@ -22,7 +22,7 @@ const KakaoCallback = () => {
 
     const sendCode = async (authorizationCode: string) => { //인가코드 백엔드로 전송하고 토큰 받아오기
         try {
-            const response = await axios.get('http://localhost:8080/api/auth/kakao/callback',
+            const response = await axios.get('https://port-0-keungdori-be-mf68say742c07b64.sel5.cloudtype.app/api/auth/kakao/callback',
                 {params: { code: authorizationCode }});
 
             const { accessToken, exists } = response.data;
