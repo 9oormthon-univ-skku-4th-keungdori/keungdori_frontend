@@ -9,7 +9,7 @@ interface AuthState {
 
 const useAuthStore = create<AuthState>((set) => ({ //로그인 토큰, 상태 저장하는 전역 저장소
     accessToken: null,
-    isLoggedIn: true,
+    isLoggedIn: false,
 
     setToken: (token) => set({
         accessToken: token,
