@@ -6,19 +6,25 @@ import Spinner from '../Spinner'; // 스피너 컴포넌트
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+interface Tag {
+    hashtag: string;
+    backgroundColor: string;
+    fontColor: string;
+}
+
 interface Review {
-    name: number; // 구글 장소 이름
-    address: string; // 구글 장소 주소
-    googleId: string; // 구글 장소 id
-    xCoordinate: number; //장소 위도
-    yCoordinate: number; //장소 경도
-    reviewId: number; //리뷰 id
-    date: string; //리뷰 작성한 날짜
-    rating: number; //별점
-    mainTag: string; //메인태그
-    subTags: string[]; //서브태그
-    imageUrl?: string; //이미지경로(supabase)
-    memo: string; //메모
+    reviewId: number;
+    rating: number;
+    memo: string;
+    mainTag: Tag; // string -> Tag
+    subTags: Tag[]; // string[] -> Tag[]
+    name: string; 
+    address: string;
+    googleId: string;
+    xCoordinate: number;
+    yCoordinate: number;
+    date: string;
+    imageUrl: string;
 }
 
 interface ReviewPage {
