@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { SwatchesPicker } from "react-color";
 import ScreenWrapper from "../../../layouts/ScreenWrapper";
 import { CameraButton, CameraIcon, ColorSwatch, Form, ImageFileInput, InputLabel, Input, InputWrapper, KeungdoriIcon, OptionWrapper, PickerWrapper, ProfileImage, ProfileImageSection, SubmitButton, ToggleSlider, ToggleSwitch, ValidationMessage } from "./Styles";
-import { SwatchesPicker } from "react-color";
+import { IconWrapper, VectorIcon } from "../Styles";
 import { useImageInput } from "../../../hooks/useImageInput";
 import { useImageUpload } from "../../../hooks/useImageUpload";
 import profile_image from "../../../assets/profile_image.png";
 import camera_icon from "../../../assets/camera_icon.png";
-import vector from "../../../assets/vector.png"
-import keungdori from "../../../assets/keungdori.png"
+import vector from "../../../assets/vector.png";
+import keungdori from "../../../assets/keungdori.png";
 import Header from "../../../components/Header";
-import { IconWrapper, VectorIcon } from "../Styles";
-import { useNavigate } from "react-router-dom";
+import AlertModal from "../../../components/alertmodal/AlertModal";
 import useAuthStore from '../../../stores/authStore';
 import api from "../../../api/api";
 
@@ -34,6 +35,7 @@ const MyAccount: React.FC = () => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null); //변경 여부 확인할 데이터
     const [initialUserInfo, setInitialUserInfo] = useState<UserInfo | null>(null); //기존 내 정보 데이터
     const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
     const [nicknameValidation, setNicknameValidation] = useState<ValidationState | null>(null);
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
     const {
@@ -51,7 +53,7 @@ const MyAccount: React.FC = () => {
         const fetchMyInfo = async () => {
             try {
                 if (!accessToken) {
-                    throw new Error('인증 토큰이 없습니다.');
+                    setError("토큰이 존재하지 않아요");
                 }
 
                 //await를 사용하여 비동기 요청을 기다리고, headers에 토큰 추가
@@ -76,19 +78,12 @@ const MyAccount: React.FC = () => {
 
             } catch (err) {
                 console.error("내 정보 불러오기 실패:", err);
-                setError("내 정보 불러오기 실패");// 1. 에러 모달 띄우기
+                setError("내 정보를 불러오는데 실패했어요");// 1. 에러 모달 띄우기
             }
         };
 
         fetchMyInfo();
     }, []);
-
-    if (error) {
-        return <div>에러: {error}</div>;
-    }
-    if (!userInfo) {
-        return null;
-    }
 
     // 닉네임 변경 검사 로직
     const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +92,7 @@ const MyAccount: React.FC = () => {
 
         const validationRegex = /^[a-zA-Z0-9_가-힣]*$/;
         if (value && !validationRegex.test(value)) {
-            setNicknameValidation({ message: '닉네임은 한글, 영문, 숫자, 언더바(_)만 사용 가능합니다.', status: 'error' });
+            setNicknameValidation({ message: '닉네임은 한글, 영문, 숫자, 언더바(_)만 사용 가능해요.', status: 'error' });
         } else {
             setNicknameValidation(null);
         }
@@ -112,12 +107,12 @@ const MyAccount: React.FC = () => {
         const updatedData: { [key: string]: any } = {};
 
         if (imageFile) {
-            alert('이미지를 업로드합니다. 잠시만 기다려주세요...');
             const imageUrl = await uploadImage(imageFile);
+
             if (imageUrl) {
                 updatedData.profileImage = imageUrl; 
             } else {
-                alert('이미지 업로드에 실패했습니다.');
+                setError('이미지 업로드에 실패했어요');
                 return; // 업로드 실패 시 중단
             }
         }
@@ -133,26 +128,44 @@ const MyAccount: React.FC = () => {
         }
 
         if (Object.keys(updatedData).length === 0) {
-            alert('변경 사항이 없습니다.');
+            setError('변경 사항이 없어요');
             return;
         }
 
         try {
             const response = await api.patch('/users/me', updatedData);
             console.log(response);
-            //alert('정보가 성공적으로 변경되었습니다.'); 2. 모달 띄우기
-            
-            navigate(-1);
+            setSuccess('내 정보가 변경됐어요!');
         } catch (error) {
             console.error('정보 수정 실패:', error);
-            alert('정보 수정에 실패했습니다.');
+            setError('정보 수정에 실패했어요');
         }
     };
 
-    const isFormValid = userInfo.nickname.length > 0 && !nicknameValidation;
+    const isFormValid = (userInfo?.nickname?.length ?? 0) > 0 && !nicknameValidation;
 
     return (
         <ScreenWrapper>
+
+            <AlertModal 
+                isOpen={error !== null}
+                onConfirm={() => {
+                    setError(null);  
+                }}
+                text={error || ''}
+                buttonText="확인"
+            />
+
+            <AlertModal
+                isOpen={success !== null}
+                onConfirm={() => {
+                    setSuccess(null);
+                    navigate(-1);
+                }}
+                text={success || ''}
+                buttonText="확인"
+            />
+
             <Header leftNode={ //1.화면 너비만큼만 차지하도록 변경해야 함? 웹 화면에서는 header가 커짐!
                 <IconWrapper>
                     <VectorIcon src={vector} onClick={() => {navigate(-1)}}></VectorIcon>
@@ -163,7 +176,7 @@ const MyAccount: React.FC = () => {
             {showColorPicker && (
                 <PickerWrapper onClick={() => setShowColorPicker(false)}>
                     <div onClick={(e) => e.stopPropagation()}>
-                        <SwatchesPicker color={userInfo.color} onChange={(color) => {
+                        <SwatchesPicker color={userInfo?.color || '#FF769F'} onChange={(color) => {
                             setUserInfo(prev => prev ? { ...prev, color: color.hex } : null);
                             setShowColorPicker(false);
                         }} />
@@ -172,7 +185,7 @@ const MyAccount: React.FC = () => {
             )}
 
             <ProfileImageSection>
-                <ProfileImage src={previewUrl || userInfo.profileImage} alt="Profile" />
+                <ProfileImage src={previewUrl || userInfo?.profileImage || profile_image} alt="Profile" />
                 <ImageFileInput type="file" accept="image/jpeg,image/png" ref={imageFileRef} onChange={handleImageChange} />
                 <CameraButton type="button" onClick={triggerFileInput}>
                     <CameraIcon src={camera_icon} alt="프로필 사진 변경" />
@@ -182,7 +195,7 @@ const MyAccount: React.FC = () => {
             <Form onSubmit={handleSubmit}>
                 <InputWrapper>
                     <InputLabel htmlFor="nickname">닉네임</InputLabel>
-                    <Input id="nickname" type="text" value={userInfo.nickname} onChange={handleNicknameChange} placeholder="닉네임" />
+                    <Input id="nickname" type="text" value={userInfo?.nickname || ''} onChange={handleNicknameChange} placeholder="닉네임" />
                     <ValidationMessage isVisible={!!nicknameValidation} status={nicknameValidation?.status || 'error'}>
                         {nicknameValidation?.message || ''}
                     </ValidationMessage>
@@ -190,18 +203,18 @@ const MyAccount: React.FC = () => {
 
                 <InputWrapper>
                     <InputLabel htmlFor="id">아이디</InputLabel>
-                    <Input id="id" type="text" value={userInfo.id} placeholder="ID" disabled />
+                    <Input id="id" type="text" value={userInfo?.id || ''} placeholder="ID" disabled />
                 </InputWrapper>
                 
                 <OptionWrapper>
                     <span>친구에게 표시될 내 기본 색상</span>
-                    <ColorSwatch color={userInfo.color} onClick={() => setShowColorPicker(true)} />
+                    <ColorSwatch color={userInfo?.color || '#FF769F'} onClick={() => setShowColorPicker(true)} />
                 </OptionWrapper>
 
                 <OptionWrapper>
                     <label htmlFor="search-toggle">내 ID를 친구 검색 결과에 포함합니다</label>
                     <ToggleSwitch htmlFor="search-toggle">
-                        <input type="checkbox" id="search-toggle" checked={userInfo.searchAvailable} onChange={() => setUserInfo(prev => prev ? { ...prev, searchAvailable: !prev.searchAvailable } : null)} />
+                        <input type="checkbox" id="search-toggle" checked={userInfo?.searchAvailable || false} onChange={() => setUserInfo(prev => prev ? { ...prev, searchAvailable: !prev.searchAvailable } : null)} />
                         <ToggleSlider />
                     </ToggleSwitch>
                 </OptionWrapper>
