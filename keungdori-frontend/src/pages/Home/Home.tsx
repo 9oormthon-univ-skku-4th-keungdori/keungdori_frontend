@@ -207,7 +207,7 @@ const Home: React.FC = () => {
                     </IconWrapper>}>
                 </Header>
 
-                <DrawerComponent isOpen={isDrawerOpen} onClose={toggleDrawer(false)}></DrawerComponent>
+                {isDrawerOpen && <DrawerComponent isOpen={isDrawerOpen} onClose={toggleDrawer(false)} />}
 
                 <SearchWrapper>
                     <SearchIcon src={searchIcon} alt="search icon" />
@@ -233,6 +233,7 @@ const Home: React.FC = () => {
                                 src={staticMapUrl} 
                                 alt="Map of current location" 
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                fetchPriority="high"
                             />
                         ) : (
                             <Spinner />
