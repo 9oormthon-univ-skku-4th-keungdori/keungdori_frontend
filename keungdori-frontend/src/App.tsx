@@ -56,7 +56,7 @@ const App: React.FC = () => {
         {/* 로그인한 사용자는 바로 홈화면으로 이동함 */}
         <Route element={<PrivateRoute />}>
           <Route path="/signup" element={<SignUp />} />
-          {/*<Route path="/home" element={<Home />} />*/}
+          <Route path="/home" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/account" element={<MyAccount />} />
@@ -64,7 +64,7 @@ const App: React.FC = () => {
           <Route path="/review/writereview/:placeId" element={<ReviewWrite />} />
           <Route path="/review/modifyreview/:placeId" element={<ReviewEdit />} />
         </Route>
-        <Route path="/home" element={<Home />} />
+
         <Route path="/oauth/callback" element={<KakaoCallback />} />
       </Routes>
     </Suspense>

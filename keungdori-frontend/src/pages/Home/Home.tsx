@@ -87,9 +87,7 @@ const Home: React.FC = () => {
     const [currentPosition, setCurrentPosition] = useState({ latitude: 37.588100, longitude: 126.992831 }); //현재 위치
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null); //지도에서 클릭한 장소의 장소 id
     const [isInteractiveMapReady, setInteractiveMapReady] = useState(false); //정적 지도 보여지면 바로 지도 api 로드
-    const [staticMapUrl, setStaticMapUrl] = useState<string>(
-  `https://maps.googleapis.com/maps/api/staticmap?center=37.5665,126.9780&zoom=17&size=600x800&key=${API_KEY}`
-); //정적 지도 url
+    const [staticMapUrl, setStaticMapUrl] = useState<string>(); //정적 지도 url
     //const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null); //화면에서 지도 범위 어디인지
 
     /*const {
