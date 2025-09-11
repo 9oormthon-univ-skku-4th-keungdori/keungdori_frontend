@@ -7,6 +7,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from './Styles';
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;

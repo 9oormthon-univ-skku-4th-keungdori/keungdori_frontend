@@ -1,16 +1,17 @@
-import '@smastrom/react-rating/style.css';
+import React from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
+import api from '../../api/api';
+import '@smastrom/react-rating/style.css';
+import { ScreenWrapper, ContentWrapper, NoReviewsMessage, PlaceHeader, PlaceName, ReviewListContainer, ButtonWrapper, VectorIcon } from './Styles';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
-import api from '../../api/api';
-import { ScreenWrapper, ContentWrapper, MainHashtag, NoReviewsMessage, PlaceHeader, PlaceName, ReviewListContainer, ButtonWrapper, VectorIcon } from './Styles';
 import ReviewCard from '../../components/reviewcard/ReviewCard';
-import vector from '../../assets/vector.png';
-import { useInView } from 'react-intersection-observer';
-import { useEffect } from 'react';
-import React from 'react';
 import Spinner from '../../components/Spinner';
+import Hashtag from '../../components/Hashtag';
+import vector from '../../assets/vector.png';
 
 interface Tag {
     hashtag: string;
@@ -58,7 +59,7 @@ const ReviewList: React.FC = () => {
     const placeAddress = location.state.placeAddress;
     const placeX = location.state.longitude; 
     const placeY = location.state.latitude;
-
+    //화면 이동 핸들러
     const handleBack = () => navigate(-1);
     const handleWriteReview = () => navigate(`/review/writereview/${placeId}`,
         { state: { x: placeX, y: placeY, placeId: placeId, placeName: placeName, placeAddress: placeAddress }}); //1. 처음 리뷰 작성하는 화면이랑, 리뷰 보는 화면 분리
@@ -72,7 +73,7 @@ const ReviewList: React.FC = () => {
         rootMargin: '200px',
     });
 
-    //UseInfiniteQuery로 교체해서 무한 스크롤해서 계속 데이터를 볼 수 있게 해야됨(페이지 단위)
+    //UseInfiniteQuery로 무한 스크롤해서 계속 데이터를 볼 수 있음
     const { 
         data,
         fetchNextPage,
@@ -116,10 +117,11 @@ const ReviewList: React.FC = () => {
             <ContentWrapper>
                 <PlaceHeader>
                     <PlaceName>{placeName}</PlaceName>
-                    {hasReviews && data?.pages[0].reviews[0]?.mainTag.hashtag &&
-                        <MainHashtag>
-                            {data.pages[0].reviews[0].mainTag.hashtag}
-                        </MainHashtag>
+                    { hasReviews && data?.pages[0].reviews[0]?.mainTag.hashtag &&
+                        <Hashtag text={data.pages[0].reviews[0].mainTag.hashtag} 
+                        backgroundColor={data.pages[0].reviews[0].mainTag.backgroundColor}
+                        fontColor={data.pages[0].reviews[0].mainTag.fontColor}
+                        />
                     }
                 </PlaceHeader>
 

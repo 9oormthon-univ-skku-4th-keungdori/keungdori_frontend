@@ -257,7 +257,7 @@ const ReviewWrite: React.FC = () => {
                                     autoFocus
                                 />
                             ) : mainTag ? (
-                                <Hashtag text={mainTag.text} bgColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag text={mainTag.text} backgroundColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
                             ) : (
                                 <TagPlaceholder onClick={() => { setActiveInput('main'); setInputValue('#')}}>
                                     메인 태그를 추가해주세요.
@@ -268,7 +268,7 @@ const ReviewWrite: React.FC = () => {
                         <TagSection>
                             {/* 이미 추가된 서브 태그들 렌더링 */}
                             {subTags.map((tag) => (
-                                <Hashtag key={tag.text} text={tag.text} bgColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag key={tag.text} text={tag.text} backgroundColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
                             ))}
                             {activeInput === 'sub' ? (
                                  <TagInput 

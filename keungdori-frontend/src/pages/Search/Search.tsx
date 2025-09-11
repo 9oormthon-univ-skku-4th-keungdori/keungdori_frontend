@@ -303,7 +303,7 @@ const Search: React.FC = () => {
                     </TabButton>
                 </TabContainer>
 
-                {activeTab === 'place' && (
+                { activeTab === 'place' && (
                     <ResultsList>
                         {googleSearchResult.length > 0 ? (
                             googleSearchResult.map((place) => (
@@ -326,7 +326,7 @@ const Search: React.FC = () => {
                     </ResultsList>
                 )}
                 
-                {activeTab === 'visited' && (
+                { activeTab === 'visited' && (
                     <ResultsList>
                         {visitedResult?.pages && visitedResult.pages[0].content.length > 0 ? (
                             <ReviewListContainer>
@@ -346,7 +346,7 @@ const Search: React.FC = () => {
                     </ResultsList>
                 )}
 
-                {activeTab === 'hashtag' && (
+                { activeTab === 'hashtag' && (
                     <ResultsList>
                         { hashtagResult?.pages && hashtagResult.pages[0].content.length > 0 ? (
                             <ReviewListContainer>

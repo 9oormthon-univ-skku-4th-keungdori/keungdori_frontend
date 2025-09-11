@@ -258,12 +258,12 @@ const ReviewEdit: React.FC = () => {
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    onBlur={resetInputState} 
+                                    //onBlur={resetInputState} 
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                 />
                             ) : mainTag ? (
-                                <Hashtag text={mainTag.text} bgColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag text={mainTag.text} backgroundColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
                             ) : (
                                 <TagPlaceholder onClick={() => { setActiveInput('main'); setInputValue('#')}}>
                                     메인 태그를 추가해주세요.
@@ -273,7 +273,7 @@ const ReviewEdit: React.FC = () => {
                         
                         <TagSection>
                             {subTags.map((tag) => (
-                                <Hashtag key={tag.text} text={tag.text} bgColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag key={tag.text} text={tag.text} backgroundColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
                             ))}
                             {activeInput === 'sub' ? (
                                  <TagInput 

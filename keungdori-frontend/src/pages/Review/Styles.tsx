@@ -32,15 +32,6 @@ export const PlaceName = styled.h2`
   font-weight: bold;
 `;
 
-export const MainHashtag = styled.span`
-  background-color: #E0E7FF;
-  color: #4F46E5;
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 14px;
-  font-weight: 500;
-`;
-
 export const ReviewListContainer = styled.ul`
   list-style: none;
   padding: 0;

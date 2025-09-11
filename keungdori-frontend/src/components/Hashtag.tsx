@@ -1,46 +1,72 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-// --- Props 인터페이스 수정 ---
 interface HashtagProps extends React.HTMLAttributes<HTMLDivElement> {
-  text: string; // children 대신 명시적인 text prop 사용
-  bgColor?: string;
-  onDelete: (text: string) => void; // 삭제할 해시태그의 text를 전달
+  text: string;
+  
+  backgroundColor?: string;
+  fontColor?: string;
+  onDelete?: (text: string) => void; 
 }
 
-const StyledHashtag = styled.div<Pick<HashtagProps, 'bgColor'>>`
-  /* 스타일은 이전과 동일 */
+const StyledHashtag = styled.div<{ 
+  backgroundColor?: string; 
+  fontColor?: string; 
+  isDeletable: boolean; 
+}>`
   display: inline-flex;
   align-items: center;
-  padding: 5px 10px 5px 15px;
+  /* 삭제 버튼이 있을 경우 오른쪽 패딩을 줄여 균형 맞춤 */
+  padding: 5px ${props => props.isDeletable ? '10px' : '15px'} 5px 15px;
   border-radius: 20px;
   font-size: 16px;
-  color: #ffffff;
-  background-color: ${(props) => props.bgColor || '#FF769F'};
   margin: 4px;
+  color: ${({ fontColor }) => fontColor || '#FFFFFF'};
+  background-color: ${({ backgroundColor }) => backgroundColor || '#FF769F'};
 `;
 
 const DeleteButton = styled.button`
-  /* 스타일은 이전과 동일 */
   background: none;
   border: none;
-  color: white;
+  color: inherit; /* 부모의 fontColor를 그대로 사용 */
   margin-left: 8px;
   cursor: pointer;
   font-size: 20px;
   font-weight: bold;
+  padding: 0;
+  line-height: 1;
 `;
 
-// --- 컴포넌트 로직 수정 ---
-const Hashtag = ({ text, bgColor, onDelete, ...rest }: HashtagProps) => {
-  const handleDeleteClick = () => {
-    onDelete(text); // 자신의 text를 부모의 삭제 함수로 전달
+const Hashtag = ({ 
+  text, 
+  backgroundColor, 
+  fontColor, 
+  onDelete, 
+  ...rest 
+}: HashtagProps) => {
+
+  const isDeletable = !!onDelete;
+
+  const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // 이벤트 버블링 방지
+    // onDelete가 존재할 때만 호출되도록 보장
+    if (onDelete) {
+      onDelete(text);
+    }
   };
 
   return (
-    <StyledHashtag bgColor={bgColor} {...rest}>
-      #{text} {/* prop으로 받은 text를 바로 사용 */}
-      <DeleteButton onClick={handleDeleteClick}>&times;</DeleteButton>
+    <StyledHashtag 
+      backgroundColor={backgroundColor} 
+      fontColor={fontColor}
+      isDeletable={isDeletable}
+      {...rest}
+    >
+      #{text}
+
+      {isDeletable && (
+        <DeleteButton onClick={handleDeleteClick}>&times;</DeleteButton>
+      )}
     </StyledHashtag>
   );
 };
