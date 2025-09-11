@@ -149,8 +149,8 @@ const Home: React.FC = () => {
                     const { latitude, longitude } = position.coords;
                     setCurrentPosition({ latitude, longitude });
 
-                    //const newStaticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=17&size=600x800&key=${API_KEY}`
-                    //setStaticMapUrl(newStaticMapUrl);
+                    const newStaticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${latitude},${longitude}&zoom=17&size=600x800&key=${API_KEY}`
+                    setStaticMapUrl(newStaticMapUrl);
 
                     setTimeout(() => {
                         setInteractiveMapReady(true);
