@@ -37,7 +37,7 @@ const MyAccount: React.FC = () => {
     const [nicknameValidation, setNicknameValidation] = useState<ValidationState | null>(null);
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
     const {
-        //previewUrl,
+        previewUrl,
         imageFile,
         //error: imageError,
         imageFileRef,
@@ -45,17 +45,6 @@ const MyAccount: React.FC = () => {
         triggerFileInput,
     } = useImageInput(userInfo?.profileImage || profile_image); // 초기 이미지는 불러온 정보 또는 기본 이미지
     const { uploadImage } = useImageUpload();
-
-    /*useEffect(() => {
-        // 더미 데이터를 설정하는 로직
-        setUserInfo({
-            profileImage: profileImg,
-            nickname: "두루미",
-            id: "durumi",
-            color: "#000000",
-            searchAvailable: true
-        });
-    }, []);*/
 
     //화면 키자 마자 회원 정보 get으로 가져와서 placeholder로 표시하기
     useEffect(() => {
@@ -69,7 +58,7 @@ const MyAccount: React.FC = () => {
                 const response = await api.get('/users/me');
                 
                 const { userName, searchId, search, kengColor, profileImage } = response.data;
-                //setToken(accessToken);
+
                 setUserInfo({
                     profileImage: profileImage,
                     nickname: userName,
@@ -87,7 +76,7 @@ const MyAccount: React.FC = () => {
 
             } catch (err) {
                 console.error("내 정보 불러오기 실패:", err);
-                setError("정보를 불러오는 데 실패했습니다.");// 1. 에러 모달 띄우기
+                setError("내 정보 불러오기 실패");// 1. 에러 모달 띄우기
             }
         };
 
@@ -101,7 +90,8 @@ const MyAccount: React.FC = () => {
         return null;
     }
 
-     const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // 닉네임 변경 검사 로직
+    const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setUserInfo(prev => prev ? { ...prev, nickname: value } : null);
 
@@ -182,7 +172,7 @@ const MyAccount: React.FC = () => {
             )}
 
             <ProfileImageSection>
-                <ProfileImage src={userInfo.profileImage} alt="Profile" />
+                <ProfileImage src={previewUrl || userInfo.profileImage} alt="Profile" />
                 <ImageFileInput type="file" accept="image/jpeg,image/png" ref={imageFileRef} onChange={handleImageChange} />
                 <CameraButton type="button" onClick={triggerFileInput}>
                     <CameraIcon src={camera_icon} alt="프로필 사진 변경" />
@@ -216,7 +206,7 @@ const MyAccount: React.FC = () => {
                     </ToggleSwitch>
                 </OptionWrapper>
 
-                <SubmitButton type="submit" disabled={!isFormValid}>정보 변경 완료</SubmitButton>
+                <SubmitButton type="submit" disabled={!isFormValid}>내 정보 변경</SubmitButton>
             </Form>
         </ScreenWrapper>
     );
