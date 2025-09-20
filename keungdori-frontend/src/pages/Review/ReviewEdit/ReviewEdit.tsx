@@ -13,23 +13,25 @@ import { useImageInput } from '../../../hooks/useImageInput';
 import { useImageUpload } from '../../../hooks/useImageUpload';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-interface Review {
-    placeId: number; //카카오 장소 id
-    placeName: string; //카카오 장소 id
-    x: number; //장소 위도
-    y: number; //장소 경도
-    reviewId: number; //리뷰 id
-    date: string; //리뷰 작성한 날짜
-    rating: number; //별점
-    mainTag: string; //메인태그
-    subTags: string[]; //서브태그
-    imageUrl?: string; //이미지경로(supabase)
-    memo: string; //메모
+interface Tag {
+    hashtag: string;
+    backgroundColor: string;
+    fontColor: string;
 }
 
-interface Tag {//리뷰를 가져오고 해시태그를 표시하려면 해시태그 색상이 필요한데, 해시태그 get api가 필요함
-  text: string;
-  backgroundColor: string;
+interface Review {
+    reviewId: number;
+    rating: number;
+    memo: string;
+    mainTag: Tag; // string -> Tag
+    subTags: Tag[]; // string[] -> Tag[]
+    name: string; 
+    address: string;
+    googleId: string;
+    xCoordinate: number;
+    yCoordinate: number;
+    date: string;
+    imageUrl: string;
 }
 
 const updateReview = async ({ reviewId, payload }: { reviewId: number, payload: any }) => {
@@ -63,10 +65,10 @@ const ReviewEdit: React.FC = () => {
     const [rating, setRating] = useState(reviewData.rating);
     const [memo, setMemo] = useState(reviewData.memo);
     const [mainTag, setMainTag] = useState<Tag | null>(
-        { text: reviewData.mainTag, backgroundColor: '#42a5f5' }//!!해시태그 api로 가져와야 함
+        { hashtag: reviewData.mainTag.hashtag, backgroundColor: reviewData.mainTag.backgroundColor, fontColor: reviewData.mainTag.fontColor }//!!해시태그 api로 가져와야 함
     );
     const [subTags, setSubTags] = useState<Tag[]>(//!!해시태그 api로 가져와야 함
-        reviewData.subTags ? reviewData.subTags.map(tag => ({ text: tag, backgroundColor: '#FF769F' })) : []
+        reviewData.subTags ? reviewData.subTags.map(tag => ({ hashtag: tag.hashtag, backgroundColor: tag.backgroundColor, fontColor: tag.fontColor })) : []
     );
     const review_image = reviewData.imageUrl || profile_image;
     const {
@@ -92,7 +94,7 @@ const ReviewEdit: React.FC = () => {
         mutationFn: updateReview,
         onSuccess: (/*data,*/ variables) => {
             //alert('리뷰가 성공적으로 수정되었습니다.'); 2. 모달로 변경
-            queryClient.invalidateQueries({ queryKey: ['reviews', reviewData.placeId] });
+            queryClient.invalidateQueries({ queryKey: ['reviews', reviewData.googleId] });
 
             //이미지 교체가 일어났을 경우에만 기존 이미지 삭제
             if (variables.payload.imageUrl && reviewData.imageUrl) {
@@ -112,7 +114,7 @@ const ReviewEdit: React.FC = () => {
         mutationFn: createTag,
         onSuccess: (newTag) => {
             if (newTag.color) {
-                const tagForState = { text: newTag.hashtag, backgroundColor: newTag.color };
+                const tagForState = { hashtag: newTag.hashtag, backgroundColor: newTag.backgroundColor, fontColor: newTag.fontColor };
                 if (activeInput === 'main') {
                     setMainTag(tagForState);
                 } else {
@@ -135,7 +137,7 @@ const ReviewEdit: React.FC = () => {
     const { mutate: patchColor } = useMutation({
         mutationFn: updateTagColor,
         onSuccess: (updatedTag) => {
-            const tagForState = { text: updatedTag.hashtag, backgroundColor: updatedTag.backgroundColor };
+            const tagForState = { hashtag: updatedTag.hashtag, backgroundColor: updatedTag.backgroundColor, fontColor: updatedTag.fontColor };
             if (activeInput === 'main') {
                 setMainTag(tagForState);
             } else {
@@ -155,10 +157,10 @@ const ReviewEdit: React.FC = () => {
     const { mutate: removeTag } = useMutation({
             mutationFn: deleteTag,
             onSuccess: (tagTextToDelete) => {
-                if (mainTag?.text === tagTextToDelete) {
+                if (mainTag?.hashtag === tagTextToDelete) {
                     setMainTag(null);
                 } else {
-                    setSubTags(prev => prev.filter(tag => tag.text !== tagTextToDelete));
+                    setSubTags(prev => prev.filter(tag => tag.hashtag !== tagTextToDelete));
                 }
             },
             onError: (error) => {
@@ -176,7 +178,7 @@ const ReviewEdit: React.FC = () => {
                 alert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
                 return;
             }
-            if (mainTag?.text === text || subTags.some(t => t.text === text)) {
+            if (mainTag?.hashtag === text || subTags.some(t => t.hashtag === text)) {
                 alert('이미 추가된 태그입니다.');
                 return;
             }
@@ -218,11 +220,11 @@ const ReviewEdit: React.FC = () => {
         const payload: { [key: string]: any } = {};
         if (rating !== reviewData.rating) payload.rating = rating;
         if (memo !== reviewData.memo) payload.memo = memo;
-        if (mainTag.text !== reviewData.mainTag) payload.mainHashtag = mainTag.text;
+        if (mainTag.hashtag !== reviewData.mainTag.hashtag) payload.mainHashtag = mainTag.hashtag;
         if (newImageUrl && newImageUrl !== reviewData.imageUrl) {
             payload.imageUrl = newImageUrl;
         }    
-        const currentSubTags = subTags.map(t => t.text);
+        const currentSubTags = subTags.map(t => t.hashtag);
         if (JSON.stringify(currentSubTags) !== JSON.stringify(reviewData.subTags)) {
             payload.hashtags = currentSubTags;
         }
@@ -243,7 +245,7 @@ const ReviewEdit: React.FC = () => {
             />
 
             <PlaceName>
-                {reviewData.placeName}
+                {reviewData.name}
             </PlaceName>
 
             <PageContainer>
@@ -263,7 +265,7 @@ const ReviewEdit: React.FC = () => {
                                     autoFocus
                                 />
                             ) : mainTag ? (
-                                <Hashtag text={mainTag.text} backgroundColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag text={mainTag.hashtag} backgroundColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
                             ) : (
                                 <TagPlaceholder onClick={() => { setActiveInput('main'); setInputValue('#')}}>
                                     메인 태그를 추가해주세요.
@@ -273,7 +275,7 @@ const ReviewEdit: React.FC = () => {
                         
                         <TagSection>
                             {subTags.map((tag) => (
-                                <Hashtag key={tag.text} text={tag.text} backgroundColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag key={tag.hashtag} text={tag.hashtag} backgroundColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
                             ))}
                             {activeInput === 'sub' ? (
                                  <TagInput 

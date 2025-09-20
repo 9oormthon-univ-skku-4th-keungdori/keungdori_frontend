@@ -6,15 +6,15 @@ import hamburger from "../../assets/hamburger_icon.png";
 import keungdori from "../../assets/keungdori.png";
 import searchIcon from "../../assets/search_icon.png";
 import Header from "../../components/Header";
-//import BottomSheet from "../../components/bottomsheet/BottomSheet";
+import BottomSheet from "../../components/bottomsheet/BottomSheet";
 import GoogleMap from "../../components/GoogleMap";
 import Spinner from "../../components/Spinner";
-//import api from "../../api/api";
-//import { useInfiniteQuery, type InfiniteData, type QueryFunctionContext} from "@tanstack/react-query";
+import api from "../../api/api";
+import { useInfiniteQuery, type InfiniteData, type QueryFunctionContext} from "@tanstack/react-query";
 
 const DrawerComponent = lazy(() => import("../../components/DrawerComponent"));
 
-/*interface Tag {
+interface Tag {
     hashtag: string;
     backgroundColor: string;
     fontColor: string;
@@ -38,7 +38,7 @@ interface Review {
 interface ReviewPage {
     reviews: Review[];
     nextPage: number | null;
-}*/
+}
 
 const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
 
@@ -62,7 +62,7 @@ const MapLoader: React.FC<{
     );
 };
 
-/*const fetchReview = async ({ pageParam = 0, queryKey }: QueryFunctionContext<[string, google.maps.LatLngBounds | null]>): Promise<ReviewPage> => {
+const fetchReview = async ({ pageParam = 0, queryKey }: QueryFunctionContext<[string, google.maps.LatLngBounds | null]>): Promise<ReviewPage> => {
     const [, bounds] = queryKey;
 
     if (!bounds) {
@@ -78,7 +78,7 @@ const MapLoader: React.FC<{
         }
     });
     return data;
-};*/
+};
 
 // 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
 const Home: React.FC = () => {
@@ -88,9 +88,9 @@ const Home: React.FC = () => {
     const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null); //지도에서 클릭한 장소의 장소 id
     const [isInteractiveMapReady, setInteractiveMapReady] = useState(false); //정적 지도 보여지면 바로 지도 api 로드
     const [staticMapUrl, setStaticMapUrl] = useState<string>(); //정적 지도 url
-    //const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null); //화면에서 지도 범위 어디인지
+    const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null); //화면에서 지도 범위 어디인지
 
-    /*const {
+    const {
         data: reviewData,
         fetchNextPage,
         hasNextPage,
@@ -107,7 +107,7 @@ const Home: React.FC = () => {
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
         enabled: !!bounds
-    })*/
+    })
 
     const handleMapClick = useCallback((placeId: string | null) => {
         if (placeId) {
@@ -241,12 +241,12 @@ const Home: React.FC = () => {
                     )}
                 </MapContainer>
                 
-                {/*<BottomSheet
+                <BottomSheet
                     reviewsData={reviewData}
                     isFetching={isFetching}
                     fetchNextPage={fetchNextPage}
                     hasNextPage={hasNextPage}
-                />*/}
+                />
 
             
             </HomeWrapper>

@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import { motion } from "framer-motion";
 import { BOTTOM_SHEET_HEIGHT } from "./Config";
 
-export const Wrapper = styled(motion.div)`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   position: absolute;
