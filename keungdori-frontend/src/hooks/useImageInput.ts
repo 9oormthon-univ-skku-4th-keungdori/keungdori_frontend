@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface UseImageInputReturn {
     previewUrl: string | null;
