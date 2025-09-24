@@ -36,7 +36,7 @@ interface Review {
 
 interface Tag {
   text: string;
-  backgroundColor: string;
+  backgroundColor: string; // 아마 fontColor도 있어야 할듯?
 }
 
 const postReview = async (newReview: Review) => { //데이터를 보내는 비동기 함수인 mutationFn

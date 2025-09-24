@@ -71,7 +71,7 @@ const SignUp: React.FC = () => {
         }
         
         try {
-            const response = await axios.get(`http://localhost:8080/api/users/check-id?value=${id}`);
+            const response = await axios.get(`https://port-0-keungdori-be-mf68say742c07b64.sel5.cloudtype.app/api/users/check-id?value=${id}`);
             if (response.data.available) {
                 setIdValidation({ message : '사용 가능한 ID입니다!', status: 'success' });
                 setIsIdAvailable(true);
@@ -102,9 +102,7 @@ const SignUp: React.FC = () => {
 
         const Data = { userName: nickname, searchId: id, search: searchAvailable, kengColor: userColor, profileImage: profileImageUrl };
         try {
-            /*const response =*/ await api.patch('/users/signup', Data);
-            //const { accessToken } = response.data;
-            //setToken(accessToken);
+            await api.patch('/users/signup', Data);
             navigate('/home');
         } catch (error) {
             console.log('회원가입 실패', error);

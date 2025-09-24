@@ -61,8 +61,8 @@ const App: React.FC = () => {
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/account" element={<MyAccount />} />
           <Route path="/review/reviewlist/:placeId" element={<ReviewList />} />
-          <Route path="/review/writereview/:placeId" element={<ReviewWrite />} />
-          <Route path="/review/modifyreview/:placeId" element={<ReviewEdit />} />
+          <Route path="/review/write/:placeId" element={<ReviewWrite />} />
+          <Route path="/review/edit/:reviewId" element={<ReviewEdit />} />
         </Route>
 
         <Route path="/oauth/callback" element={<KakaoCallback />} />

@@ -61,10 +61,10 @@ const ReviewList: React.FC = () => {
     const placeY = location.state.latitude;
     //화면 이동 핸들러
     const handleBack = () => navigate(-1);
-    const handleWriteReview = () => navigate(`/review/writereview/${placeId}`,
+    const handleWriteReview = () => navigate(`/review/write/${placeId}`,
         { state: { x: placeX, y: placeY, placeId: placeId, placeName: placeName, placeAddress: placeAddress }}); //1. 처음 리뷰 작성하는 화면이랑, 리뷰 보는 화면 분리
     const handleReviewClick = (review: Review) => {
-        navigate(`/review/modifyreview/${placeId}`, { state: { reviewData: review }});
+        navigate(`/review/edit/${review.reviewId}`, { state: { reviewData: review }});
     }
 
     //무한스크롤 감지

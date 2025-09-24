@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from '../../../components/Header';
 import { HiddenImageInput, ImageUploader, MemoTextarea, PageContainer, PlaceName, RatingAndTags, TagInput, TagPlaceholder, TagSection, TopSection, UploadedImage, VectorIcon } from './Styles';
 import { Rating } from '@smastrom/react-rating';
@@ -11,7 +11,7 @@ import vector from '../../../assets/vector.png';
 import profile_image from '../../../assets/profile_image.png';
 import { useImageInput } from '../../../hooks/useImageInput';
 import { useImageUpload } from '../../../hooks/useImageUpload';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface Tag {
     hashtag: string;
@@ -33,6 +33,11 @@ interface Review {
     date: string;
     imageUrl: string;
 }
+
+const getReviewById = async (reviewId: number) => {
+    const { data } = await api.get(`/reviews/${reviewId}`);
+    return data;
+};
 
 const updateReview = async ({ reviewId, payload }: { reviewId: number, payload: any }) => {
     const { data } = await api.patch(`/reviews/${reviewId}`, payload);
@@ -59,24 +64,38 @@ const ReviewEdit: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { reviewId } = useParams<{ reviewId: string }>();
+
+    //리뷰 get
+    const { data: reviewData } = useQuery<Review>({
+        queryKey: ['review', reviewId],
+        queryFn: () => getReviewById(Number(reviewId!)),
+        initialData: location.state?.reviewData, // location.state 데이터를 초기값으로 사용
+        enabled: !!reviewId, // reviewId가 있을 때만 쿼리 실행
+    });
+
+    useEffect(() => {
+        if (reviewData) {
+            setRating(reviewData.rating);
+            setMemo(reviewData.memo);
+            setMainTag(reviewData.mainTag);
+            setSubTags(reviewData.subTags || []);
+        }
+    }, [reviewData]);
 
     //리뷰목록 화면에서 가져와야 하는 항목들(기존 리뷰, 장소 id, 장소 이름, 장소 주소)
-    const reviewData = location.state.reviewData as Review; //기존 리뷰
-    const [rating, setRating] = useState(reviewData.rating);
-    const [memo, setMemo] = useState(reviewData.memo);
-    const [mainTag, setMainTag] = useState<Tag | null>(
-        { hashtag: reviewData.mainTag.hashtag, backgroundColor: reviewData.mainTag.backgroundColor, fontColor: reviewData.mainTag.fontColor }//!!해시태그 api로 가져와야 함
-    );
-    const [subTags, setSubTags] = useState<Tag[]>(//!!해시태그 api로 가져와야 함
-        reviewData.subTags ? reviewData.subTags.map(tag => ({ hashtag: tag.hashtag, backgroundColor: tag.backgroundColor, fontColor: tag.fontColor })) : []
-    );
-    const review_image = reviewData.imageUrl || profile_image;
+    const [rating, setRating] = useState(0);
+    const [memo, setMemo] = useState('');
+    const [mainTag, setMainTag] = useState<Tag | null>(null);
+    const [subTags, setSubTags] = useState<Tag[]>([]);
+    const initialImageUrl = reviewData?.imageUrl || profile_image;
+
     const {
             previewUrl,
             imageFile,
             //error: imageError, // 필요하다면 에러 처리 추가
             handleImageChange, //label안에 input 있어서 handleimagechange만 줘도 이미지 누르면 파일 탐색기가 뜸
-        } = useImageInput(review_image); // 1. 초기 이미지 뭘로 할지?
+        } = useImageInput(initialImageUrl); // 1. 초기 이미지 뭘로 할지?
     const { uploadImage, deleteImage } = useImageUpload();
 
     const [isColorModalOpen, setIsColorModalOpen] = useState(false);
