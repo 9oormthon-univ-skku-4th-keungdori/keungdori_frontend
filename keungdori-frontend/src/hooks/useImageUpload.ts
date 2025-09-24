@@ -2,7 +2,7 @@ import { supabase } from "../supabaseClient";
 
 export const useImageUpload = () => {
 
-    const BUCKET_NAME = 'bucket-name';
+    const BUCKET_NAME = 'keungdori-image';
 
     const uploadImage = async (file: File): Promise<string | null> => {
         try {
