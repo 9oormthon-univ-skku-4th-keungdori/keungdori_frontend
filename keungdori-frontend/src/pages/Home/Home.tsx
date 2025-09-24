@@ -14,7 +14,7 @@ import Spinner from "../../components/Spinner";
 
 const DrawerComponent = lazy(() => import("../../components/DrawerComponent"));
 
-interface Tag {
+/*interface Tag {
     hashtag: string;
     backgroundColor: string;
     fontColor: string;
@@ -35,7 +35,7 @@ interface Review {
     imageUrl: string;
 }
 
-/*interface ReviewPage {
+interface ReviewPage {
     reviews: Review[];
     nextPage: number | null;
 }*/
@@ -245,7 +245,7 @@ const Home: React.FC = () => {
                     reviewsData={reviewData}
                     isFetching={isFetching}
                     fetchNextPage={fetchNextPage}
-                    hasNextPage={hasNextPage}*
+                    hasNextPage={hasNextPage}
                 />*/}
 
             
