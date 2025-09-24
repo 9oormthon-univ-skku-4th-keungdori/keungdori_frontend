@@ -15,6 +15,10 @@ export const useImageInput = (initialImageUrl: string): UseImageInputReturn => {
     const [error, setError] = useState<string | null>(null); 
     const imageFileRef = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        setPreviewUrl(initialImageUrl);
+    }, [initialImageUrl]);
+
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setError(null); //새로운 파일 선택 시 에러 초기화
         const file = e.target.files?.[0];
