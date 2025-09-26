@@ -124,6 +124,15 @@ export const ReviewListContainer = styled.ul`
   margin: 0;
 `;
 
+export const ReviewListItem = styled.li`
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
 export const ReviewButton = styled.button`
     padding: 6px 12px;
     font-size: 14px;

@@ -16,7 +16,8 @@ import {
     PlaceInfo,
     /*Distance,*/
     ReviewButton,
-    ReviewListContainer
+    ReviewListContainer,
+    ReviewListItem
 } from "./Styles";
 import Header from "../../components/Header";
 import hamburger from "../../assets/hamburger_icon.png";
@@ -332,11 +333,12 @@ const Search: React.FC = () => {
                             <ReviewListContainer>
                                 { visitedResult.pages.map(page =>
                                 page.content.map((place: ReviewedPlace) => (
-                                    <PlaceCard 
-                                        key={place.placeId}
-                                        place={place} 
-                                        onClick={() => handleReviewClick(place)} 
-                                    />
+                                    <ReviewListItem key={place.placeId}>
+                                        <PlaceCard 
+                                            place={place} 
+                                            onClick={() => handleReviewClick(place)} 
+                                        />
+                                    </ReviewListItem>
                                 ))
                             )}
                             </ReviewListContainer>
@@ -352,11 +354,12 @@ const Search: React.FC = () => {
                             <ReviewListContainer>
                                 { hashtagResult.pages.map(page => 
                                 page.content.map((place: ReviewedPlace) => (
-                                    <PlaceCard 
-                                        key={place.placeId}
-                                        place={place} 
-                                        onClick={() => handleReviewClick(place)} 
-                                    />
+                                    <ReviewListItem key={place.placeId}>
+                                        <PlaceCard 
+                                            place={place} 
+                                            onClick={() => handleReviewClick(place)} 
+                                        />
+                                    </ReviewListItem>
                                 ))
                             )}
                             </ReviewListContainer>
