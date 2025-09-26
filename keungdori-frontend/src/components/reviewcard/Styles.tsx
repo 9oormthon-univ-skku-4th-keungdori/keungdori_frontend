@@ -10,12 +10,13 @@ export const CardContainer = styled.li`
   cursor: pointer; /* 클릭 가능하다는 것을 알려주기 위해 추가 */
 `;
 
-export const ReviewImagePlaceholder = styled.div`
+export const ReviewImage = styled.img`
   width: 80px;
   height: 80px;
   background-color: #E0E0E0;
   border-radius: 8px;
   margin-right: 16px;
+  object-fit: cover;
 `;
 
 export const ReviewContent = styled.div`

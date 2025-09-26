@@ -3,7 +3,7 @@ import { Rating } from '@smastrom/react-rating';
 import '@smastrom/react-rating/style.css';
 import { 
     CardContainer, 
-    ReviewImagePlaceholder, 
+    ReviewImage, 
     ReviewContent, 
     ReviewDate, 
     StarRating, 
@@ -51,7 +51,7 @@ const renderStars = (rating: number) => {
 const ReviewCard: React.FC<ReviewCardProps> = ({ review, onClick }) => {
     return (
         <CardContainer onClick={() => onClick(review)}>
-            <ReviewImagePlaceholder />
+            <ReviewImage src={review.imageUrl}/>
             <ReviewContent>
                 <ReviewDate>{review.date}</ReviewDate>
                 <StarRating>{renderStars(review.rating)}</StarRating>
