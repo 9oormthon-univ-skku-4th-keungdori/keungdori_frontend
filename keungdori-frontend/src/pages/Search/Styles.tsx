@@ -11,7 +11,7 @@ export const IconWrapper = styled.div`
     gap: 18px;
 `;
 
-export const HamburgerIcon = styled.img`
+export const VectorIcon = styled.img`
 `;
 
 export const KeungdoriIcon = styled.img`

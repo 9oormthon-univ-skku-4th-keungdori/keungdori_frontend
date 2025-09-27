@@ -3,7 +3,7 @@ import {
     SearchWrapper, 
     ContentWrapper,
     IconWrapper, 
-    HamburgerIcon, 
+    VectorIcon,
     KeungdoriIcon, 
     SearchInputWrapper, 
     SearchIcon, 
@@ -17,13 +17,12 @@ import {
     /*Distance,*/
     ReviewButton,
     ReviewListContainer,
-    ReviewListItem
+    ReviewListItem,
 } from "./Styles";
 import Header from "../../components/Header";
-import hamburger from "../../assets/hamburger_icon.png";
+import vector from "../../assets/vector.svg";
 import keungdori from "../../assets/keungdori.png";
 import searchIcon from "../../assets/search_icon.png";
-import DrawerComponent from "../../components/DrawerComponent";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
@@ -116,7 +115,6 @@ const fetchHashtagSearch = async ({ pageParam = 0, query }: { pageParam?: number
 const Search: React.FC = () => {
     const navigate = useNavigate();
     const googleScriptLoaded = useRef(false);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('place'); //현재 실행중인 탭
     const [currentLocation, setCurrentLocation] = useState<{ latitude: number, longitude: number; } | null>(null); //현재 사용자 위치
     const [searchQuery, setSearchQuery] = useState(""); //검색어
@@ -167,19 +165,6 @@ const Search: React.FC = () => {
         initialPageParam: 0,
         enabled: false, 
     });
-
-
-
-    const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-            if (
-                event.type === 'keydown' &&
-                ((event as React.KeyboardEvent).key === 'Tab' ||
-                    (event as React.KeyboardEvent).key === 'Shift')
-            ) {
-                return;
-            }
-            setIsDrawerOpen(open);
-        };
 
     const handleFocus = async () => {
             if (!googleScriptLoaded.current) {
@@ -264,13 +249,11 @@ const Search: React.FC = () => {
             <Header 
                 leftNode={
                     <IconWrapper>
-                        <HamburgerIcon src={hamburger} onClick={toggleDrawer(true)}/>
+                        <VectorIcon src={vector} onClick={() => {navigate(-1)}}></VectorIcon>
                         <KeungdoriIcon src={keungdori} />
                     </IconWrapper>
                 }
             />
-
-            <DrawerComponent isOpen={isDrawerOpen} onClose={toggleDrawer(false)}></DrawerComponent>
 
             <ContentWrapper>
 

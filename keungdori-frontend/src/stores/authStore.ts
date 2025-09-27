@@ -18,7 +18,7 @@ const useAuthStore = create<AuthState>((set) => ({ //로그인 토큰, 상태 �
 
     logout: () => set({
         accessToken: null,
-        isLoggedIn: false,
+        isLoggedIn: true,
     })
 
 }));
