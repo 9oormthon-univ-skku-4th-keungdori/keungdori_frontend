@@ -6,6 +6,7 @@ import { Rating } from '@smastrom/react-rating';
 import Hashtag from '../../../components/Hashtag';
 import Button from '../../../components/Button';
 import api from '../../../api/api';
+import AlertModal from '../../../components/alertmodal/AlertModal';
 import HashtagModal from '../../../components/hashtagmodal/HashtagModal';
 import vector from '../../../assets/vector.png';
 import profile_image from '../../../assets/profile_image.png';
@@ -103,6 +104,27 @@ const ReviewEdit: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [tagToColorize, setTagToColorize] = useState<string | null>(null);
 
+    const [alertModal, setAlertModal] = useState({
+        isOpen: false,
+        text: '',
+        buttonText: '확인',
+        onConfirm: () => {}
+    });
+
+    const showAlert = (text: string, onConfirmAction?: () => void) => {
+        setAlertModal({
+            isOpen: true,
+            text,
+            buttonText: '확인',
+            onConfirm: () => {
+                setAlertModal({ isOpen: false, text: '', buttonText: '확인', onConfirm: () => {} });
+                if (onConfirmAction) {
+                    onConfirmAction();
+                }
+            }
+        });
+    };
+
     const resetInputState = () => {
         setActiveInput(null);
         setInputValue('');
@@ -112,7 +134,6 @@ const ReviewEdit: React.FC = () => {
     const { mutate: editReview, /*isPending: isEditing*/ } = useMutation({
         mutationFn: updateReview,
         onSuccess: (/*data,*/ variables) => {
-            //alert('리뷰가 성공적으로 수정되었습니다.'); 2. 모달로 변경
             queryClient.invalidateQueries({ queryKey: ['reviews', reviewData.googleId] });
 
             //이미지 교체가 일어났을 경우에만 기존 이미지 삭제
@@ -120,11 +141,13 @@ const ReviewEdit: React.FC = () => {
                 deleteImage(reviewData.imageUrl); 
             }
             
-            navigate(-1);
+            showAlert('리뷰가 성공적으로 수정되었습니다.', () => {
+                navigate(-1);
+            });
         },
         onError: (error) => {
             console.error('리뷰 수정 실패:', error);
-            //alert('리뷰 수정에 실패했습니다.'); 2. 모달로 변경
+            showAlert('리뷰 수정에 실패했습니다.');
         }
     });
 
@@ -147,7 +170,7 @@ const ReviewEdit: React.FC = () => {
         },
         onError: (error) => {
             console.error('태그 생성 실패:', error);
-            //alert('태그를 생성하는 데 실패했습니다.'); 2. 모달로 변경
+            showAlert('태그를 생성하는 데 실패했습니다.');
             resetInputState();
         }
     });
@@ -168,7 +191,7 @@ const ReviewEdit: React.FC = () => {
         },
         onError: (error) => {
             console.error('태그 색상 업데이트 실패:', error);
-            //alert('태그 색상을 업데이트하는 데 실패했습니다.'); 2. 모달로 변경
+            showAlert('태그 색상을 업데이트하는 데 실패했습니다.');
             setIsColorModalOpen(false);
         }
     });
@@ -184,7 +207,7 @@ const ReviewEdit: React.FC = () => {
             },
             onError: (error) => {
                 console.error("태그 삭제 실패:", error); 
-                alert("태그 삭제 실패");
+                showAlert("태그 삭제에 실패했습니다.");
             }
     })
 
@@ -194,11 +217,11 @@ const ReviewEdit: React.FC = () => {
             e.preventDefault();
             const text = inputValue.trim();
             if (!text.startsWith('#') || text.length <= 1) {
-                alert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
+                showAlert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
                 return;
             }
             if (mainTag?.hashtag === text || subTags.some(t => t.hashtag === text)) {
-                alert('이미 추가된 태그입니다.');
+                showAlert('이미 추가된 태그입니다.');
                 return;
             }
             addTag(text);
@@ -219,7 +242,7 @@ const ReviewEdit: React.FC = () => {
     //리뷰 수정 제출
     const handleSubmit = async () => {
         if (!rating || !mainTag) {
-            alert('별점과 메인 태그는 필수입니다.'); //2. 모달로 변경
+            showAlert('별점과 메인 태그는 필수입니다.');
             return;
         }
 
@@ -229,7 +252,7 @@ const ReviewEdit: React.FC = () => {
         if (imageFile) {
             const uploadedUrl = await uploadImage(imageFile);
             if (!uploadedUrl) {
-                // 업로드 실패 시 전송 중단
+                showAlert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
                 return;
             }
             newImageUrl = uploadedUrl;
@@ -249,7 +272,7 @@ const ReviewEdit: React.FC = () => {
         }
 
         if (Object.keys(payload).length === 0) {
-            alert('수정된 내용이 없습니다.'); // 2. 모달로 변경
+            showAlert('수정된 내용이 없습니다.');
             return;
         }
 
@@ -339,6 +362,14 @@ const ReviewEdit: React.FC = () => {
                 }}
                 onColorSelect={handleColorSelect}
             />
+
+            <AlertModal
+                isOpen={alertModal.isOpen}
+                onConfirm={alertModal.onConfirm}
+                text={alertModal.text}
+                buttonText={alertModal.buttonText}
+            />
+
         </>
     );
 };

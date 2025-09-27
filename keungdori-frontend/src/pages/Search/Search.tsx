@@ -353,14 +353,14 @@ const Search: React.FC = () => {
                     </ResultsList>
                 )}
 
-                {activeTab !== 'place' && (
+                {/*activeTab !== 'place' && (
                     <>
                     <div ref={ref} /> 
                     {(isVisitedFetching || isHashtagFetching) && (
                         <Message>리뷰를 불러오는 중입니다</Message>
                     )}
                     </>
-                )}
+                )*/}
 
             </ContentWrapper>
         </SearchWrapper>

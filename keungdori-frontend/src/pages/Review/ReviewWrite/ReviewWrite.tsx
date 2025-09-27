@@ -9,6 +9,7 @@ import { Rating } from '@smastrom/react-rating';
 import Hashtag from '../../../components/Hashtag';
 import Button from '../../../components/Button';
 import api from '../../../api/api';
+import AlertModal from '../../../components/alertmodal/AlertModal';
 import HashtagModal from '../../../components/hashtagmodal/HashtagModal';
 import profile_image from '../../../assets/profile_image.png';
 import vector from '../../../assets/vector.png'
@@ -89,16 +90,41 @@ const ReviewWrite: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [tagToColorize, setTagToColorize] = useState<string | null>(null);
 
+    // isOpen: 모달 열림 여부, text: 모달에 표시될 텍스트, onConfirm: 확인 버튼 클릭 시 실행될 함수
+    const [alertModal, setAlertModal] = useState({
+        isOpen: false,
+        text: '',
+        buttonText: '확인',
+        onConfirm: () => {}
+    });
+
+    const showAlert = (text: string, onConfirmAction?: () => void) => {
+        setAlertModal({
+            isOpen: true,
+            text,
+            buttonText: '확인',
+            onConfirm: () => {
+                // 확인 버튼을 누르면 모달을 닫고, 추가적인 액션이 있으면 실행합니다.
+                setAlertModal({ isOpen: false, text: '', buttonText: '확인', onConfirm: () => {} });
+                if (onConfirmAction) {
+                    onConfirmAction();
+                }
+            }
+        });
+    };
+
     const { mutate: submitReview } = useMutation({ //4. 낙관적 업데이트 적용해 말어?
         mutationFn: postReview,
         onSuccess: () => {
             //alert('리뷰가 성공적으로 등록되었습니다.'); 3. 리뷰 전송 완료 모달
             queryClient.invalidateQueries({ queryKey: ['reviews', placeId] }); //리뷰 전송하면 리뷰 목록화면에서 리뷰 목록 갱신
-            navigate(-1); 
+            showAlert('리뷰가 성공적으로 등록되었습니다.', () => {
+                navigate(-1);
+            });
         },
         onError: (error) => {
             console.error('리뷰 등록 실패:', error);
-            //alert('리뷰 등록에 실패했습니다.'); 3. 리뷰 전송 실패 모달
+            showAlert('리뷰 등록에 실패했습니다.');
         },
     })
 
@@ -120,7 +146,7 @@ const ReviewWrite: React.FC = () => {
         },
         onError: (error) => {
             console.error('태그 생성 실패:', error);
-            alert('태그를 생성하는 데 실패했습니다.');
+            showAlert('태그를 생성하는 데 실패했습니다.');
             resetInputState();
         }
     });
@@ -140,7 +166,7 @@ const ReviewWrite: React.FC = () => {
         },
         onError: (error) => {
             console.error('태그 색상 업데이트 실패:', error);
-            alert('태그 색상을 업데이트하는 데 실패했습니다.');
+            showAlert('태그 색상을 업데이트하는 데 실패했습니다.');
             setIsColorModalOpen(false);
         }
     });
@@ -156,7 +182,7 @@ const ReviewWrite: React.FC = () => {
         },
         onError: (error) => {
             console.error("태그 삭제 실패:", error); 
-            alert("태그 삭제 실패");
+            showAlert("태그 삭제에 실패했습니다.");
         }
     })
 
@@ -170,11 +196,11 @@ const ReviewWrite: React.FC = () => {
             e.preventDefault(); // Form 전송 방지
             const text = inputValue.trim();
             if (!text.startsWith('#') || text.length <= 1) {
-                alert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
+                showAlert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
                 return;
             }
             if (mainTag?.text === text || subTags.some(t => t.text === text)) {
-                alert('이미 추가된 태그입니다.');
+                showAlert('이미 추가된 태그입니다.');
                 return;
             }
             addTag(text); // 태그 생성 API 호출
@@ -195,7 +221,7 @@ const ReviewWrite: React.FC = () => {
     
     const handleSubmit = async () => {
         if (!rating || !mainTag) {
-            //alert('별점과 메인 태그는 필수입니다.'); 2. 모달로 변경
+            showAlert('별점과 메인 태그는 필수입니다.');
             return;
         }
 
@@ -205,7 +231,7 @@ const ReviewWrite: React.FC = () => {
         if (imageFile) {
             const uploadedUrl = await uploadImage(imageFile);
             if (!uploadedUrl) {
-                console.error("이미지 업로드에 실패했습니다!");
+                showAlert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
                 // 업로드 실패 시 전송 중단
                 return;
             }
@@ -313,6 +339,15 @@ const ReviewWrite: React.FC = () => {
                 }}
                 onColorSelect={handleColorSelect}
             />
+
+            <AlertModal
+                isOpen={alertModal.isOpen}
+                onConfirm={alertModal.onConfirm}
+                text={alertModal.text}
+                buttonText={alertModal.buttonText}
+            />
+
+            
         </>
     );
 };
