@@ -25,7 +25,7 @@ interface Review {
     memo: string;
     mainTag: Tag; // string -> Tag
     subTags: Tag[]; // string[] -> Tag[]
-    name: string; 
+    placeName: string; 
     address: string;
     googleId: string;
     xCoordinate: number;
@@ -264,7 +264,7 @@ const ReviewEdit: React.FC = () => {
             />
 
             <PlaceName>
-                {reviewData.name}
+                {reviewData.placeName}
             </PlaceName>
 
             <PageContainer>

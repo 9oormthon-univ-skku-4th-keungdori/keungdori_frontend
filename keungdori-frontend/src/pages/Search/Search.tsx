@@ -32,7 +32,7 @@ import PlaceCard from "../../components/placecard/PlaceCard";
 
 interface Place {
     place_id: string;
-    name: string;
+    placeName: string;
     formatted_address: string;
     geometry: {
         location: google.maps.LatLng;
@@ -41,7 +41,7 @@ interface Place {
 
 interface ReviewedPlace {
     placeId: number;
-    name: string;
+    placeName: string;
     address: string;
     googleId: string;
     xcoordinate: number;
@@ -69,7 +69,7 @@ const searchGooglePlaces = async (
         
         const mappedPlaces: Place[] = places.map(place => ({
             place_id: place.id ?? '', 
-            name: place.displayName ?? '', 
+            placeName: place.displayName ?? '', 
             formatted_address: place.formattedAddress ?? '', 
             geometry: {
                 location: place.location ?? new google.maps.LatLng(0, 0)
@@ -196,10 +196,10 @@ const Search: React.FC = () => {
     };
 
     const handleReviewButtonClick = (place: Place) => { //리뷰 목록 화면으로 이동할때, 장소 이름, 좌표 넘겨줌
-        console.log("리뷰 작성:", place.name);
+        console.log("리뷰 작성:", place.placeName);
         navigate(`/review/reviewlist/${place.place_id}`, 
             { state: { 
-                placeName: place.name,
+                placeName: place.placeName,
                 placeId: place.place_id,
                 placeAddress: place.formatted_address,
                 longitude: place.geometry.location.lng(), 
@@ -211,7 +211,7 @@ const Search: React.FC = () => {
     const handleReviewClick = (place: ReviewedPlace) => {
         navigate(`/review/reviewlist/${place.googleId}`, 
             { state: { 
-                placeName: place.name,
+                placeName: place.placeName,
                 placeId: place.googleId,
                 placeAddress: place.address,
                 longitude: place.xcoordinate,
@@ -293,7 +293,7 @@ const Search: React.FC = () => {
                             googleSearchResult.map((place) => (
                                 <SearchResultItem key={place.place_id}>
                                     <PlaceInfo>
-                                        <h4>{place.name}</h4>
+                                        <h4>{place.placeName}</h4>
                                         <p>{place.formatted_address}</p>
                                         {/*{place.distance && (
                                             <Distance>{formatDistance(place.distance)}</Distance>

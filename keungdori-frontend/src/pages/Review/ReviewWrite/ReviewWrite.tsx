@@ -22,7 +22,7 @@ interface Place {
 }
 
 interface Review {
-    name: string; // 장소 이름
+    placeName: string; // 장소 이름
     address: string, // 장소 주소
     googleId: string, // 구글 장소 id
     xCoordinate: number; // 장소 위도
@@ -214,7 +214,7 @@ const ReviewWrite: React.FC = () => {
 
         // 신규 리뷰 등록
         const review: Review = {
-            name: placeName,
+            placeName: placeName,
             address: placeAddress,
             googleId: placeId,
             xCoordinate: placeX,

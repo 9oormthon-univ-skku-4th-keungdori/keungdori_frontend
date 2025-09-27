@@ -12,7 +12,7 @@ import bgImage from '../../assets/keungdori.png';
 // Search.tsx의 ReviewedPlace 인터페이스와 맞춰주세요.
 interface Place {
     placeId: number;
-    name: string;
+    placeName: string;
     address: string;
     googleId: string;
     xcoordinate: number;
@@ -31,7 +31,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place, onClick }) => {
             {/* place.imageUrl이 있으면 배경이미지로 설정, 없으면 기본 플레이스홀더 표시 */}
             <ImagePlaceholder style={{ backgroundImage: bgImage }} />
             <Content>
-                <PlaceName>{place.name}</PlaceName>
+                <PlaceName>{place.placeName}</PlaceName>
                 <TagContainer>
                 </TagContainer>
             </Content>
