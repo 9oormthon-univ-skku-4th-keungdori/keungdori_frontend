@@ -209,6 +209,7 @@ const Search: React.FC = () => {
     };
 
     const handleReviewClick = (place: ReviewedPlace) => {
+        console.log("장소 이름:", place.placeName);
         navigate(`/review/reviewlist/${place.googleId}`, 
             { state: { 
                 placeName: place.placeName,
