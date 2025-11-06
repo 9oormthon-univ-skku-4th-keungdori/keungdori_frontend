@@ -41,7 +41,8 @@ export function useBottomSheet() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      const { touchStart, touchMove } = metrics.current;
+      const { touchStart, touchMove, isContentAreaTouched } = metrics.current;
+      const contentElement = content.current;
       const currentTouch = e.touches[0];
 
       if (touchMove.prevTouchY === undefined) {
@@ -53,6 +54,19 @@ export function useBottomSheet() {
       if (touchMove.prevTouchY > currentTouch.clientY) {
         touchMove.movingDirection = 'up';
       }
+
+      // ⭐️⭐️⭐️ 바로 이 부분입니다! ⭐️⭐️⭐️
+      // 컨텐츠 영역을 아래로 스크롤할 때, 스크롤이 최상단이 아니면 바텀시트 움직임을 막습니다.
+      if (
+        isContentAreaTouched &&
+        touchMove.movingDirection === 'down' &&
+        contentElement &&
+        contentElement.scrollTop > 0
+      ) {
+        // 여기서 함수를 종료시켜 버리면, 아래의 transform 로직이 실행되지 않습니다.
+        return;
+      }
+      // ⭐️⭐️⭐️ 여기까지가 추가된 로직입니다. ⭐️⭐️⭐️
 
       const touchOffset = currentTouch.clientY - touchStart.touchY;
       let nextSheetY = touchStart.sheetY + touchOffset;

@@ -9,8 +9,16 @@ interface HashtagModalProps {
     onColorSelect: (bgColor: string) => void;
 }
 
+const customColors = [
+    ['#F44259','#FF83A8', '#FFA6A7', '#FFE0E0'],
+    ['#FF5E2D', '#FF953E', '#FFC639', '#FFF272'],
+    ['#57B75B', '#A3E23D', '#8DD7B0', '#D7FF97'],
+    ['#14479E', '#B571DB', '#7CD8FF', '#B4D8ED'],
+    ['#854343', '#D05953', '#D17619', '#ADADAD']
+];
+
 const HashtagModal: React.FC<HashtagModalProps> = ({ isOpen, onClose, onColorSelect }) => {
-    const [selectedColor, setSelectedColor] = useState('#FF769F');
+    const [selectedColor, setSelectedColor] = useState(customColors[0][0]);
 
     //색상 변경
     const handleColorChange = (color: ColorResult) => {
@@ -40,6 +48,7 @@ const HashtagModal: React.FC<HashtagModalProps> = ({ isOpen, onClose, onColorSel
                     <SwatchesPicker
                         color={selectedColor}
                         onChangeComplete={handleColorChange}
+                        colors={customColors}
                     />
                 </PickerWrapper>
 

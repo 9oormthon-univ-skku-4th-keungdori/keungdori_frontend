@@ -198,7 +198,7 @@ const ReviewEdit: React.FC = () => {
 
     const { mutate: removeTag } = useMutation({
             mutationFn: deleteTag,
-            onSuccess: (tagTextToDelete) => {
+            onSuccess: (_, tagTextToDelete) => {
                 if (mainTag?.hashtag === tagTextToDelete) {
                     setMainTag(null);
                 } else {
@@ -324,7 +324,7 @@ const ReviewEdit: React.FC = () => {
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    onBlur={resetInputState}
+                                    //onBlur={resetInputState}
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                  />
