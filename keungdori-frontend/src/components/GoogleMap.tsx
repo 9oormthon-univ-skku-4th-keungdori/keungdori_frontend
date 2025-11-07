@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { Map, AdvancedMarker, useMap, type MapMouseEvent, type MapEvent } from '@vis.gl/react-google-maps';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
-import location_marker from '../assets/current_marker.png';
+import place_marker from '../assets/place_marker.svg';
+import location_marker from '../assets/current_marker.svg';
 
 //현재 위치를 나타내는 마커 애니메이션
 const bounce = keyframes`
@@ -23,6 +24,14 @@ const BouncingMarker = styled.img`
   filter: drop-shadow(0px 5px 3px rgba(0, 0, 0, 0.2));
 `;
 
+const PlaceMarker = styled.img`
+  width: 32px; // 원하는 크기로 조절
+  height: 32px; // 원하는 크기로 조절
+  border-radius: 50%; // 원형 마커로 만들고 싶다면
+  border: 2px solid white; // 테두리 추가
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3); // 그림자 효과
+`;
+
 const MapController = ({ latitude, longitude }: { latitude: number; longitude: number }) => {
     const map = useMap();
     // 사용자가 위치를 이동하면 그에 맞게 지도의 중심을 옮기는 기능임.
@@ -35,14 +44,21 @@ const MapController = ({ latitude, longitude }: { latitude: number; longitude: n
     return null;
 }
 
+interface ReviewForMap {
+    ycoordinate: number; // 위도 (lat)
+    xcoordinate: number; // 경도 (lng)
+    placeName: string; // 마우스 오버 시 이름 표시용
+}
+
 interface GoogleMapProps {
   latitude: number;
   longitude: number;
   onMapClick: (placeId: string | null) => void; // Place ID를 부모로 전달할 콜백 함수
   onBoundsChanged: (bounds: google.maps.LatLngBounds) => void;
+  reviews: ReviewForMap[] | undefined;
 }
 
-const GoogleMap: React.FC<GoogleMapProps> = ({ latitude, longitude, onMapClick, onBoundsChanged }) => {
+const GoogleMap: React.FC<GoogleMapProps> = ({ latitude, longitude, onMapClick, onBoundsChanged, reviews }) => {
   const position = { lat: latitude, lng: longitude };
 
   // 지도 클릭 핸들러
@@ -76,6 +92,21 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ latitude, longitude, onMapClick, 
         <AdvancedMarker position={position}>
             <BouncingMarker src={location_marker} />
         </AdvancedMarker>
+
+        {/* 리뷰 데이터를 기반으로 마커 렌더링 */}
+        {reviews &&
+            reviews.map((review) => (
+                <AdvancedMarker
+                    key={review.placeName}
+                    position={{
+                        lat: review.ycoordinate, // API 데이터의 위도
+                        lng: review.xcoordinate, // API 데이터의 경도
+                    }}
+                    title={review.placeName} // 마우스 오버 시 장소 이름 표시
+                >
+                    <PlaceMarker src={place_marker} alt={review.placeName} />
+                </AdvancedMarker>
+          ))}
 
         {/* Map 자식으로 컨트롤러를 추가하여 지도 움직임을 제어 */}
         <MapController latitude={latitude} longitude={longitude} />

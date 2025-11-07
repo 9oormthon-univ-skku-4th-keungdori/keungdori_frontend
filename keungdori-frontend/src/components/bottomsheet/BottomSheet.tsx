@@ -11,22 +11,17 @@ interface Tag {
 }
 
 interface Review {
-    reviewId: number;
-    rating: number;
-    memo: string;
     mainTag: Tag; // string -> Tag
     subTags: Tag[]; // string[] -> Tag[]
     placeName: string; 
     address: string;
-    googleId: string;
-    xCoordinate: number;
-    yCoordinate: number;
-    date: string;
-    imageUrl: string;
+    xcoordinate: number;
+    ycoordinate: number;
+    distance: number;
 }
 
 interface ReviewPage {
-    reviews: Review[];
+    places: Review[];
     nextPage: number | null;
 }
 
