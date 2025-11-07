@@ -6,7 +6,7 @@ export const CardContainer = styled.li`
   border: 1px solid #F0F0F0;
   border-radius: 16px;
   margin-bottom: 16px;
-  background-color: #FFC2C3;
+  background-color: #D8F3E4;
   cursor: pointer;
 `;
 

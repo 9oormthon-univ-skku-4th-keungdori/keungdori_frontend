@@ -19,7 +19,7 @@ const StyledHashtag = styled.span<Pick<RdOnlyHashtagProps, 'backgroundColor' | '
 const RdOnlyHashtag = ({ hashtag, backgroundColor, fontColor, ...rest }: RdOnlyHashtagProps) => {
     return (
     <StyledHashtag backgroundColor={backgroundColor} fontColor={fontColor} {...rest}> 
-        {hashtag}
+        #{hashtag}
     </StyledHashtag>
     );
 };

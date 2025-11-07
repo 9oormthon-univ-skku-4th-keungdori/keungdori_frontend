@@ -205,7 +205,7 @@ const MyAccount: React.FC = () => {
                 </InputWrapper>
                 
                 <OptionWrapper>
-                    <span>친구에게 표시될 내 기본 색상</span>
+                    <InputLabel>친구에게 표시될 내 기본 색상</InputLabel>
                     <ColorSwatch color={userInfo?.color || '#8DD7B0'} onClick={() => setIsColorModalOpen(true)} />
                 </OptionWrapper>
 
