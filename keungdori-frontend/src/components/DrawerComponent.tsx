@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer, Box, IconButton, Typography, List, ListItem, ListItemText, Divider, Toolbar } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import settings from '../assets/Settings.png';
+import settings from '../assets/settings.png';
 import styled from '@emotion/styled';
 
 const SettingsIconImg = styled.img`
