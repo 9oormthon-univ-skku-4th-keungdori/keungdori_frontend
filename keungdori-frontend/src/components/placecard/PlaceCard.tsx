@@ -16,13 +16,13 @@ interface Tag {
 }
 
 interface Place {
-    mainTag: Tag;
-    subTags: Tag[];
+    mainTag?: Tag;
+    subTags?: Tag[];
     placeName: string; 
     address: string;
     xcoordinate: number;
     ycoordinate: number;
-    distance: number;
+    distance?: number;
 }
 
 // 컴포넌트의 props 타입을 정의합니다.
@@ -46,7 +46,7 @@ const PlaceCard: React.FC<PlaceCardProps> = ({ place, onClick }) => {
                             fontColor={place.mainTag.fontColor}
                         />
                     )}
-                    {place.subTags.map((tag) => (
+                    {place.subTags?.map((tag) => (
                         <RdOnlyHashtag
                             key={tag.hashtag}
                             hashtag={tag.hashtag}

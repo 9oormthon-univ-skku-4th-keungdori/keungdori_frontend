@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer'; // import
 import PlaceCard from '../placecard/PlaceCard'; // 경로에 맞게 수정
 import Spinner from '../Spinner'; // 스피너 컴포넌트
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 
 interface Tag {
     hashtag: string;
