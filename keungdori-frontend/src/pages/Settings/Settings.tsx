@@ -1,16 +1,17 @@
 import React, { Suspense, useState } from 'react';
 import Header from '../../components/Header';
-import { ArrowIcon, Badge, Container, HeaderTitle, IconWrapper, ItemLeft, MenuGroup, MenuIcon, MenuItem, MenuTitle, SettingScreenWrapper, VectorIcon } from './Styles';
+import { ArrowIcon, Badge, Container, HeaderTitle, IconWrapper, ItemLeft, MenuGroup, MenuIcon, MenuItem, MenuTitle, Myaccount, SettingScreenWrapper, VectorIcon } from './Styles';
 import vector from '../../assets/vector.svg';
 import vectorReverse from '../../assets/vector_reverse.png';
 import account from '../../assets/account.svg';
 import subscribe from '../../assets/subscribe.svg';
 import support from '../../assets/support.svg';
 import info from '../../assets/information.svg';
-import trashCan from '../../assets/trash_can.svg';
+import friend from '../../assets/friend.svg';
 import addFriend from '../../assets/add_friend.svg';
 import hashtag from '../../assets/hashtag.svg';
 import logout from '../../assets/logout.svg';
+import out from '../../assets/out.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/authStore';
 import authApi from '../../api/authApi';
@@ -71,12 +72,12 @@ const Settings : React.FC = () => {
                 
                 <Container>
                     <MenuGroup>
-                        <MenuItem onClick={() => navigate('/settings/account')}>
+                        <Myaccount onClick={() => navigate('/settings/account')}>
                             <ItemLeft>
                                 <MenuIcon src={account} alt="내 정보 변경" />
                                 <MenuTitle>내 정보 변경</MenuTitle>
                             </ItemLeft>
-                        </MenuItem>
+                        </Myaccount>
                     </MenuGroup>
 
                     <MenuGroup>
@@ -104,7 +105,7 @@ const Settings : React.FC = () => {
                     <MenuGroup>
                         <MenuItem>
                             <ItemLeft>
-                                <MenuIcon src={trashCan} alt="친구 목록 보기/삭제하기" />
+                                <MenuIcon src={friend} alt="친구 목록 보기/삭제하기" />
                                 <MenuTitle>친구 목록 보기 / 삭제하기</MenuTitle>
                             </ItemLeft>
                             <ArrowIcon src={vectorReverse} alt="go" />
@@ -134,7 +135,7 @@ const Settings : React.FC = () => {
                         </MenuItem>
                         <MenuItem onClick={handleUnsubscribeClick}>
                             <ItemLeft>
-                                <MenuIcon src={hashtag} alt="회원탈퇴" />
+                                <MenuIcon src={out} alt="회원탈퇴" />
                                 <MenuTitle>회원 탈퇴</MenuTitle>
                             </ItemLeft>
                         </MenuItem>

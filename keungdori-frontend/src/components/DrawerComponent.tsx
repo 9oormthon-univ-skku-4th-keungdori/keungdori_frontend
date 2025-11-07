@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer, Box, IconButton, Typography, List, ListItem, ListItemText, Divider, Toolbar } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import keungdori from '../assets/keungdori.png';
+import settings from '../assets/Settings.png';
 import styled from '@emotion/styled';
 
 const SettingsIconImg = styled.img`
@@ -31,11 +31,8 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({ isOpen, onClose }) =>
     >
       <Toolbar>
         <IconButton onClick={handleSettingsClick} sx={{ p: 1 }}>
-          <SettingsIconImg src={keungdori} alt="설정" />
+          <SettingsIconImg src={settings} alt="설정" />
         </IconButton>
-        <Typography variant="h6" sx={{ ml: 1 }} onClick={handleSettingsClick}>
-          설정
-        </Typography>
       </Toolbar>
       <Divider />
       <List>
