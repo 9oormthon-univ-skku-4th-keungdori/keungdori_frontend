@@ -27,6 +27,7 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center; // 컨텐츠를 세로 중앙에 배치
+  min-width: 0;
 `;
 
 export const PlaceName = styled.h4`
@@ -39,5 +40,11 @@ export const TagContainer = styled.div`
   display: flex;
   gap: 8px;
   flex-wrap: nowrap;    
-  overflow-x: auto;      
+  overflow-x: auto;
+
+  // 자식 요소(RdOnlyHashtag)들에게 적용될 스타일
+  & > * {
+    flex-shrink: 0;      // 공간이 부족해도 절대 너비가 줄어들지 않도록 설정
+    white-space: nowrap; // 텍스트가 길어도 내부에서 절대 줄바꿈 되지 않도록 설정
+  }
 `;
