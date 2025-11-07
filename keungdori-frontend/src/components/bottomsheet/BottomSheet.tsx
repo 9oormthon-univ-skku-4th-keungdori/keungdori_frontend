@@ -2,7 +2,6 @@ import BottomSheetHeader from './BottomSheetHeader';
 import { BottomSheetContent, Wrapper } from './Styles';
 import { useBottomSheet } from "../../hooks/useBottomSheet";
 import Content from "./Content";
-import type { InfiniteData } from '@tanstack/react-query';
 
 interface Tag {
     hashtag: string;
@@ -20,19 +19,13 @@ interface Review {
     distance: number;
 }
 
-interface ReviewPage {
-    places: Review[];
-    nextPage: number | null;
-}
 
 interface BottomSheetProps {
-    reviewsData?: InfiniteData<ReviewPage>;
+    reviews?: Review[];
     isFetching: boolean;
-    fetchNextPage: () => void;
-    hasNextPage: boolean;
 }
 
-const BottomSheet = ({ reviewsData, isFetching, fetchNextPage, hasNextPage }: BottomSheetProps) => {
+const BottomSheet = ({ reviews, isFetching }: BottomSheetProps) => {
   const { sheet, content } = useBottomSheet();
 
   
@@ -41,10 +34,8 @@ const BottomSheet = ({ reviewsData, isFetching, fetchNextPage, hasNextPage }: Bo
       <BottomSheetHeader />
       <BottomSheetContent ref={content}>
         <Content 
-          reviewsData={reviewsData}
+          reviews={reviews}
           isFetching={isFetching}
-          fetchNextPage={fetchNextPage}
-          hasNextPage={hasNextPage}
         />
       </BottomSheetContent>
     </Wrapper>

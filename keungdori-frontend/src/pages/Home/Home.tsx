@@ -10,7 +10,7 @@ import BottomSheet from "../../components/bottomsheet/BottomSheet";
 import GoogleMap from "../../components/GoogleMap";
 import Spinner from "../../components/Spinner";
 import api from "../../api/api";
-import { useInfiniteQuery, type InfiniteData, type QueryFunctionContext} from "@tanstack/react-query";
+import { useQuery, type QueryFunctionContext} from "@tanstack/react-query";
 
 const DrawerComponent = lazy(() => import("../../components/DrawerComponent"));
 
@@ -28,11 +28,6 @@ interface Review {
     xcoordinate: number;
     ycoordinate: number;
     distance: number;
-}
-
-interface ReviewPage {
-    places: Review[];
-    nextPage: number | null;
 }
 
 const API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
@@ -59,25 +54,19 @@ const MapLoader: React.FC<{
     );
 };
 
-const fetchReview = async ({ pageParam = 0, queryKey }: QueryFunctionContext<[string, google.maps.LatLngBounds | null]>): Promise<ReviewPage> => {
+const fetchReview = async ({ queryKey }: QueryFunctionContext<[string, google.maps.LatLngBounds | null]>): Promise<Review[]> => {
     const [, bounds] = queryKey;
 
     if (!bounds) {
-        // useInfiniteQuery는 이 구조를 기본 데이터로 사용합니다.
-        return { places: [], nextPage: null };
+        return [];
     }
 
     const { north, south, east, west } = bounds.toJSON();
-    const { data } = await api.get(`/reviews/nearme`, {
-        params: {
-            page: pageParam,
-            north, south, east, west
-        }
+    const { data } = await api.get(`/places/nearme`, {
+        params: { north, south, east, west }
     });
-    return {
-        places: data.places,
-        nextPage: data.nextPage ?? null
-    };
+    return data.places;
+
 };
 
 // 해당 위치에서 사용자가 리뷰 작성한 곳 마커 표시해야 함
@@ -92,20 +81,15 @@ const Home: React.FC = () => {
 
     const {
         data: reviewData,
-        fetchNextPage,
-        hasNextPage,
         isFetching,
-    } = useInfiniteQuery<
-        ReviewPage,                                           // TQueryFnData: fetchReview가 반환하는 타입
+    } = useQuery<
+        Review[],                                           // TQueryFnData: fetchReview가 반환하는 타입
         Error,                                               // TError: 에러 타입
-        InfiniteData<ReviewPage>,                            // TData: 실제 반환되는 데이터 타입
-        [string, google.maps.LatLngBounds | null],          // TQueryKey: 쿼리 키 타입
-        number                                              // TPageParam: 페이지 파라미터 타입
+        Review[],                           // TData: 실제 반환되는 데이터 타입
+        [string, google.maps.LatLngBounds | null]          // TQueryKey: 쿼리 키 타입
     >({
         queryKey: ['reviews', bounds] as const,
         queryFn: fetchReview,
-        initialPageParam: 0,
-        getNextPageParam: (lastPage) => lastPage.nextPage ?? undefined,
         enabled: !!bounds
     })
 
@@ -225,7 +209,7 @@ const Home: React.FC = () => {
                                 currentPosition={currentPosition}
                                 handleMapClick={handleMapClick}
                                 onBoundsChanged={handleBoundsChanged}
-                                reviews={reviewData?.pages.flatMap(page => page.places)}
+                                reviews={reviewData}
                             />
                         </APIProvider>
                     ) : (
@@ -243,10 +227,8 @@ const Home: React.FC = () => {
                 </MapContainer>
                 
                 {<BottomSheet
-                    reviewsData={reviewData}
+                    reviews={reviewData}
                     isFetching={isFetching}
-                    fetchNextPage={fetchNextPage}
-                    hasNextPage={hasNextPage}
                 />}
 
             

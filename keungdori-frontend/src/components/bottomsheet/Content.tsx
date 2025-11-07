@@ -1,9 +1,5 @@
-import { useEffect } from 'react';
-import { type InfiniteData } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer'; // import
 import PlaceCard from '../placecard/PlaceCard'; // 경로에 맞게 수정
 import Spinner from '../Spinner'; // 스피너 컴포넌트
-import React from 'react';
 //import { useNavigate } from 'react-router-dom';
 
 interface Tag {
@@ -22,62 +18,36 @@ interface Review {
     distance: number;
 }
 
-interface ReviewPage {
-    places: Review[];
-    nextPage: number | null;
-}
-
 interface ContentProps {
-    reviewsData?: InfiniteData<ReviewPage>;
+    reviews?: Review[];
     isFetching: boolean;
-    fetchNextPage: () => void;
-    hasNextPage: boolean;
 }
 
-const Content = ({ reviewsData, isFetching, fetchNextPage, hasNextPage }: ContentProps) => {
-  //const navigate = useNavigate();
+const Content = ({ reviews, isFetching }: ContentProps) => {
+    //const navigate = useNavigate();
   
-  const { ref, inView } = useInView({
-        threshold: 0,
-    });
-
-    useEffect(() => {
-        if (inView && hasNextPage && !isFetching) {
-            fetchNextPage();
-        }
-    }, [inView, hasNextPage, isFetching, fetchNextPage]);
 
     /*
     const handleReviewClick = (review: Review) => {
       navigate(`/review/modifyreview/${review.googleId}`, { state: { reviewData: review }});
     };*/
 
-    if (isFetching && !reviewsData) {
+    if (isFetching && !reviews) {
         return <Spinner />;
     }
 
-    if (!reviewsData || reviewsData.pages.length === 0 || reviewsData.pages[0].places.length === 0) {
-        return <div>이 지역에 작성된 리뷰가 없습니다.</div>;
+    if (!reviews|| reviews.length === 0 ) {
+        return <div>근처에 리뷰를 작성한 장소가 없어요!</div>;
     }
 
     return (
         <div>
-            {/* useInfiniteQuery의 데이터는 pages 배열에 중첩되어 있습니다.*/}
-            {reviewsData.pages.map((page, i) => (
-                <React.Fragment key={i}>
-                    {page.places.map(review => (
-                        <PlaceCard 
-                            key={review.placeName} 
-                            place={review}
-                            //onClick={...}
-                        />
-                    ))}
-                </React.Fragment>
+            {reviews.map(review => (
+                <PlaceCard 
+                    key={review.placeName} // (placeName이 고유하지 않다면 review.address 등을 조합해 더 고유한 key를 만드는 것이 좋습니다)
+                    place={review}
+                />
             ))}
-            
-            {hasNextPage && <div ref={ref} style={{ height: '50px' }} />}
-            
-            {isFetching && hasNextPage && <Spinner />}
         </div>
     );
 }
