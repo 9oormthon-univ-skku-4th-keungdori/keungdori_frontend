@@ -1,6 +1,6 @@
 import PlaceCard from '../placecard/PlaceCard'; // 경로에 맞게 수정
 import Spinner from '../Spinner'; // 스피너 컴포넌트
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface Tag {
     hashtag: string;
@@ -13,6 +13,7 @@ interface Review {
     subTags: Tag[]; // string[] -> Tag[]
     placeName: string; 
     address: string;
+    googleId: string;
     xcoordinate: number;
     ycoordinate: number;
     distance: number;
@@ -24,13 +25,17 @@ interface ContentProps {
 }
 
 const Content = ({ reviews, isFetching }: ContentProps) => {
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
   
-
-    /*
     const handleReviewClick = (review: Review) => {
-      navigate(`/review/modifyreview/${review.googleId}`, { state: { reviewData: review }});
-    };*/
+      navigate(`/review/reviewlist/${review.googleId}`, { state: { 
+            placeName: review.placeName,
+            placeId: review.googleId,
+            placeAddress: review.address,
+            longitude: review.xcoordinate,
+            latitude: review.ycoordinate
+      }});
+    };
 
     if (isFetching && !reviews) {
         return <Spinner />;
@@ -46,6 +51,7 @@ const Content = ({ reviews, isFetching }: ContentProps) => {
                 <PlaceCard 
                     key={review.placeName} // (placeName이 고유하지 않다면 review.address 등을 조합해 더 고유한 key를 만드는 것이 좋습니다)
                     place={review}
+                    onClick={() => handleReviewClick(review)}
                 />
             ))}
         </div>

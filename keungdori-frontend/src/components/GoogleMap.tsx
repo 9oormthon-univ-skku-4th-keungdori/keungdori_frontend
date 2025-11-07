@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Map, AdvancedMarker, useMap, type MapMouseEvent, type MapEvent } from '@vis.gl/react-google-maps';
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
@@ -44,10 +45,21 @@ const MapController = ({ latitude, longitude }: { latitude: number; longitude: n
     return null;
 }
 
-interface ReviewForMap {
-    ycoordinate: number; // 위도 (lat)
-    xcoordinate: number; // 경도 (lng)
-    placeName: string; // 마우스 오버 시 이름 표시용
+interface Tag {
+    hashtag: string;
+    backgroundColor: string;
+    fontColor: string;
+}
+
+interface Review {
+    mainTag: Tag;
+    subTags: Tag[];
+    placeName: string; 
+    address: string;
+    googleId: string;
+    xcoordinate: number;
+    ycoordinate: number;
+    distance: number;
 }
 
 interface GoogleMapProps {
@@ -55,10 +67,11 @@ interface GoogleMapProps {
   longitude: number;
   onMapClick: (placeId: string | null) => void; // Place ID를 부모로 전달할 콜백 함수
   onBoundsChanged: (bounds: google.maps.LatLngBounds) => void;
-  reviews: ReviewForMap[] | undefined;
+  reviews: Review[] | undefined;
 }
 
 const GoogleMap: React.FC<GoogleMapProps> = ({ latitude, longitude, onMapClick, onBoundsChanged, reviews }) => {
+  const navigate = useNavigate();
   const position = { lat: latitude, lng: longitude };
 
   // 지도 클릭 핸들러
@@ -75,6 +88,18 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ latitude, longitude, onMapClick, 
         onBoundsChanged(newBounds);
     }
   };
+
+  const handleMarkerClick = (review: Review) => {
+    console.log("장소 이름:", review.placeName);
+    navigate(`/review/reviewlist/${review.googleId}`, 
+        { state: { 
+            placeName: review.placeName,
+            placeId: review.googleId,
+            placeAddress: review.address,
+            longitude: review.xcoordinate,
+            latitude: review.ycoordinate
+        }});
+  }
 
   return (
       <Map
@@ -103,6 +128,7 @@ const GoogleMap: React.FC<GoogleMapProps> = ({ latitude, longitude, onMapClick, 
                         lng: review.xcoordinate, // API 데이터의 경도
                     }}
                     title={review.placeName} // 마우스 오버 시 장소 이름 표시
+                    onClick={() => handleMarkerClick(review)}
                 >
                     <PlaceMarker src={place_marker} alt={review.placeName} />
                 </AdvancedMarker>

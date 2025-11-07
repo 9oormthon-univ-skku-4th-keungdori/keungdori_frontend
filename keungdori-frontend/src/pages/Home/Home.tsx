@@ -25,6 +25,7 @@ interface Review {
     subTags: Tag[]; // string[] -> Tag[]
     placeName: string; 
     address: string;
+    googleId: string;
     xcoordinate: number;
     ycoordinate: number;
     distance: number;
