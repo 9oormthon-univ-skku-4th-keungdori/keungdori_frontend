@@ -188,4 +188,8 @@ export const PickerWrapper = styled.div`
 export const SubmitButton = styled(Button)`
     margin-top: 10px;
     margin-bottom: 50px;
+
+    &:not(:disabled) {
+        background-color: #FFA6A9;
+    }
 `;

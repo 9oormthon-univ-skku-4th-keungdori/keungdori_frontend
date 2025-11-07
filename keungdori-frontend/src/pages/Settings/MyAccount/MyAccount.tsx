@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { SwatchesPicker } from "react-color";
 import ScreenWrapper from "../../../layouts/ScreenWrapper";
-import { CameraButton, CameraIcon, ColorSwatch, Form, ImageFileInput, InputLabel, Input, InputWrapper, KeungdoriIcon, OptionWrapper, PickerWrapper, ProfileImage, ProfileImageSection, SubmitButton, ToggleSlider, ToggleSwitch, ValidationMessage } from "./Styles";
+import { CameraButton, CameraIcon, ColorSwatch, Form, ImageFileInput, InputLabel, Input, InputWrapper, KeungdoriIcon, OptionWrapper, ProfileImage, ProfileImageSection, SubmitButton, ToggleSlider, ToggleSwitch, ValidationMessage } from "./Styles";
 import { IconWrapper, VectorIcon } from "../Styles";
 import { useImageInput } from "../../../hooks/useImageInput";
 import { useImageUpload } from "../../../hooks/useImageUpload";
@@ -14,6 +13,7 @@ import Header from "../../../components/Header";
 import AlertModal from "../../../components/alertmodal/AlertModal";
 import useAuthStore from '../../../stores/authStore';
 import api from "../../../api/api";
+import HashtagModal from "../../../components/hashtagmodal/HashtagModal";
 
 // 받아올 데이터 인터페이스
 interface UserInfo {
@@ -37,7 +37,7 @@ const MyAccount: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
     const [nicknameValidation, setNicknameValidation] = useState<ValidationState | null>(null);
-    const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
+    const [isColorModalOpen, setIsColorModalOpen] = useState<boolean>(false);
     const {
         previewUrl,
         imageFile,
@@ -173,16 +173,14 @@ const MyAccount: React.FC = () => {
                 </IconWrapper>}>
             </Header>
 
-            {showColorPicker && (
-                <PickerWrapper onClick={() => setShowColorPicker(false)}>
-                    <div onClick={(e) => e.stopPropagation()}>
-                        <SwatchesPicker color={userInfo?.color || '#FF769F'} onChange={(color) => {
-                            setUserInfo(prev => prev ? { ...prev, color: color.hex } : null);
-                            setShowColorPicker(false);
-                        }} />
-                    </div>
-                </PickerWrapper>
-            )}
+            <HashtagModal
+                isOpen={isColorModalOpen}
+                onClose={() => setIsColorModalOpen(false)}
+                onColorSelect={(selectedColor) => {
+                    setUserInfo(prev => prev ? { ...prev, color: selectedColor } : null);
+                    setIsColorModalOpen(false); // 색상 선택 후 모달 닫기
+                }}
+            />
 
             <ProfileImageSection>
                 <ProfileImage src={previewUrl || userInfo?.profileImage || profile_image} alt="Profile" />
@@ -208,7 +206,7 @@ const MyAccount: React.FC = () => {
                 
                 <OptionWrapper>
                     <span>친구에게 표시될 내 기본 색상</span>
-                    <ColorSwatch color={userInfo?.color || '#FF769F'} onClick={() => setShowColorPicker(true)} />
+                    <ColorSwatch color={userInfo?.color || '#8DD7B0'} onClick={() => setIsColorModalOpen(true)} />
                 </OptionWrapper>
 
                 <OptionWrapper>
