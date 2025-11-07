@@ -66,7 +66,7 @@ export const TabButton = styled.button<{ isActive: boolean }>`
     padding: 12px 12px;
     font-size: 16px;
     font-weight: ${props => props.isActive ? 'bold' : 'normal'};
-    color: ${props => props.isActive ? '#333333' : '#828282'};
+    color: ${props => props.isActive ? '#8DD7B0' : '#828282'};
     background: none;
     border: none;
     border-bottom: ${props => props.isActive ? '2px solid #FFA6A9' : 'none'};

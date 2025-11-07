@@ -358,7 +358,7 @@ const ReviewEdit: React.FC = () => {
                 isOpen={isColorModalOpen}
                 onClose={() => {
                   setIsColorModalOpen(false);
-                  resetInputState(); // 모달을 그냥 닫으면 입력 상태 초기화
+                  resetInputState(); // 모달을 닫으면 입력 상태 초기화
                 }}
                 onColorSelect={handleColorSelect}
             />
