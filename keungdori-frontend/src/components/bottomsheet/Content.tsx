@@ -1,3 +1,4 @@
+import styled from '@emotion/styled';
 import PlaceCard from '../placecard/PlaceCard'; // 경로에 맞게 수정
 import Spinner from '../Spinner'; // 스피너 컴포넌트
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,11 @@ interface ContentProps {
     isFetching: boolean;
 }
 
+const ContentWrapper = styled.div`
+  /** 좌우에 16px 여백을 줍니다. (값은 원하시는 대로 조절하세요) */
+  padding: 0 16px;
+`;
+
 const Content = ({ reviews, isFetching }: ContentProps) => {
     const navigate = useNavigate();
   
@@ -46,7 +52,7 @@ const Content = ({ reviews, isFetching }: ContentProps) => {
     }
 
     return (
-        <div>
+        <ContentWrapper>
             {reviews.map(review => (
                 <PlaceCard 
                     key={review.placeName} // (placeName이 고유하지 않다면 review.address 등을 조합해 더 고유한 key를 만드는 것이 좋습니다)
@@ -54,7 +60,7 @@ const Content = ({ reviews, isFetching }: ContentProps) => {
                     onClick={() => handleReviewClick(review)}
                 />
             ))}
-        </div>
+        </ContentWrapper>
     );
 }
 
