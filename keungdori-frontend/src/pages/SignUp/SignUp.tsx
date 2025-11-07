@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { ProfileImageSection, ProfileImage, ImageFileInput, Form, InputWrapper, Input, SubmitButton, CameraButton, CameraIcon, IdInputWrapper, DuplicateCheckButton, ValidationMessage, OptionWrapper, ToggleSwitch, ToggleSlider, PickerWrapper, ColorSwatch } from "./Styles";
+import { ProfileImageSection, ProfileImage, ImageFileInput, Form, InputWrapper, Input, SubmitButton, CameraButton, CameraIcon, IdInputWrapper, DuplicateCheckButton, ValidationMessage, OptionWrapper, ToggleSwitch, ToggleSlider, ColorSwatch } from "./Styles";
 import { useImageInput } from "../../hooks/useImageInput";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import profile_image from "../../assets/profile_image.png";
 import camera_icon from "../../assets/camera_icon.png"
 import ScreenWrapper from "../../layouts/ScreenWrapper";
 import axios from "axios";
-import { SwatchesPicker } from "react-color";
 import { useNavigate } from "react-router-dom";
+import HashtagModal from "../../components/hashtagmodal/HashtagModal";
 import api from "../../api/api";
 
 type ValidationState = {
@@ -32,8 +32,8 @@ const SignUp: React.FC = () => {
     const [idValidation, setIdValidation] = useState<ValidationState | null>(null);
     const [isIdAvailable, setIsIdAvailable] = useState<boolean | null>(null);
     const [searchAvailable, setSearchAvailable] = useState<boolean>(true);
-    const [userColor, setUserColor] = useState<string>('#FF3662');
-    const [showColorPicker, setShowColorPicker] = useState<boolean>(false); // 컬러 피커 표시 여부
+    const [userColor, setUserColor] = useState<string>('#8DD7B0');
+    const [isColorModalOpen, setIsColorModalOpen] = useState<boolean>(false); // 컬러 피커 표시 여부
     const isFormValid = nickname.length > 0 && !nicknameValidation && isIdAvailable;
 
     //닉네임 유효성 검사(영문,숫자,언더바만)
@@ -113,19 +113,14 @@ const SignUp: React.FC = () => {
     return (
         <ScreenWrapper>
 
-            {showColorPicker && (
-                <PickerWrapper onClick={() => setShowColorPicker(false)}>
-                    <div onClick={(e) => e.stopPropagation()}> {/* 이벤트 버블링 방지 */}
-                        <SwatchesPicker color={userColor}
-                            onChange={(color) => {
-                                setUserColor(color.hex)
-                                setShowColorPicker(false);
-                                }
-                            }
-                        />
-                    </div>
-                </PickerWrapper>
-            )}
+            <HashtagModal
+                isOpen={isColorModalOpen}
+                onClose={() => setIsColorModalOpen(false)}
+                onColorSelect={(selectedColor) => {
+                    setUserColor(selectedColor);
+                    setIsColorModalOpen(false); // 색상 선택 후 모달 닫기
+                }}
+            />
 
             <ProfileImageSection>
                 <ProfileImage src={previewUrl || profile_image} alt="ProfileImage"></ProfileImage>
@@ -157,7 +152,7 @@ const SignUp: React.FC = () => {
 
                 <OptionWrapper>
                     <span>친구에게 표시될 해시태그 색상</span>
-                    <ColorSwatch color={userColor} onClick={() => setShowColorPicker(true)} />
+                    <ColorSwatch color={userColor} onClick={() => setIsColorModalOpen(true)} />
                 </OptionWrapper>
 
                 <OptionWrapper>

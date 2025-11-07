@@ -66,7 +66,7 @@ export const Input = styled.input`
 
     &:focus {
         outline: none;
-        border-color: #FF3662;
+        border-color: #C0F5D6;
     }
 `;
 
@@ -158,21 +158,12 @@ export const ToggleSlider = styled.span`
     }
 `;
 
-export const PickerWrapper = styled.div`
-  position: fixed; /* 화면 전체를 기준으로 위치 */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* 다른 요소들 위에 보이도록 */
-`;
-
 // styled(공통컴포넌트)로 공통 컴포넌트에서 위치만 조절한 컴포넌트 생성
 export const SubmitButton = styled(Button)`
     margin-top: 10px;
     margin-bottom: 50px;
+    
+    &:not(:disabled) {
+        background-color: #FFA6A9;
+    }
 `;
