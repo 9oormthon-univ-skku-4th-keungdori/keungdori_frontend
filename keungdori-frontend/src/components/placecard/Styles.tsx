@@ -38,4 +38,13 @@ export const PlaceName = styled.h4`
 export const TagContainer = styled.div`
   display: flex;
   gap: 8px;
+
+  flex-wrap: nowrap;    
+  overflow-x: auto;      
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 `;
