@@ -32,7 +32,7 @@ export const SearchInputWrapper = styled.div`
     transition: box-shadow 0.2s ease-in-out; 
 
     &:focus-within {
-        box-shadow: 0 0 0 3px rgba(255, 166, 169, 0.5);
+        box-shadow: 0 0 0 3px #8DD7B0;
     }
 `;
 
@@ -69,7 +69,7 @@ export const TabButton = styled.button<{ isActive: boolean }>`
     color: ${props => props.isActive ? '#8DD7B0' : '#828282'};
     background: none;
     border: none;
-    border-bottom: ${props => props.isActive ? '2px solid #FFA6A9' : 'none'};
+    border-bottom: ${props => props.isActive ? '2px solid #8DD7B0' : 'none'};
     cursor: pointer;
 `;
 

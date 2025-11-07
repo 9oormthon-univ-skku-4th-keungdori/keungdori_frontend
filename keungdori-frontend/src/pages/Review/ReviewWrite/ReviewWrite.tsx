@@ -55,8 +55,13 @@ const updateTagColor = async (variables: { text: string; backgroundColor: string
     return data;
 };
 
-const deleteTag = async (tagText: string) => {
-    const { data } = await api.delete('/hashtags', { data: { hashtag: tagText } });
+const deleteTag = async (inputs: { tagText: string; placeId: string }) => {
+    const { data } = await api.delete('/hashtags', 
+        { data: { 
+            hashtag: inputs.tagText, 
+            placeId: inputs.placeId 
+        } }
+    );
     return data;
 }
 
@@ -215,7 +220,7 @@ const ReviewWrite: React.FC = () => {
     };
 
     const handleDeleteTag = (textToDelete: string) => {
-        removeTag(textToDelete);
+        removeTag({ tagText: textToDelete, placeId: placeId });
     };
 
     
