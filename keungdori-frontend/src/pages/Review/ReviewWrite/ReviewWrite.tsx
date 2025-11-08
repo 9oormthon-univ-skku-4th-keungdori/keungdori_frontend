@@ -37,7 +37,8 @@ interface Review {
 
 interface Tag {
   text: string;
-  backgroundColor: string; // 아마 fontColor도 있어야 할듯?
+  backgroundColor: string;
+  fontColor: string;
 }
 
 const postReview = async (newReview: Review) => { //데이터를 보내는 비동기 함수인 mutationFn
@@ -121,7 +122,6 @@ const ReviewWrite: React.FC = () => {
     const { mutate: submitReview } = useMutation({ //4. 낙관적 업데이트 적용해 말어?
         mutationFn: postReview,
         onSuccess: () => {
-            //alert('리뷰가 성공적으로 등록되었습니다.'); 3. 리뷰 전송 완료 모달
             queryClient.invalidateQueries({ queryKey: ['reviews', placeId] }); //리뷰 전송하면 리뷰 목록화면에서 리뷰 목록 갱신
             showAlert('리뷰가 성공적으로 등록되었습니다.', () => {
                 navigate(-1);
@@ -137,7 +137,7 @@ const ReviewWrite: React.FC = () => {
         mutationFn: createTag, // 직접 정의한 함수 사용
         onSuccess: (newTag) => {// new Tag는 응답으로 온 데이터
             if (newTag.color) { // 기존 태그 (색상 값이 있음)
-                const tagForState = { text: newTag.hashtag, backgroundColor: newTag.color };
+                const tagForState = { text: newTag.hashtag, backgroundColor: newTag.color, fontColor: newTag.fontColor };
                 if (activeInput === 'main') {
                     setMainTag(tagForState);
                 } else {
@@ -159,7 +159,7 @@ const ReviewWrite: React.FC = () => {
     const { mutate: patchColor } = useMutation({
         mutationFn: updateTagColor,
         onSuccess: (updatedTag) => { 
-            const tagForState = { text: updatedTag.hashtag, backgroundColor: updatedTag.backgroundColor };
+            const tagForState = { text: updatedTag.hashtag, backgroundColor: updatedTag.backgroundColor, fontColor: updatedTag.fontColor };
             if (activeInput === 'main') {
                 setMainTag(tagForState);
             } else {
@@ -196,20 +196,49 @@ const ReviewWrite: React.FC = () => {
         setInputValue('');
     };
 
+    // [추가] 1. 태그 제출(검증 및 API 호출) 로직을 별도 함수로 분리합니다.
+    const handleTagSubmit = () => {
+        const text = inputValue.trim();
+
+        // 입력값이 없거나 '#'만 있으면, 경고 없이 그냥 입력창을 닫습니다.
+        // (onBlur 시 사용자가 아무것도 입력 안했을 때 경고가 뜨는 것을 방지)
+        if (text.length <= 1 || text === '#') {
+            resetInputState();
+            return;
+        }
+
+        // --- 유효성 검사 ---
+        // (기존 onKeyDown에 있던 로직과 동일)
+        if (!text.startsWith('#')) {
+            showAlert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
+            resetInputState(); // [수정] 잘못된 입력 시에도 입력창 초기화
+            return;
+        }
+        if (mainTag?.text === text || subTags.some(t => t.text === text)) {
+            showAlert('이미 추가된 태그입니다.');
+            resetInputState(); // [수정] 중복 시에도 입력창 초기화
+            return;
+        }
+
+        // 모든 검증 통과 시 태그 생성 API 호출
+        // addTag의 onSuccess/onError에서 resetInputState가 호출됩니다.
+        addTag(text); 
+    };
+
+
+    // [수정] 2. onKeyDown 핸들러를 수정합니다.
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault(); // Form 전송 방지
-            const text = inputValue.trim();
-            if (!text.startsWith('#') || text.length <= 1) {
-                showAlert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
-                return;
-            }
-            if (mainTag?.text === text || subTags.some(t => t.text === text)) {
-                showAlert('이미 추가된 태그입니다.');
-                return;
-            }
-            addTag(text); // 태그 생성 API 호출
+            // 분리된 태그 제출 함수를 호출합니다.
+            handleTagSubmit();
         }
+    };
+
+    // [추가] 3. onBlur 핸들러를 새로 만듭니다.
+    const handleInputBlur = () => {
+        // onKeyDown과 동일하게, 분리된 태그 제출 함수를 호출합니다.
+        handleTagSubmit();
     };
 
     // 모달에서 색상 선택 완료 시 호출
@@ -283,12 +312,12 @@ const ReviewWrite: React.FC = () => {
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    //onBlur={resetInputState} 
+                                    onBlur={handleInputBlur}  
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                 />
                             ) : mainTag ? (
-                                <Hashtag text={mainTag.text} backgroundColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag text={mainTag.text} backgroundColor={mainTag.backgroundColor} fontColor={mainTag.fontColor} onDelete={handleDeleteTag}/>
                             ) : (
                                 <TagPlaceholder onClick={() => { setActiveInput('main'); setInputValue('#')}}>
                                     메인 태그를 추가해주세요.
@@ -299,14 +328,14 @@ const ReviewWrite: React.FC = () => {
                         <TagSection>
                             {/* 이미 추가된 서브 태그들 렌더링 */}
                             {subTags.map((tag) => (
-                                <Hashtag key={tag.text} text={tag.text} backgroundColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag key={tag.text} text={tag.text} backgroundColor={tag.backgroundColor} fontColor={tag.fontColor} onDelete={handleDeleteTag}/>
                             ))}
                             {activeInput === 'sub' ? (
                                  <TagInput 
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    //onBlur={resetInputState}
+                                    onBlur={handleInputBlur} 
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                  />

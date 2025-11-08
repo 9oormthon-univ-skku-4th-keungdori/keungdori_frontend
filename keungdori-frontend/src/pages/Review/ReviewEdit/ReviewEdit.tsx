@@ -211,21 +211,46 @@ const ReviewEdit: React.FC = () => {
             }
     })
 
-    //해시태그 input enter입력 시
+    // [추가] 1. 태그 제출 로직을 별도 함수로 분리합니다.
+    const handleTagSubmit = () => {
+        const text = inputValue.trim();
+
+        // 입력값이 없거나 '#'만 있으면, 경고 없이 그냥 입력창을 닫습니다.
+        if (text.length <= 1 || text === '#') {
+            resetInputState();
+            return;
+        }
+
+        // --- 유효성 검사 ---
+        if (!text.startsWith('#')) {
+            showAlert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
+            resetInputState(); // [수정] 잘못된 입력 시에도 입력창 초기화
+            return;
+        }
+        // [수정] ReviewEdit.tsx에 맞게 mainTag.text -> mainTag.hashtag로 변경
+        if (mainTag?.hashtag === text || subTags.some(t => t.hashtag === text)) {
+            showAlert('이미 추가된 태그입니다.');
+            resetInputState(); // [수정] 중복 시에도 입력창 초기화
+            return;
+        }
+
+        // 모든 검증 통과 시 태그 생성 API 호출
+        addTag(text);
+    };
+
+    // [수정] 2. onKeyDown 핸들러를 수정합니다.
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            const text = inputValue.trim();
-            if (!text.startsWith('#') || text.length <= 1) {
-                showAlert('#으로 시작하는 한 글자 이상의 태그를 입력해주세요.');
-                return;
-            }
-            if (mainTag?.hashtag === text || subTags.some(t => t.hashtag === text)) {
-                showAlert('이미 추가된 태그입니다.');
-                return;
-            }
-            addTag(text);
+            // 분리된 태그 제출 함수를 호출합니다.
+            handleTagSubmit();
         }
+    };
+
+    // [추가] 3. onBlur 핸들러를 새로 만듭니다.
+    const handleInputBlur = () => {
+        // onKeyDown과 동일하게, 분리된 태그 제출 함수를 호출합니다.
+        handleTagSubmit();
     };
 
     //모달에서 색상 선택시 patch api 호출
@@ -267,7 +292,7 @@ const ReviewEdit: React.FC = () => {
             payload.imageUrl = newImageUrl;
         }    
         const currentSubTags = subTags.map(t => t.hashtag);
-        if (JSON.stringify(currentSubTags) !== JSON.stringify(reviewData.subTags)) {
+        if (JSON.stringify(currentSubTags) !== JSON.stringify(reviewData.subTags.map(t => t.hashtag))) {
             payload.hashtags = currentSubTags;
         }
 
@@ -302,12 +327,12 @@ const ReviewEdit: React.FC = () => {
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    //onBlur={resetInputState} 
+                                    onBlur={handleInputBlur} 
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                 />
                             ) : mainTag ? (
-                                <Hashtag text={mainTag.hashtag} backgroundColor={mainTag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag text={mainTag.hashtag} backgroundColor={mainTag.backgroundColor} fontColor={mainTag.fontColor} onDelete={handleDeleteTag}/>
                             ) : (
                                 <TagPlaceholder onClick={() => { setActiveInput('main'); setInputValue('#')}}>
                                     메인 태그를 추가해주세요.
@@ -317,14 +342,14 @@ const ReviewEdit: React.FC = () => {
                         
                         <TagSection>
                             {subTags.map((tag) => (
-                                <Hashtag key={tag.hashtag} text={tag.hashtag} backgroundColor={tag.backgroundColor} onDelete={handleDeleteTag}/>
+                                <Hashtag key={tag.hashtag} text={tag.hashtag} backgroundColor={tag.backgroundColor} fontColor={tag.fontColor} onDelete={handleDeleteTag}/>
                             ))}
                             {activeInput === 'sub' ? (
                                  <TagInput 
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     onKeyDown={handleInputKeyDown}
-                                    //onBlur={resetInputState}
+                                    onBlur={handleInputBlur}
                                     placeholder="#태그 입력 후 Enter"
                                     autoFocus
                                  />

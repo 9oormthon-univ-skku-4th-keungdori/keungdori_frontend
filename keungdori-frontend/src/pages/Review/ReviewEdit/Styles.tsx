@@ -22,6 +22,7 @@ export const TopSection = styled.section`
 `;
 
 export const RatingAndTags = styled.div`
+  border: 1px solid #8DD7B0;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -63,7 +64,7 @@ export const UploadedImage = styled.img`
 `;
 
 export const TagSection = styled.div`
-  border: 1px solid #e0e0e0;
+  border: 1px solid #8DD7B0;
   border-radius: 8px;
   padding: 12px;
   min-height: 40px;
@@ -76,7 +77,7 @@ export const TagSection = styled.div`
 
 export const TagInput = styled.input`
   padding: 8px 12px;
-  border: 1px solid #FF769F;
+  border: 1px solid #8DD7B0;
   border-radius: 20px;
   font-size: 14px;
   outline: none;
@@ -91,7 +92,7 @@ export const TagPlaceholder = styled.span`
 export const MemoTextarea = styled.textarea`
   width: 100%;
   min-height: 150px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #8DD7B0;
   border-radius: 8px;
   padding: 12px;
   font-size: 16px;
@@ -99,7 +100,7 @@ export const MemoTextarea = styled.textarea`
 
   &:focus {
     outline: none;
-    border-color: #FF769F;
+    border-color: #8DD7B0;
   }
 `;
 
