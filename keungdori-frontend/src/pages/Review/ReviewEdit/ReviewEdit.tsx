@@ -67,7 +67,7 @@ const removeSubTag = async ({ reviewId, tagText }: { reviewId: number, tagText: 
     // 요청하신 엔드포인트: api/reviews/{reviewId}/subtag?태그이름
     // 'tag' 쿼리 파라미터로 태그 이름을 전송합니다.
     const { data } = await api.delete(`/reviews/${reviewId}/subtag`, {
-        params: { tag: tagText } 
+        params: { tagName: tagText } 
     });
     return data;
 };
