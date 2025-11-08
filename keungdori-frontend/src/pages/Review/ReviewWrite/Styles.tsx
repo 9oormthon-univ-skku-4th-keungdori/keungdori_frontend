@@ -22,7 +22,6 @@ export const TopSection = styled.section`
 `;
 
 export const RatingAndTags = styled.div`
-  border: 1px solid #8DD7B0;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -64,6 +63,7 @@ export const UploadedImage = styled.img`
 `;
 
 export const TagSection = styled.div`
+  border: 1px solid #8DD7B0;
   border-radius: 8px;
   padding: 12px;
   min-height: 40px;
