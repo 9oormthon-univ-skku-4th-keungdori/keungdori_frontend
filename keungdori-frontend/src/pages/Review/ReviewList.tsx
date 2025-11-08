@@ -10,8 +10,8 @@ import Header from '../../components/Header';
 import Button from '../../components/Button';
 import ReviewCard from '../../components/reviewcard/ReviewCard';
 import Spinner from '../../components/Spinner';
-import Hashtag from '../../components/Hashtag';
 import vector from '../../assets/vector.png';
+import RdOnlyHashtag from '../../components/RdOnlyHashtag';
 
 interface Tag {
     hashtag: string;
@@ -118,7 +118,7 @@ const ReviewList: React.FC = () => {
                 <PlaceHeader>
                     <PlaceName>{placeName}</PlaceName>
                     { hasReviews && data?.pages[0].reviews[0]?.mainTag.hashtag &&
-                        <Hashtag text={data.pages[0].reviews[0].mainTag.hashtag} 
+                        <RdOnlyHashtag hashtag={data.pages[0].reviews[0].mainTag.hashtag} 
                         backgroundColor={data.pages[0].reviews[0].mainTag.backgroundColor}
                         fontColor={data.pages[0].reviews[0].mainTag.fontColor}
                         />
