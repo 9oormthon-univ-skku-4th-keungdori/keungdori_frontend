@@ -56,15 +56,12 @@ const updateTagColor = async (variables: { text: string; backgroundColor: string
     return data;
 };
 
-const deleteTag = async (inputs: { tagText: string; placeId: string }) => {
-    const { data } = await api.delete('/hashtags', 
-        { data: { 
-            hashtag: inputs.tagText, 
-            placeId: inputs.placeId 
-        } }
-    );
+// [추가] 메인 태그 삭제 API
+const removeMainTag = async (placeId: string) => {
+    // 요청하신 엔드포인트: api/reviews/places/{placeId}/maintag
+    const { data } = await api.delete(`/reviews/places/${placeId}/maintag`);
     return data;
-}
+};
 
 const ReviewWrite: React.FC = () => {
     const location = useLocation();
@@ -176,20 +173,16 @@ const ReviewWrite: React.FC = () => {
         }
     });
 
-    const { mutate: removeTag } = useMutation({
-        mutationFn: deleteTag,
-        onSuccess: (tagTextToDelete) => {
-            if (mainTag?.text === tagTextToDelete) {
-                setMainTag(null);
-            } else {
-                setSubTags(prev => prev.filter(tag => tag.text !== tagTextToDelete));
-            }
-        },
-        onError: (error) => {
-            console.error("태그 삭제 실패:", error); 
-            showAlert("태그 삭제에 실패했습니다.");
-        }
-    })
+    const { mutate: removeMainTagMutation } = useMutation({
+    mutationFn: removeMainTag, // [수정] 새로 만든 API 함수 사용
+    onSuccess: () => {
+        setMainTag(null); // [수정] 성공 시 메인 태그 상태만 null로 변경
+    },
+    onError: (error) => {
+        console.error("메인 태그 삭제 실패:", error); 
+        showAlert("메인 태그 삭제에 실패했습니다.");
+    }
+    });
 
     const resetInputState = () => {
         setActiveInput(null);
@@ -249,7 +242,16 @@ const ReviewWrite: React.FC = () => {
     };
 
     const handleDeleteTag = (textToDelete: string) => {
-        removeTag({ tagText: textToDelete, placeId: placeId });
+    // 삭제하려는 태그가 메인 태그인 경우
+    if (mainTag?.text === textToDelete) {
+        // placeId를 사용하여 API 호출
+        removeMainTagMutation(placeId); 
+    } 
+    // 삭제하려는 태그가 서브 태그인 경우
+    else {
+        // 서브 태그는 API 호출 없이 로컬 상태(state)만 변경
+        setSubTags(prev => prev.filter(tag => tag.text !== textToDelete));
+    }
     };
 
     

@@ -100,6 +100,8 @@ const ReviewList: React.FC = () => {
         return <div>에러가 발생했습니다!</div>;
     }*/
 
+    const placeInfo = data?.pages[0]?.placeInfo;
+
     if (isLoading) {
         return <Spinner />;
     }
@@ -117,10 +119,11 @@ const ReviewList: React.FC = () => {
             <ContentWrapper>
                 <PlaceHeader>
                     <PlaceName>{placeName}</PlaceName>
-                    { hasReviews && data?.pages[0].reviews[0]?.mainTag.hashtag &&
-                        <RdOnlyHashtag hashtag={data.pages[0].reviews[0].mainTag.hashtag} 
-                        backgroundColor={data.pages[0].reviews[0].mainTag.backgroundColor}
-                        fontColor={data.pages[0].reviews[0].mainTag.fontColor}
+                    { placeInfo?.mainTag?.hashtag &&
+                        <RdOnlyHashtag 
+                            hashtag={placeInfo.mainTag.hashtag} 
+                            backgroundColor={placeInfo.mainTag.backgroundColor}
+                            fontColor={placeInfo.mainTag.fontColor}
                         />
                     }
                 </PlaceHeader>

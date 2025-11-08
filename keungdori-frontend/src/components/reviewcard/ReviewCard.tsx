@@ -69,7 +69,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review, onClick }) => {
                             fontColor={review.mainTag.fontColor}
                         />
                     )}
-                    {review.subTags?.map(tag => 
+                    {review.subTags?.filter(tag => tag.hashtag).map(tag => 
                     <RdOnlyHashtag key={tag.hashtag} hashtag={tag.hashtag} backgroundColor={tag.backgroundColor} fontColor={tag.fontColor}/>)}
                 </HashtagContainer>
             </ReviewContent>
