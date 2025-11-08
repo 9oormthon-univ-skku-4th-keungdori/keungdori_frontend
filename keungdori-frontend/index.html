@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!--화면 설정-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" /> <!--화면 설정-->
     <title>Keungdori</title> <!--앱 제목-->
     <meta name="description" content="Share your places with friends"> <!-- 앱 설명-->
     <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" /> <!--애플 터치 아이콘-->
@@ -11,6 +11,11 @@
     <link rel="icon" type="image/png" href="assets/icons/pwa-512x512.png" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"> <!--테마 컬러-->
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://maps.googleapis.com">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400&display=swap" media="print" onload="this.media='all'">
   </head>
   <body>
     <div id="root"></div>
